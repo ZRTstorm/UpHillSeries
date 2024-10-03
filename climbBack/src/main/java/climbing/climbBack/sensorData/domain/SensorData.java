@@ -1,5 +1,6 @@
 package climbing.climbBack.sensorData.domain;
 
+import climbing.climbBack.climbData.domain.ClimbData;
 import climbing.climbBack.sensor.domain.Sensor;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,15 +13,16 @@ import java.time.LocalDateTime;
 public class SensorData {
 
     @Id @GeneratedValue
-    Long id;
+    private Long id;
 
+    private Long sensorId;
+    private Long routeId;
+
+    private boolean isTouched;
+    private LocalDateTime createdTime;
+
+    // 등반 기록
     @ManyToOne
-    @JoinColumn(name = "sensor_id")
-    private Sensor sensor;
-    private String routeId;
-
-    boolean isTouched;
-    LocalDateTime createdTime;
-
-    // 등반 기록 번호 -> 참조 혹은 번호
+    @JoinColumn(name = "climbdata_id")
+    private ClimbData climbData;
 }

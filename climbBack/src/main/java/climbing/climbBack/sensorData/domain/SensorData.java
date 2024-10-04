@@ -15,7 +15,9 @@ public class SensorData {
     @Id @GeneratedValue
     private Long id;
 
-    private Long sensorId;
+    @ManyToOne
+    @JoinColumn(name = "sensor_id")
+    private Sensor sensor;
     private Long routeId;
 
     private boolean isTouched;
@@ -23,6 +25,6 @@ public class SensorData {
 
     // 등반 기록
     @ManyToOne
-    @JoinColumn(name = "climbdata_id")
+    @JoinColumn(name = "climb_data_id")
     private ClimbData climbData;
 }

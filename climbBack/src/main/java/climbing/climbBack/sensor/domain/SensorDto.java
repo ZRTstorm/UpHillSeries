@@ -1,14 +1,20 @@
 package climbing.climbBack.sensor.domain;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
 public class SensorDto {
 
+    @Min(value = 1)
     private Long id;
 
+    @NotNull
     private String center;
+    @NotNull
     private String route;
 
     // 만약 센서가 부착 되는 위치의 좌표 값을 저장 한다면 (x,y,z) Double 값 추가

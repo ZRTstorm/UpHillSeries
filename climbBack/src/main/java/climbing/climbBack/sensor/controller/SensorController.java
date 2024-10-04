@@ -3,6 +3,8 @@ package climbing.climbBack.sensor.controller;
 import climbing.climbBack.sensor.domain.Sensor;
 import climbing.climbBack.sensor.domain.SensorDto;
 import climbing.climbBack.sensor.service.SensorService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +16,7 @@ public class SensorController {
 
     // 센서 등록
     @PostMapping("/sensors/register")
-    public Long registerSensor(@RequestBody SensorDto sensorDto) {
+    public Long registerSensor(@Valid @RequestBody SensorDto sensorDto) {
 
         Sensor sensor = new Sensor();
         sensor.setId(sensorDto.getId());
@@ -26,7 +28,7 @@ public class SensorController {
 
     // 센서가 등록 되어 있는지 확인
     @GetMapping("/sensors/{sensorId}")
-    public boolean checkSensor(@PathVariable Long sensorId) {
+    public boolean checkSensor(@PathVariable @Min(1) Long sensorId) {
 
         return sensorService.isSensor(sensorId);
     }
@@ -35,7 +37,7 @@ public class SensorController {
 
     // 센서 삭제
     @PostMapping("/sensors/{sensorId}/delete")
-    public boolean removeSensor(@PathVariable Long sensorId) {
+    public boolean removeSensor(@PathVariable @Min(1) Long sensorId) {
 
         return sensorService.deleteSensor(sensorId);
     }

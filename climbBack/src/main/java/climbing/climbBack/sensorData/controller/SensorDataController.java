@@ -3,6 +3,7 @@ package climbing.climbBack.sensorData.controller;
 import climbing.climbBack.sensorData.domain.SensorData;
 import climbing.climbBack.sensorData.domain.SensorDataDto;
 import climbing.climbBack.sensorData.service.SensorDataService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class SensorDataController {
     // method 화 -> 모든 controller 에서 사용 해야 하는 매서드
 
     @PostMapping("/sensorData/{sensorId}/start")
-    public boolean startSensing(@RequestBody SensorDataDto sensorDataDto, @PathVariable Long sensorId) {
+    public boolean startSensing(@Valid @RequestBody SensorDataDto sensorDataDto, @PathVariable Long sensorId) {
         // 들어온 Data 의 유저가 없는 경우 -> false return
         if (!isDataUser(sensorDataDto.getRouteId())) return false;
         // SensorDataDto -> sensorData
@@ -32,7 +33,7 @@ public class SensorDataController {
     }
 
     @PostMapping("/sensorData/{sensorId}/insert")
-    public boolean pushSensing(@RequestBody SensorDataDto sensorDataDto, @PathVariable Long sensorId) {
+    public boolean pushSensing(@Valid @RequestBody SensorDataDto sensorDataDto, @PathVariable Long sensorId) {
         if (!isDataUser(sensorDataDto.getRouteId())) return false;
 
         SensorData sensorData = getDataToDto(sensorDataDto, sensorId);
@@ -42,7 +43,7 @@ public class SensorDataController {
     }
 
     @PostMapping("/sensorData/{sensorId}/end")
-    public boolean endSensing(@RequestBody SensorDataDto sensorDataDto, @PathVariable Long sensorId) {
+    public boolean endSensing(@Valid @RequestBody SensorDataDto sensorDataDto, @PathVariable Long sensorId) {
         if (!isDataUser(sensorDataDto.getRouteId())) return false;
 
         SensorData sensorData = getDataToDto(sensorDataDto, sensorId);
@@ -60,7 +61,7 @@ public class SensorDataController {
 
         SensorData sensorData = new SensorData();
 
-        sensorData.setSensorId(sensorId);
+        // Sensor 프록시 객체 생성 -> sensorId 만 보유 -> Service Layer 로 내려
         sensorData.setRouteId(sensorDataDto.getRouteId());
         sensorData.setTouched(sensorDataDto.isTouched());
         sensorData.setCreatedTime(LocalDateTime.now());

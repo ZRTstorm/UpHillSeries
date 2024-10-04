@@ -14,7 +14,7 @@ import java.util.List;
 public class ClimbData {
 
     @Id @GeneratedValue
-    @Column(name = "climbdata_id")
+    @Column(name = "climb_data_id")
     private Long id;
 
     private Long userId;

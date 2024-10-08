@@ -15,6 +15,6 @@ public class Sensor {
     @Column(name = "sensor_id")
     private Long id;
 
-    private Long centerId;
+    // sensor 가 부착된 route ID
     private Long routeId;
 }

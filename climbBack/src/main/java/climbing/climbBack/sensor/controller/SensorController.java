@@ -1,7 +1,7 @@
 package climbing.climbBack.sensor.controller;
 
 import climbing.climbBack.sensor.domain.Sensor;
-import climbing.climbBack.sensor.domain.SensorDto;
+import climbing.climbBack.sensor.domain.SensorRegisterDto;
 import climbing.climbBack.sensor.service.SensorService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -14,31 +14,27 @@ public class SensorController {
 
     private final SensorService sensorService;
 
-    // 센서 등록
+    // 센서 등록 Controller
     @PostMapping("/sensors/register")
-    public Long registerSensor(@Valid @RequestBody SensorDto sensorDto) {
+    public void registerSensor(@Valid @RequestBody SensorRegisterDto sensorRegisterDto) {
 
+        // SensorRegisterDto -> Sensor
         Sensor sensor = new Sensor();
-        sensor.setId(sensorDto.getId());
-        sensor.setCenter(sensor.getCenter());
-        sensor.setRoute(sensor.getRoute());
+        sensor.setId(sensorRegisterDto.getSensorId());
+        sensor.setRouteId(sensorRegisterDto.getRouteId());
 
-        return sensorService.saveSensor(sensor);
+        // 센서 등록
+        sensorService.saveSensor(sensor);
     }
 
-    // 센서가 등록 되어 있는지 확인
-    @GetMapping("/sensors/{sensorId}")
-    public boolean checkSensor(@PathVariable @Min(1) Long sensorId) {
-
-        return sensorService.isSensor(sensorId);
-    }
-
-    // 센서 리스트 검색 -> 암장 / 루트 별로 등록된 센서 리스트 반환
-
-    // 센서 삭제
+    // 센서 삭제 Controller
     @PostMapping("/sensors/{sensorId}/delete")
-    public boolean removeSensor(@PathVariable @Min(1) Long sensorId) {
+    public void removeSensor(@PathVariable @Min(1) Long sensorId) {
 
-        return sensorService.deleteSensor(sensorId);
+        // 센서 삭제
+        sensorService.deleteSensor(sensorId);
     }
+
+    // parameter : sensorId
+    // 센서 List Controller
 }

@@ -11,24 +11,24 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
-public class entryQueue {
+public class EntryQueue {
 
     @Id @GeneratedValue
     @Column(name = "entry_id")
     private Long id;
 
-    // entryQueue 는 대기 열을 DB 로 저장 및 삭제만 하기 때문에 객체 그래프 탐색은 X
+    // EntryQueue 는 객체 그래프 탐색을 하지 않음
+    // 대기열 신청한 루트 ID
     @Column(name = "route_id")
     private Long routeId;
 
+    // 대기열 신청한 User ID
     @Column(name = "user_id")
     private Long userId;
 
-    // WebSocket 통신을 위한 세션 ID
-    @Column(name = "session_id")
-    private String sessionId;
-
     // 루트 대기 순번 -> 전체 대기 순번 과는 다름
     private Long position;
+
+    // 대기열 신청 시각
     private LocalDateTime createdTime;
 }

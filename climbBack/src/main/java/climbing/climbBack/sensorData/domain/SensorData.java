@@ -1,6 +1,6 @@
 package climbing.climbBack.sensorData.domain;
 
-import climbing.climbBack.climbData.domain.ClimbData;
+import climbing.climbBack.climbingData.domain.ClimbingData;
 import climbing.climbBack.sensor.domain.Sensor;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,5 +26,5 @@ public class SensorData {
     // 등반 기록
     @ManyToOne
     @JoinColumn(name = "climb_data_id")
-    private ClimbData climbData;
+    private ClimbingData climbingData;
 }

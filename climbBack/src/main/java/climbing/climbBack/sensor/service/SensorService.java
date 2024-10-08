@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,42 +19,48 @@ public class SensorService {
 
     private final SensorRepository sensorRepository;
 
-    // 센서 등록 성공 -> 등록한 센서의 고유 번호 반환 >0
-    // 센서 등록 실패 -> -1 값 반환
+    // 센서 등록 서비스
     @Transactional
-    public Long saveSensor(Sensor sensor) {
-        if (validateDuplicateId(sensor)) {
-            Sensor getSensor = sensorRepository.save(sensor);
+    public void saveSensor(Sensor sensor) {
+        Long sensorId = sensor.getId();
 
-            return getSensor.getId();
-        } else {
-            return -1L;
+        // 이미 등록된 센서 번호가 존재 하는지 검사
+        if(sensorRepository.existsById(sensorId)) {
+            log.info("SensorId is already exist = {}", sensorId);
+            return;
         }
+
+        sensorRepository.save(sensor);
     }
 
-    // 받은 고유 번호를 가진 센서가 존재 하는지 확인
-    // 센서 존재 -> true , 센서 존재 x -> false
+    // sensorId 를 가진 센서가 등록 되어 있는지 검사
+    // return : 존재 하면 true , 존재 하지 않다면 false
     public boolean isSensor(Long sensorId) {
-        Optional<Sensor> optionalSensor = sensorRepository.findById(sensorId);
-
-        return optionalSensor.isPresent();
+        return sensorRepository.existsById(sensorId);
     }
 
-    // 센서 삭제
-    public boolean deleteSensor(Long sensorId) {
-        try {
-            sensorRepository.deleteById(sensorId);
-            return true;
-        } catch (EmptyResultDataAccessException e) {
-            log.warn("error: ", e);
-            return false;
+    // sensorId 를 가진 센서가 부착된 routeId 확인
+    public Long getRouteBySensor(Long sensorId) {
+        Optional<Sensor> sensor = sensorRepository.findById(sensorId);
+        if (sensor.isEmpty()) {
+            throw new IllegalStateException("Please check for isSensor method");
         }
+
+        return sensor.get().getRouteId();
     }
 
-    // sensorId 와 매칭 되는 센서가 존재 하지 않는 다면 true, 그렇지 않다면 false
-    private boolean validateDuplicateId(Sensor sensor) {
-        Optional<Sensor> preSensor = sensorRepository.findById(sensor.getId());
+    // route 에 부착된 센서 List 파악 서비스
+    public List<Sensor> getSensorListByRoute(Long routeId) {
+        return sensorRepository.findByRouteId(routeId);
+    }
 
-        return preSensor.isEmpty();
+    // 센서 삭제 서비스
+    public void deleteSensor(Long sensorId) {
+        if (!sensorRepository.existsById(sensorId)) {
+            log.info("SensorId is not used yet = {}", sensorId);
+            return;
+        }
+
+        sensorRepository.deleteById(sensorId);
     }
 }

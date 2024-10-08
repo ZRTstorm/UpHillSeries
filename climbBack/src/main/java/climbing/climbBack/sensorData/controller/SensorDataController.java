@@ -1,7 +1,7 @@
 package climbing.climbBack.sensorData.controller;
 
 import climbing.climbBack.sensorData.domain.SensorData;
-import climbing.climbBack.sensorData.domain.SensorDataDto;
+import climbing.climbBack.climbingData.domain.SensorDataDto;
 import climbing.climbBack.sensorData.service.SensorDataService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,6 @@
 package climbing.climbBack.route.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Route {
@@ -12,5 +9,7 @@ public class Route {
     @Column(name = "route_id")
     private Long id;
 
-    // 루트 번호와 매칭 되는 모든 스탯 Data 를 가져 오는 것은 불가능 -> 참조 X
+    // Route 에 배정된 난이도
+    @Enumerated(EnumType.STRING)
+    private Difficulty difficulty;
 }

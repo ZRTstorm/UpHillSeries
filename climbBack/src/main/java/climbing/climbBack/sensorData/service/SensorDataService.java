@@ -1,6 +1,6 @@
 package climbing.climbBack.sensorData.service;
 
-import climbing.climbBack.climbData.service.ClimbDataService;
+import climbing.climbBack.climbingData.service.ClimbingDataService;
 import climbing.climbBack.sensorData.domain.SensorData;
 import climbing.climbBack.sensorData.repository.SensorDataJpaRepository;
 import climbing.climbBack.sensorData.repository.SensorDataMemRepository;
@@ -20,7 +20,7 @@ public class SensorDataService {
 
     private final SensorDataJpaRepository jpaRepository;
     private final SensorDataMemRepository memRepository;
-    private final ClimbDataService climbDataService;
+    private final ClimbingDataService climbingDataService;
 
     // 기록 시작
     public boolean setSensorList(SensorData sensorData) {
@@ -53,7 +53,7 @@ public class SensorDataService {
         List<SensorData> sensorDataList = memRepository.removeDataList(routeId);
 
         // climbData 생성 -> SensorData 와 ClimbData 연관 -> 함께 영속
-        Long climbDataId = climbDataService.createClimbingData(sensorDataList, true);
+        Long climbDataId = climbingDataService.createClimbingData(sensorDataList, true);
 
         return true;
     }

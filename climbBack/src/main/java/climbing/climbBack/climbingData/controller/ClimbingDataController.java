@@ -29,8 +29,9 @@ public class ClimbingDataController {
         }
 
         // route 를 등반 중인 user 가 있는지 확인
-        if(!climbingDataService.checkUserInRoute(sensorId)) {
+        if(climbingDataService.checkUserInRoute(sensorId)) {
             log.info("User is not climbing in this route = {}", sensorId);
+            return;
         }
 
         // 등반 기록 시작
@@ -50,11 +51,20 @@ public class ClimbingDataController {
         }
 
         // route 를 등반 중인 user 가 있는지 확인
-        if(!climbingDataService.checkUserInRoute(sensorId)) {
+        if(climbingDataService.checkUserInRoute(sensorId)) {
             log.info("User is not climbing in this route = {}", sensorId);
+            return;
         }
 
         // 등반 성공 기록
         climbingDataService.successClimbingData(sensorId);
+    }
+
+    // 등반 실패 감지 Controller
+    @PostMapping("climbing/failure")
+    public void failureClimbing(@RequestBody Long userId) {
+
+        // 센서 로부터 받지 않고, App Client 로부터 도달
+        climbingDataService.failureClimbingData(userId);
     }
 }

@@ -2,6 +2,7 @@ package climbing.climbBack.climbingData.service;
 
 import climbing.climbBack.climbingData.domain.ClimbingData;
 import climbing.climbBack.climbingData.repository.ClimbingDataRepository;
+import climbing.climbBack.entryQueue.service.EntryQueueService;
 import climbing.climbBack.sensor.service.SensorService;
 import climbing.climbBack.sensorData.domain.SensorData;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ClimbingDataService {
 
     private final ClimbingDataRepository climbingDataRepository;
     private final SensorService sensorService;
+    private final EntryQueueService entryQueueService;
 
     // 등반 기록 임시 저장소
     // key : routeId    value : ClimbingData
@@ -41,35 +42,60 @@ public class ClimbingDataService {
 
         // route 를 등반 중인 user 탐색 -> 기록
         // EntryQueueService 의 routeId - userId 로부터 획득
+        Long userId = entryQueueService.getUserByRouteMap(routeId);
+        climbingData.setUserId(userId);
 
         // 등반 기록 임시 저장소 저장
         climbingDataMap.put(routeId, climbingData);
     }
 
     // 등반 성공 기록 저장 서비스
+    @Transactional
     public void successClimbingData(Long sensorId) {
         Long routeId = sensorService.getRouteBySensor(sensorId);
 
+        // 등반 성공 기록 저장
+        ClimbingData climbingData = recordClimbingData(routeId, true);
+
+        // 등반에 성공 했음을 Client 에게 알림
+        entryQueueService.notifyToUser(climbingData.getUserId(), "successToClimbing");
+    }
+
+    // 등반 실패 기록 저장 서비스
+    @Transactional
+    public void failureClimbingData(Long userId) {
+        // userId 로부터 routeId 획득
+        Long routeId = entryQueueService.getRouteByUserMap(userId);
+
+        // 등반 실패 기록 저장
+        recordClimbingData(routeId, false);
+    }
+
+    // Data 를 보낸 센서의 루트 에서 현재 사용 중인 유저가 있는지 확인
+    // EntryQueueService 의 routeId - userId 로부터 획득
+    // 사용 하는 유저가 없다면 true, 있다면 false return
+    public boolean checkUserInRoute(Long sensorId) {
+        Long routeId = sensorService.getRouteBySensor(sensorId);
+
+        // routeUserMap 에서 Data 확인
+        return !entryQueueService.checkUserByRoute(routeId);
+    }
+
+    private ClimbingData recordClimbingData(Long routeId, boolean success) {
         // 임시 저장소 데이터 불러 오기 & 삭제
         ClimbingData climbingData = climbingDataMap.remove(routeId);
 
-        // 등반 기록 성공 처리
-        climbingData.setSuccess(true);
+        // 등반 기록 성공 & 실패 처리
+        climbingData.setSuccess(success);
 
         // 등반 시간 계산
         Long duringTime = calculateDateToTime(climbingData);
         climbingData.setClimbingTime(duringTime);
 
-        // 등반 성공 기록 저장
+        // 등반 성공 & 실패 기록 저장
         climbingDataRepository.save(climbingData);
-    }
 
-    // Data 를 보낸 센서의 루트 에서 현재 사용 중인 유저가 있는지 확인
-    // EntryQueueService 의 routeId - userId 로부터 획득
-    public boolean checkUserInRoute(Long sensorId) {
-        Long routeId = sensorService.getRouteBySensor(sensorId);
-
-        return true;
+        return climbingData;
     }
 
     private Long calculateDateToTime(ClimbingData climbingData) {

@@ -94,9 +94,19 @@ public class EntryQueueService {
         notifyToUser(userId, "allowToUseRoute");
     }
 
-    // 등록된 대기열 삭제 서비스
+    // 등록된 대기열 삭제 서비스 -> User 가 임의로 열을 벗어 나는 경우
     @Transactional
     public void deleteEntry(Long userId) {
+        // 삭제 하는 Data 의 position 값을 탐색
+        Optional<EntryQueue> deleteData = entryQueueRepository.findByUserId(userId);
+        if (deleteData.isEmpty()) {
+            log.info("deleting operation is not in entry = {}", userId);
+            return;
+        }
+
+        // 삭제 하는 Data 보다 후순위 Data 의 position 값을 조정
+        entryQueueRepository.decreasePositionGreater(deleteData.get().getRouteId(), deleteData.get().getPosition());
+
         // User 대기열 데이터 삭제
         entryQueueRepository.deleteAllByUserId(userId);
     }
@@ -108,6 +118,60 @@ public class EntryQueueService {
 
         // Data 가 존재 한다면 true , 존재 하지 않는 다면 false return
         return entryQueue.isPresent();
+    }
+
+    // Route 이용 하는 User 를 변경 -> 대기열 조정 서비스
+    // 등반 완료를 기점 으로 자동 실행 하는 서비스
+    @Transactional
+    public void manipulateEntryQueue(Long routeId) {
+        // route 를 이용한 User 의 route User Data 삭제 & userId 획득
+        Long userId = routeUserMap.remove(routeId);
+
+        // 완료 User 의 EntryQueue Data 삭제 -> pos == 0 Data
+        entryQueueRepository.deleteAllByUserId(userId);
+
+        // 종료한 route 를 기준 으로 이용 할 수 있는 route 대기자 탐색
+        // route 에서 간섭 관계를 가진 route List 를 획득
+        List<Long> routeList = routeGroupService.getGroupById(routeId);
+
+        // route List 에 포함된 route 들 중 현재 pos == 1 인 Data 중
+        // createdTime 이 빠른 순서 대로 정렬 해서 EntryQueue 획득
+        // 빈 List 일 경우 -> 대기 인원이 존재 하지 않음 -> 아무 일도 일어 나지 않음
+        List<EntryQueue> entryList = entryQueueRepository.findEntryListOrderedByCreatedTime(routeList);
+
+        // 순서 대로 확인 하여 이용 가능 한지 확인
+        for (EntryQueue entry : entryList) {
+            // 간섭 관계를 가진 route List 획득
+            List<Long> checkList = routeGroupService.getGroupById(entry.getRouteId());
+            checkList.add(entry.getRouteId());
+
+            // 간섭 관계를 가진 route 를 누군가 이용 중인지 확인
+            boolean isInfer = false;
+            for (Long checkRoute : checkList) {
+                if (routeUserMap.containsKey(checkRoute)) {
+                    isInfer = true;
+                    break;
+                }
+            }
+
+            // isInfer == true : 이용 중인 유저가 존재
+            // isInfer == false : 이용 중인 유저가 없어서 이용 가능
+            if (isInfer) continue;
+            else {
+                // Route - User 이용자 기록
+                Long ableRouteId = entry.getRouteId();
+                Long ableUserId = entry.getUserId();
+                routeUserMap.put(ableRouteId, ableUserId);
+
+                // 이용할 routeId 의 모든 pos 값 1씩 감소
+                entryQueueRepository.decreasePositionByRouteId(ableRouteId);
+
+                // WebSocket 으로 이용 허가 message 전송
+                notifyToUser(ableUserId, "allowToUseRoute");
+
+                break;
+            }
+        }
     }
 
     // routeId - UserId Data 가 routeUserMap 에 존재 하는지 확인

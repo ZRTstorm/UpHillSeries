@@ -17,6 +17,7 @@ public class EntryQueueController {
 
     private final EntryQueueService entryQueueService;
 
+    // 대기열 등록 Controller
     @PostMapping("/entryQueue/register")
     public void registerEntry(@RequestBody QueueRegisterDto registerDto) {
 
@@ -34,6 +35,7 @@ public class EntryQueueController {
         entryQueueService.createEntryQueue(userId, routeId);
     }
 
+    // 대기열 삭제 Controller -> 사용자 임의 삭제
     @PostMapping("/entryQueue/{userId}/delete")
     public void deleteEntry(@PathVariable Long userId) {
 

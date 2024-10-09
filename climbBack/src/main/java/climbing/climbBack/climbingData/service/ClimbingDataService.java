@@ -6,6 +6,7 @@ import climbing.climbBack.entryQueue.service.EntryQueueService;
 import climbing.climbBack.sensor.service.SensorService;
 import climbing.climbBack.sensorData.domain.SensorData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClimbingDataService {
 
     private final ClimbingDataRepository climbingDataRepository;
@@ -59,6 +61,9 @@ public class ClimbingDataService {
 
         // 등반에 성공 했음을 Client 에게 알림
         entryQueueService.notifyToUser(climbingData.getUserId(), "successToClimbing");
+
+        // 대기열 조정 명령
+        changeTurnOfUser(routeId);
     }
 
     // 등반 실패 기록 저장 서비스
@@ -67,8 +72,16 @@ public class ClimbingDataService {
         // userId 로부터 routeId 획득
         Long routeId = entryQueueService.getRouteByUserMap(userId);
 
+        if (routeId == -1L) {
+            log.info("User is not playing Climbing = {}", userId);
+            return;
+        }
+
         // 등반 실패 기록 저장
         recordClimbingData(routeId, false);
+
+        // 대기열 조정 명령
+        changeTurnOfUser(routeId);
     }
 
     // Data 를 보낸 센서의 루트 에서 현재 사용 중인 유저가 있는지 확인
@@ -81,6 +94,7 @@ public class ClimbingDataService {
         return !entryQueueService.checkUserByRoute(routeId);
     }
 
+    // 등반 기록을 불러 와서 남은 필드를 채우고 DB 에 저장
     private ClimbingData recordClimbingData(Long routeId, boolean success) {
         // 임시 저장소 데이터 불러 오기 & 삭제
         ClimbingData climbingData = climbingDataMap.remove(routeId);
@@ -98,6 +112,12 @@ public class ClimbingDataService {
         return climbingData;
     }
 
+    // 등반의 성공 혹은 실패 -> 등반 완료 판단 후 -> route User 변경
+    private void changeTurnOfUser(Long routeId) {
+        entryQueueService.manipulateEntryQueue(routeId);
+    }
+
+    // 현재 시각 부터 기록 생성 시각 과의 차이를 return
     private Long calculateDateToTime(ClimbingData climbingData) {
         LocalDateTime firstTime = climbingData.getIsCreated();
         LocalDateTime lastTime = LocalDateTime.now();

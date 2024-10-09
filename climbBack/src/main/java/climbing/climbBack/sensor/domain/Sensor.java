@@ -1,9 +1,7 @@
 package climbing.climbBack.sensor.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Min;
+import climbing.climbBack.route.domain.Route;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +13,8 @@ public class Sensor {
     @Column(name = "sensor_id")
     private Long id;
 
-    // sensor 가 부착된 route ID
-    private Long routeId;
+    // sensor 가 부착된 route
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id")
+    private Route route;
 }

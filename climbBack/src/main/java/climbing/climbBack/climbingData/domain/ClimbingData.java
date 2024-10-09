@@ -1,13 +1,12 @@
 package climbing.climbBack.climbingData.domain;
 
-import climbing.climbBack.sensorData.domain.SensorData;
+import climbing.climbBack.route.domain.Route;
+import climbing.climbBack.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -17,20 +16,20 @@ public class ClimbingData {
     @Column(name = "climbing_data_id")
     private Long id;
 
-    // id vs reference 고민 필요
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    // id vs reference 고민 필요
-    @Column(name = "route_id")
-    private Long routeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id")
+    private Route route;
 
     // 등반 성공 여부
-    private boolean success;
+    private Boolean success;
 
-    // 등반 소요 시간
+    // 등반 소요 시간 (sec)
     private Long climbingTime;
 
     // 등반 기록 생성 시각
-    private LocalDateTime isCreated;
+    private LocalDateTime createdTime;
 }

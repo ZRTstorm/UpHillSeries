@@ -1,6 +1,5 @@
 package climbing.climbBack.climbingData.domain;
 
-import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 

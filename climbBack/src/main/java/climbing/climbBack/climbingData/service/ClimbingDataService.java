@@ -3,8 +3,9 @@ package climbing.climbBack.climbingData.service;
 import climbing.climbBack.climbingData.domain.ClimbingData;
 import climbing.climbBack.climbingData.repository.ClimbingDataRepository;
 import climbing.climbBack.entryQueue.service.EntryQueueService;
+
+import climbing.climbBack.route.repository.RouteRepository;
 import climbing.climbBack.sensor.service.SensorService;
-import climbing.climbBack.sensorData.domain.SensorData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -21,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClimbingDataService {
 
     private final ClimbingDataRepository climbingDataRepository;
+    private final RouteRepository routeRepository;
+
     private final SensorService sensorService;
     private final EntryQueueService entryQueueService;
 
@@ -34,18 +37,20 @@ public class ClimbingDataService {
 
         // 시작 신호를 보낸 센서 ID 로부터 route ID 탐색
         Long routeId = sensorService.getRouteBySensor(sensorId);
-        climbingData.setRouteId(routeId);
+        climbingData.setRoute(routeRepository.getReferenceById(routeId));
 
         // 재시작 하는 경우 임시 저장소 이전 기록 삭제
         climbingDataMap.remove(routeId);
 
         // 등반 시작 시각 기록
-        climbingData.setIsCreated(LocalDateTime.now());
+        climbingData.setCreatedTime(LocalDateTime.now());
 
         // route 를 등반 중인 user 탐색 -> 기록
         // EntryQueueService 의 routeId - userId 로부터 획득
         Long userId = entryQueueService.getUserByRouteMap(routeId);
-        climbingData.setUserId(userId);
+
+        // user 필드 주입
+        // climbingData.setUser(userRepository.getReferenceById(userId));
 
         // 등반 기록 임시 저장소 저장
         climbingDataMap.put(routeId, climbingData);
@@ -60,7 +65,7 @@ public class ClimbingDataService {
         ClimbingData climbingData = recordClimbingData(routeId, true);
 
         // 등반에 성공 했음을 Client 에게 알림
-        entryQueueService.notifyToUser(climbingData.getUserId(), "successToClimbing");
+        entryQueueService.notifyToUser(climbingData.getUser().getId(), "successToClimbing");
 
         // 대기열 조정 명령
         changeTurnOfUser(routeId);
@@ -119,7 +124,7 @@ public class ClimbingDataService {
 
     // 현재 시각 부터 기록 생성 시각 과의 차이를 return
     private Long calculateDateToTime(ClimbingData climbingData) {
-        LocalDateTime firstTime = climbingData.getIsCreated();
+        LocalDateTime firstTime = climbingData.getCreatedTime();
         LocalDateTime lastTime = LocalDateTime.now();
 
         Duration duration = Duration.between(firstTime, lastTime);

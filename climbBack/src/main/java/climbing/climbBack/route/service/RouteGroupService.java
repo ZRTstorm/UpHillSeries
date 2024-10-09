@@ -2,6 +2,7 @@ package climbing.climbBack.route.service;
 
 import climbing.climbBack.route.domain.RouteGroup;
 import climbing.climbBack.route.repository.RouteGroupRepository;
+import climbing.climbBack.route.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.util.List;
 public class RouteGroupService {
 
     private final RouteGroupRepository routeGroupRepository;
+    private final RouteRepository routeRepository;
 
     // 루트 간 간섭 관계 저장 서비스 -> route1 & route2
     @Transactional
@@ -20,8 +22,8 @@ public class RouteGroupService {
         RouteGroup routeGroup = new RouteGroup();
 
         // route1 & route2 등록
-        routeGroup.setRoute1(route1);
-        routeGroup.setRoute2(route2);
+        routeGroup.setRoute1(routeRepository.getReferenceById(route1));
+        routeGroup.setRoute2(routeRepository.getReferenceById(route2));
 
         // routeGroup DB 저장
         routeGroupRepository.save(routeGroup);
@@ -34,8 +36,8 @@ public class RouteGroupService {
             RouteGroup routeGroup = new RouteGroup();
 
             // route 와 관련된 각 route2 등록
-            routeGroup.setRoute1(routeId);
-            routeGroup.setRoute2(related);
+            routeGroup.setRoute1(routeRepository.getReferenceById(routeId));
+            routeGroup.setRoute2(routeRepository.getReferenceById(related));
 
             // routeGroup DB 저장
             routeGroupRepository.save(routeGroup);

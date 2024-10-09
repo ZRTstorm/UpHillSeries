@@ -1,6 +1,5 @@
 package climbing.climbBack.sensor.controller;
 
-import climbing.climbBack.sensor.domain.Sensor;
 import climbing.climbBack.sensor.domain.SensorRegisterDto;
 import climbing.climbBack.sensor.service.SensorService;
 import jakarta.validation.Valid;
@@ -18,13 +17,12 @@ public class SensorController {
     @PostMapping("/sensors/register")
     public void registerSensor(@Valid @RequestBody SensorRegisterDto sensorRegisterDto) {
 
-        // SensorRegisterDto -> Sensor
-        Sensor sensor = new Sensor();
-        sensor.setId(sensorRegisterDto.getSensorId());
-        sensor.setRouteId(sensorRegisterDto.getRouteId());
+        // sensorId & routeId 추출
+        Long sensorId = sensorRegisterDto.getSensorId();
+        Long routeId = sensorRegisterDto.getRouteId();
 
         // 센서 등록
-        sensorService.saveSensor(sensor);
+        sensorService.saveSensor(sensorId, routeId);
     }
 
     // 센서 삭제 Controller

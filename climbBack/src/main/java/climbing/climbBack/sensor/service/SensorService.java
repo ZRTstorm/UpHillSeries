@@ -1,10 +1,11 @@
 package climbing.climbBack.sensor.service;
 
+import climbing.climbBack.route.domain.Route;
+import climbing.climbBack.route.repository.RouteRepository;
 import climbing.climbBack.sensor.domain.Sensor;
 import climbing.climbBack.sensor.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,17 +19,23 @@ import java.util.Optional;
 public class SensorService {
 
     private final SensorRepository sensorRepository;
+    private final RouteRepository routeRepository;
 
     // 센서 등록 서비스
     @Transactional
-    public void saveSensor(Sensor sensor) {
-        Long sensorId = sensor.getId();
-
+    public void saveSensor(Long sensorId, Long routeId) {
         // 이미 등록된 센서 번호가 존재 하는지 검사
         if(sensorRepository.existsById(sensorId)) {
             log.info("SensorId is already exist = {}", sensorId);
             return;
         }
+
+        Sensor sensor = new Sensor();
+        sensor.setId(sensorId);
+
+        // 프록시 객체 로드 -> 필드 주입
+        Route route = routeRepository.getReferenceById(routeId);
+        sensor.setRoute(route);
 
         sensorRepository.save(sensor);
     }
@@ -46,7 +53,7 @@ public class SensorService {
             throw new IllegalStateException("Please check for isSensor method");
         }
 
-        return sensor.get().getRouteId();
+        return sensor.get().getRoute().getId();
     }
 
     // route 에 부착된 센서 List 파악 서비스

@@ -4,7 +4,6 @@ import climbing.climbBack.entryQueue.domain.QueueRegisterDto;
 import climbing.climbBack.entryQueue.service.EntryQueueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

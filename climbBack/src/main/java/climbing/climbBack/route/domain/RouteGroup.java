@@ -1,9 +1,6 @@
 package climbing.climbBack.route.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,9 +11,11 @@ public class RouteGroup {
     @Id @GeneratedValue
     private Long id;
 
-    @Column(name = "route_id1")
-    private Long route1;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id1")
+    private Route route1;
 
-    @Column(name = "route_id2")
-    private Long route2;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "route_id2")
+    private Route route2;
 }

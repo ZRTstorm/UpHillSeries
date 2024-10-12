@@ -5,6 +5,7 @@ import climbing.climbBack.route.domain.RouteDto;
 import climbing.climbBack.route.domain.RouteGroupDto;
 import climbing.climbBack.route.service.RouteGroupService;
 import climbing.climbBack.route.service.RouteService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ public class RouteController {
 
     // 루트 간 간섭 관계 등록 Controller
     @PostMapping("routes/routeGroup/register")
+    @Operation()
     public void registerRouteGroup(@RequestBody RouteGroupDto groupDto) {
 
         // route1 & route2 ID 추출

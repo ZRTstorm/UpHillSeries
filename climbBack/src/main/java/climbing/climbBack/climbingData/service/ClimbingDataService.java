@@ -6,6 +6,7 @@ import climbing.climbBack.entryQueue.service.EntryQueueService;
 
 import climbing.climbBack.route.repository.RouteRepository;
 import climbing.climbBack.sensor.service.SensorService;
+import climbing.climbBack.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class ClimbingDataService {
 
     private final ClimbingDataRepository climbingDataRepository;
     private final RouteRepository routeRepository;
+    private final UsersRepository usersRepository;
 
     private final SensorService sensorService;
     private final EntryQueueService entryQueueService;
@@ -50,7 +52,7 @@ public class ClimbingDataService {
         Long userId = entryQueueService.getUserByRouteMap(routeId);
 
         // user 필드 주입
-        // climbingData.setUser(userRepository.getReferenceById(userId));
+        climbingData.setUsers(usersRepository.getReferenceById(userId));
 
         // 등반 기록 임시 저장소 저장
         climbingDataMap.put(routeId, climbingData);
@@ -65,7 +67,7 @@ public class ClimbingDataService {
         ClimbingData climbingData = recordClimbingData(routeId, true);
 
         // 등반에 성공 했음을 Client 에게 알림
-        entryQueueService.notifyToUser(climbingData.getUser().getId(), "successToClimbing");
+        // entryQueueService.notifyToUser(climbingData.getUsers().getId(), "successToClimbing");
 
         // 대기열 조정 명령
         changeTurnOfUser(routeId);
@@ -79,7 +81,7 @@ public class ClimbingDataService {
 
         if (routeId == -1L) {
             log.info("User is not playing Climbing = {}", userId);
-            return;
+            throw new IllegalStateException("There are no User data in climbing" + userId);
         }
 
         // 등반 실패 기록 저장

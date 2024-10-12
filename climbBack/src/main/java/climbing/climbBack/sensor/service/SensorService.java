@@ -62,6 +62,7 @@ public class SensorService {
     }
 
     // 센서 삭제 서비스
+    @Transactional
     public void deleteSensor(Long sensorId) {
         if (!sensorRepository.existsById(sensorId)) {
             log.info("SensorId is not used yet = {}", sensorId);

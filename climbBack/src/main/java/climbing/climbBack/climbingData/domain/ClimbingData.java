@@ -1,7 +1,7 @@
 package climbing.climbBack.climbingData.domain;
 
 import climbing.climbBack.route.domain.Route;
-import climbing.climbBack.user.domain.User;
+import climbing.climbBack.user.domain.Users;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @Getter @Setter
 public class ClimbingData {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "climbing_data_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id")

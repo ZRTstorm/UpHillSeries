@@ -1,6 +1,7 @@
 package climbing.climbBack.climbingData.service;
 
 import climbing.climbBack.climbingData.domain.ClimbingData;
+import climbing.climbBack.climbingData.domain.ClimbingDataDto;
 import climbing.climbBack.climbingData.repository.ClimbingDataRepository;
 import climbing.climbBack.entryQueue.service.EntryQueueService;
 
@@ -9,13 +10,17 @@ import climbing.climbBack.sensor.service.SensorService;
 import climbing.climbBack.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,6 +96,30 @@ public class ClimbingDataService {
         changeTurnOfUser(routeId);
     }
 
+    // 등반 기록 삭제 서비스
+    @Transactional
+    public void deleteClimbingData(Long climbingDataId) {
+        // 삭제할 Data 가 없는 경우 DataAccessException
+        if (!climbingDataRepository.existsById(climbingDataId)) {
+            throw new EmptyResultDataAccessException("ClimbingData is not found with ID = " + climbingDataId, 1);
+        }
+
+        // climbingDataId 와 Matching 되는 등반 기록 데이터 삭제
+        climbingDataRepository.deleteById(climbingDataId);
+    }
+
+    // 전체 등반 기록 조회 서비스
+    @Transactional(readOnly = true)
+    public List<ClimbingDataDto> getAllClimbingData() {
+        return climbingDataToClimbingDataDto(climbingDataRepository.findAllFetch());
+    }
+
+    // 사용자 등반 기록 조회 서비스
+    @Transactional(readOnly = true)
+    public List<ClimbingDataDto> getAllUserClimbingData(Long userId) {
+        return climbingDataToClimbingDataDto(climbingDataRepository.findAllByUserId(userId));
+    }
+
     // Data 를 보낸 센서의 루트 에서 현재 사용 중인 유저가 있는지 확인
     // EntryQueueService 의 routeId - userId 로부터 획득
     // 사용 하는 유저가 없다면 true, 있다면 false return
@@ -119,6 +148,18 @@ public class ClimbingDataService {
         return climbingData;
     }
 
+    // ClimbingData -> ClimbingDataDto 변환
+    private List<ClimbingDataDto> climbingDataToClimbingDataDto(List<ClimbingData> list) {
+        return list.stream().map(climbingData -> new ClimbingDataDto(
+                climbingData.getId(),
+                climbingData.getUsers().getId(),
+                climbingData.getRoute().getId(),
+                climbingData.getSuccess(),
+                climbingData.getClimbingTime(),
+                climbingData.getCreatedTime()
+        )).collect(Collectors.toList());
+    }
+
     // 등반의 성공 혹은 실패 -> 등반 완료 판단 후 -> route User 변경
     private void changeTurnOfUser(Long routeId) {
         entryQueueService.manipulateEntryQueue(routeId);
@@ -126,10 +167,12 @@ public class ClimbingDataService {
 
     // 현재 시각 부터 기록 생성 시각 과의 차이를 return
     private Long calculateDateToTime(ClimbingData climbingData) {
+        // 등반 기록 생성 시간
         LocalDateTime firstTime = climbingData.getCreatedTime();
+        // 등반 기록 완성 시간
         LocalDateTime lastTime = LocalDateTime.now();
 
         Duration duration = Duration.between(firstTime, lastTime);
-        return duration.getSeconds();
+        return duration.toMillis();
     }
 }

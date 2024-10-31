@@ -1,5 +1,6 @@
 package climbing.climbBack.entryQueue.repository;
 
+import climbing.climbBack.entryQueue.domain.EntryCountDto;
 import climbing.climbBack.entryQueue.domain.EntryQueue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -42,4 +43,26 @@ public interface EntryQueueRepository extends JpaRepository<EntryQueue, Long> {
             "where e.routeId in :routeList and e.position = 1 " +
             "order by e.createdTime asc")
     List<EntryQueue> findEntryListOrderedByCreatedTime(@Param("routeList") List<Long> routeList);
+
+    // routeId 로 Group By 하여 모든 route 의 대기열 COUNT 조회
+    @Query("select new climbing.climbBack.entryQueue.domain.EntryCountDto(e.routeId, count(e)) " +
+            "from EntryQueue e " +
+            "group by e.routeId order by e.routeId asc")
+    List<EntryCountDto> countAllEntryByRoute();
+
+    // routeId 가 일치 하는 Data 의 개수 조회
+    // routeId 로 등록된 Data 가 없는 경우 Optional.empty() 반환
+    @Query("select new climbing.climbBack.entryQueue.domain.EntryCountDto(e.routeId, count(e)) " +
+            "from EntryQueue  e " +
+            "where e.routeId = :routeId")
+    Optional<EntryCountDto> countRouteEntry(@Param("routeId") Long routeId);
+
+    // userId 와 Matching 되는 Data 의 { routeId : position } 값을 조회
+    @Query("select new climbing.climbBack.entryQueue.domain.EntryCountDto(e.routeId, e.position) " +
+            "from EntryQueue e " +
+            "where e.userId = :userId")
+    Optional<EntryCountDto> findPositionRouteByUserId(@Param("userId") Long userId);
+
+    @Query("select e.routeId from EntryQueue e where e.userId = :userId")
+    Long findRouteIdByUserId(@Param("userId") Long routeId);
 }

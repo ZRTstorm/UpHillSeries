@@ -1,5 +1,6 @@
 package climbing.climbBack.entryQueue.service;
 
+import climbing.climbBack.entryQueue.domain.EntryCountDto;
 import climbing.climbBack.entryQueue.domain.EntryQueue;
 import climbing.climbBack.entryQueue.repository.EntryQueueRepository;
 import climbing.climbBack.route.service.RouteGroupService;
@@ -48,7 +49,7 @@ public class EntryQueueService {
     }
 
 
-    // 대기열 정보 생성 서비스
+    // 대기열 Data 생성 서비스
     @Transactional
     public void createEntryQueue(Long userId, Long routeId) {
         EntryQueue entryQueue = new EntryQueue();
@@ -72,21 +73,23 @@ public class EntryQueueService {
         // 대기열 엔티티 저장
         entryQueueRepository.save(entryQueue);
 
-        // 대기열 등록 후 바로 이용 가능 한지 검사
-        // 이전 대기 유저가 존재 하면 바로 이용 불가
+        // 현재 대기열이 바로 이용 가능 한지 검사
+        // 이전 대기 유저가 존재 하면 이용 불가
         if (lastEntry.isPresent() || routeUserMap.containsKey(routeId)) return;
 
-        // 등록 루트와 연관된 루트 List 확인
+        // 등록 루트와 연관된 루트 List 조회
         List<Long> routeGroupList = routeGroupService.getGroupById(routeId);
 
-        // 간섭 루트 중 사용 중인 루트가 존재 하는지 확인 -> 없다면 사용 가능
+        // 연관된 루트 중 사용 중인 루트가 존재 하는지 확인
+        // 연관된 모든 루트가 비어 있다면 이용 가능
         for (Long inferRoute : routeGroupList) {
             if (routeUserMap.containsKey(inferRoute)) return;
         }
 
         // 이용 허가
-        // Route - User 정보 저장 -> 이용자 기록 저장
+        // Route - User 정보 저장 -> 해당 루트의 이용자를 임시 저장
         routeUserMap.put(routeId, userId);
+
         // 대기열 pos 조정
         entryQueueRepository.decreasePositionByRouteId(routeId);
 
@@ -97,11 +100,10 @@ public class EntryQueueService {
     // 등록된 대기열 삭제 서비스 -> User 가 임의로 열을 벗어 나는 경우
     @Transactional
     public void deleteEntry(Long userId) {
-        // 삭제 하는 Data 의 position 값을 탐색
+        // 삭제 하는 Data 조회
         Optional<EntryQueue> deleteData = entryQueueRepository.findByUserId(userId);
         if (deleteData.isEmpty()) {
-            log.info("deleting operation is not in entry = {}", userId);
-            return;
+            throw new IllegalStateException("User did not register entry : userID = " + userId);
         }
 
         // 삭제 하는 Data 보다 후순위 Data 의 position 값을 조정
@@ -111,7 +113,8 @@ public class EntryQueueService {
         entryQueueRepository.deleteAllByUserId(userId);
     }
 
-    // 이미 유저가 대기열 등록을 했는지 검사 -> 대기열 중복 등록은 허용 하지 않음
+    // 요청한 유저가 이미 대기열을 가지고 있는지 검사
+    // Rule : 대기열은 모든 루트에 대하여 중복 등록 할 수 없다
     @Transactional(readOnly = true)
     public boolean checkQueueForUser(Long userId) {
         Optional<EntryQueue> entryQueue = entryQueueRepository.findByUserId(userId);
@@ -133,6 +136,9 @@ public class EntryQueueService {
         // 종료한 route 를 기준 으로 이용 할 수 있는 route 대기자 탐색
         // route 에서 간섭 관계를 가진 route List 를 획득
         List<Long> routeList = routeGroupService.getGroupById(routeId);
+
+        // routeList 에 현재 route 추가
+        routeList.add(routeId);
 
         // route List 에 포함된 route 들 중 현재 pos == 1 인 Data 중
         // createdTime 이 빠른 순서 대로 정렬 해서 EntryQueue 획득
@@ -172,6 +178,40 @@ public class EntryQueueService {
                 break;
             }
         }
+    }
+
+    // 모든 대기열 Data 조회 서비스
+    @Transactional(readOnly = true)
+    public List<EntryQueue> getAllEntryData() {
+        return entryQueueRepository.findAll();
+    }
+
+    // 모든 route 별 대기열 COUNT 조회 서비스
+    @Transactional(readOnly = true)
+    public List<EntryCountDto> getAllEntryCountList() {
+        return entryQueueRepository.countAllEntryByRoute();
+    }
+
+    // 특정 route 의 대기 인원 조회 서비스
+    @Transactional(readOnly = true)
+    public EntryCountDto getRouteEntryCountOne(Long routeId) {
+        // { routeId : COUNT } 형태로 조회
+        return entryQueueRepository.countRouteEntry(routeId)
+                .orElse(new EntryCountDto(routeId, 0L));
+    }
+
+    // 사용자의 routeId : COUNT 위치 정보 조회 서비스
+    @Transactional(readOnly = true)
+    public EntryCountDto getUserEntryCountOne(Long userId) {
+        // { routeId : user 의 position } 형태로 조회
+        return entryQueueRepository.findPositionRouteByUserId(userId)
+                .orElse(new EntryCountDto());
+    }
+
+    // userId 와 일치 하는 Data 의 routeId 를 조회 하는 서비스
+    @Transactional(readOnly = true)
+    public Long getRouteIdByUserId(Long userId) {
+        return entryQueueRepository.findRouteIdByUserId(userId);
     }
 
     // routeId - UserId Data 가 routeUserMap 에 존재 하는지 확인

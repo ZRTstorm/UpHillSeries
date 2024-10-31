@@ -1,6 +1,7 @@
 package com.example.uphill
 
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -8,6 +9,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.uphill.databinding.ActivityMainBinding
+import org.opencv.android.OpenCVLoader
+import org.opencv.core.Core
+
+const val TAG = "UPHILL"
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +34,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_information,R.id.navigation_record,R.id.navigation_search
             )
         )
+        if (OpenCVLoader.initLocal()) {
+            Log.d(TAG, "OpenCV init successes")
+            println("OpenCV version: ${Core.VERSION}")
+        }
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }

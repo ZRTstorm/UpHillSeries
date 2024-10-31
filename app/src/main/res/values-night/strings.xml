@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_information">information</string>
+    <string name="title_search">search</string>
+    <string name="title_record">record</string>
+    <string name="title_dot">Dot</string>
+    <string name="게시물">게시물</string>
+    <string name="내정보">내정보</string>
+    <string name="계정">계정</string>
+    <string name="설정">설정</string>
+</resources>

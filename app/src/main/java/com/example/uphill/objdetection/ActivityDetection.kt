@@ -14,9 +14,9 @@ import org.opencv.core.Size
 
 private const val TAG = "ACTIVITY_DETECTION"
 
-public var targetFPS = 4
+var targetFPS = 4
 
-class ActivityDetection(val context: Context, val videoUri: Uri) {
+class ActivityDetection {
     private val portraitModeWidth = 200
     private val portraitModeHeight = 300
     private var threshold = 15.0
@@ -29,7 +29,7 @@ class ActivityDetection(val context: Context, val videoUri: Uri) {
         threshold = th
     }
 
-    private suspend fun calcDiff(): ArrayList<Mat>?{
+    private suspend fun calcDiff(context: Context, videoUri: Uri): ArrayList<Mat>?{
         // Load the video
         val retriever = MediaMetadataRetriever()
         val frameArrayList = arrayListOf<Bitmap>()
@@ -121,18 +121,13 @@ class ActivityDetection(val context: Context, val videoUri: Uri) {
         return diffList
     }
     private suspend fun calcOneDiffCenter(diff:Mat):DoubleArray{
-        var sumX:Double = 0.0
-        var sumY:Double = 0.0
-        var weight:Double = 0.0
-        var count:Int = 0
+        var sumX = 0.0
+        var sumY = 0.0
+        var weight = 0.0
+        var count = 0
         for (y:Int in 0..<diff.height()){
             for (x:Int in 0..<diff.width()){
-                val location = intArrayOf(y,x)
                 val value = diff.get(y,x)[0]
-                /*
-                sumX    += value[0]*x.toDouble()
-                sumY    += value[0]*y.toDouble()
-                */
                 if (value>threshold){
                     sumX+=x.toDouble()
                     sumY+=y.toDouble()
@@ -143,7 +138,7 @@ class ActivityDetection(val context: Context, val videoUri: Uri) {
         }
         val avgX = sumX/count
         val avgY = sumY/count
-        val avgWeight = weight/diff.height()/diff.width()
+        //val avgWeight = weight/diff.height()/diff.width()
         val ret = doubleArrayOf(avgY,avgX)
 
         //Log.d(TAG, "$avgX, $avgY, avg val: $avgWeight")
@@ -157,8 +152,8 @@ class ActivityDetection(val context: Context, val videoUri: Uri) {
         }
         return ret
     }
-    suspend fun detect(){
-        val diffList = calcDiff()
+    suspend fun detect(context: Context, videoUri: Uri){
+        val diffList = calcDiff(context, videoUri)
         if(diffList==null){
             Log.e(TAG, "Different calculating fail")
             return

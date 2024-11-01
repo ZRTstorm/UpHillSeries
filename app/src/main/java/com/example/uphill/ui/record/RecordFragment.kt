@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.uphill.R
 import com.example.uphill.databinding.FragmentRecordBinding
 import com.example.uphill.objdetection.ActivityDetection
+import com.example.uphill.objdetection.ActivityDetector
 import com.example.uphill.objdetection.ClimbingRoute
 import com.example.uphill.objdetection.UserAnimator
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +31,7 @@ const val TAG = "RECORD_FRAGMENT"
 class RecordFragment : Fragment() {
 
     private var _binding: FragmentRecordBinding? = null
+    private lateinit var imageView: ImageView
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -43,9 +45,12 @@ class RecordFragment : Fragment() {
         val informationViewModel =
             ViewModelProvider(this).get(RecordViewModel::class.java)
 
+
         _binding = FragmentRecordBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        binding.imageView2.setImageResource(R.drawable.green_circle)
+        imageView = binding.imageView
         val textView: TextView = binding.textRecord
         informationViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
@@ -67,43 +72,36 @@ class RecordFragment : Fragment() {
         _binding = null
     }
 
-    suspend fun calcTestVideo():Bitmap?{
+    private suspend fun calcTestVideo():Bitmap?{
         val context = this.context ?: return null
         val movingView = binding.imageView2
-
-
 
         val sourceUriString =
             "android.resource://" + context.packageName + "/" + R.raw.climbing_demo_30s2
         val videoUri = Uri.parse(sourceUriString)
 
-        val activityDetection = ActivityDetection(context, videoUri)
 
-        activityDetection.detect()
+        val data = ActivityDetector.detect(context, videoUri) ?: return null
         var climbingRoute: ClimbingRoute? = null
-        if(activityDetection.bitmap!=null){
-            climbingRoute = ClimbingRoute(activityDetection.bitmap, Point(23,192), Point(127,60))
+        if(ActivityDetector.thumbnail != null){
+            climbingRoute = ClimbingRoute(ActivityDetector.thumbnail, Point(23,192), Point(127,60))
         }
-        if(activityDetection.locationList!=null) {
+        val uaTest = UserAnimator(movingView, data, climbingRoute!!)
+        uaTest.startTime=3.7
+        uaTest.endTime=18.0
+        uaTest.calc()
+        Handler(Looper.getMainLooper()).post{
             Log.d(TAG,"animation start")
-            val uaTest = UserAnimator(movingView, activityDetection.locationList!!, climbingRoute!!)
-            uaTest.startTime=3.7
-            uaTest.endTime=18.0
-            uaTest.calc()
-            Handler(Looper.getMainLooper()).post{
-                uaTest.start()
-            }
+            uaTest.start()
         }
-        return activityDetection.bitmap
+        return ActivityDetector.thumbnail
     }
-    fun calcVideo(videoUri: Uri){
-        val activityDetection = this.context?.let { ActivityDetection(it, videoUri) }
-        if (activityDetection==null){
-            return
-        }
+    private fun updateView(bitmap: Bitmap){
 
-    }
-    fun updateView(bitmap: Bitmap){
-        binding.imageView.setImageBitmap(bitmap)
+        if (::imageView.isInitialized){
+            imageView.setImageBitmap(bitmap)
+        }else{
+            Log.e(TAG, "imageView is not initialized")
+        }
     }
 }

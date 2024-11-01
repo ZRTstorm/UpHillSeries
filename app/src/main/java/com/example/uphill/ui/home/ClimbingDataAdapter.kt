@@ -24,8 +24,8 @@ class ClimbingDataAdapter(private val itemList: ClimbingData) : RecyclerView.Ada
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = itemList.items[position]
-        var str = "루트 번호: ${item.routeId}" +
-                "\n등반 시각: ${String.format(Locale.KOREA, "%02d:%02d",item.getCreatedTime()?.hour,item.getCreatedTime()?.minute)}"
+        val str = "루트 번호: ${item.routeId}" +
+                "\n등반 시각: ${String.format(Locale.KOREA, "%02d:%02d",item.getCreatedTime()?.hour,item.getCreatedTime()?.minute)}" +
                 "\n등반 시간: ${item.getClimbingTimeString()}"
         holder.textView.text = str
 

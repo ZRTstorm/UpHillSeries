@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.httptest2.ClimbingData
 import com.example.httptest2.HttpClient
 import com.example.uphill.databinding.FragmentHomeBinding
@@ -41,13 +43,15 @@ class HomeFragment : Fragment() {
         homeViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-        val expTextView = binding.textView2
         val calendarView = binding.calendarView
+        val recyclerView: RecyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this.context)
         calendarView.setOnDateChangeListener{ view, year, month, dayofMonth ->
             if (climbingData!=null) {
                 val selectedDate = LocalDate.of(year, month + 1, dayofMonth)
                 val todayData:ClimbingData = climbingData!!.getDateData(selectedDate)
-                expTextView.text = todayData.toString()
+                val adapter = ClimbingDataAdapter(todayData)
+                recyclerView.adapter = adapter
             }
         }
         CoroutineScope(Dispatchers.IO).launch{

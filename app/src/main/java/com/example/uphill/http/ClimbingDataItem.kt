@@ -1,8 +1,8 @@
 package com.example.httptest2
 
 
-import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -26,7 +26,8 @@ data class ClimbingDataItem(
     fun getCreatedTime(): LocalDateTime? {
         val formatter = DateTimeFormatter.ISO_DATE_TIME
         val dateTime = LocalDateTime.parse(createdTime, formatter)
-        return dateTime
+        val kstTime = dateTime.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.systemDefault())
+        return kstTime.toLocalDateTime()
     }
     fun getClimbingTimeString():String{
         var ret = ""

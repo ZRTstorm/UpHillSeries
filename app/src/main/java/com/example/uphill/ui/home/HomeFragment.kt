@@ -16,6 +16,7 @@ import com.example.uphill.databinding.FragmentHomeBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 class HomeFragment : Fragment() {
@@ -44,14 +45,10 @@ class HomeFragment : Fragment() {
             textView.text = it
         }
         val calendarView = binding.calendarView
-        val recyclerView: RecyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(this.context)
         calendarView.setOnDateChangeListener{ view, year, month, dayofMonth ->
             if (climbingData!=null) {
                 val selectedDate = LocalDate.of(year, month + 1, dayofMonth)
-                val todayData:ClimbingData = climbingData!!.getDateData(selectedDate)
-                val adapter = ClimbingDataAdapter(todayData)
-                recyclerView.adapter = adapter
+                updateData(selectedDate)
             }
         }
         CoroutineScope(Dispatchers.IO).launch{
@@ -62,6 +59,9 @@ class HomeFragment : Fragment() {
                     Log.d("test", data.toString())
                 }
                 climbingData = data
+                withContext(Dispatchers.Main){
+                    updateData(LocalDate.now())
+                }
             }
 
         }.start()
@@ -72,5 +72,15 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+
+    private fun updateData(date:LocalDate){
+        if(climbingData==null) return
+        val recyclerView: RecyclerView = binding.recyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this.context)
+        val data = climbingData!!.getDateData(date)
+        val adapter = ClimbingDataAdapter(data)
+        recyclerView.adapter = adapter
     }
 }

@@ -29,7 +29,7 @@ class ActivityDetection {
         threshold = th
     }
 
-    private suspend fun calcDiff(context: Context, videoUri: Uri): ArrayList<Mat>?{
+    private fun calcDiff(context: Context, videoUri: Uri): ArrayList<Mat>?{
         // Load the video
         val retriever = MediaMetadataRetriever()
         val frameArrayList = arrayListOf<Bitmap>()
@@ -120,7 +120,7 @@ class ActivityDetection {
 
         return diffList
     }
-    private suspend fun calcOneDiffCenter(diff:Mat):DoubleArray{
+    private fun calcOneDiffCenter(diff:Mat):DoubleArray{
         var sumX = 0.0
         var sumY = 0.0
         var weight = 0.0

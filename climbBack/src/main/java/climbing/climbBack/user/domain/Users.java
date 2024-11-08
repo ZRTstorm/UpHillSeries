@@ -12,11 +12,10 @@ public class Users {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String username;
+    // Firebase 에서 발급한 사용자의 고유한 ID
+    private String uid;
 
-    @Column(nullable = false)
-    private String password;
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;

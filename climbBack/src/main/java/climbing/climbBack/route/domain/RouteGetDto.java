@@ -1,21 +1,20 @@
 package climbing.climbBack.route.domain;
 
-import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class RouteDto {
+@AllArgsConstructor
+public class RouteGetDto {
 
-    // 수동으로 루트 번호 등록
-    @Min(value = 1)
     private Long routeId;
 
-    // 루트 난이도
+    // Route 난이도
     private Difficulty difficulty;
 
-    // 루트가 위치한 암장 번호
-    private Long climbingCenterId;
+    // Route 의 Center ID
+    private Long centerId;
 
     // 루트 x 좌표 & y 좌표
     private Integer xPos;

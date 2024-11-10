@@ -45,6 +45,8 @@
         android:layout_marginTop="550dp"
         android:layout_marginEnd="182dp"
         android:layout_marginBottom="33dp"
+        android:indeterminateTint="@color/skyblue"
+        android:indeterminateTintMode="src_in"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

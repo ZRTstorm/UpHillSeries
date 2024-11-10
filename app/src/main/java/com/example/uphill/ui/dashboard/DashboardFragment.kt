@@ -23,7 +23,7 @@ class DashboardFragment : Fragment() {
             Competition(5, "Competition 5", "Description 5"),
             Competition(6, "Competition 6", "Description 6"),
             Competition(7, "Competition 7", "Description 7"),
-            Competition(8, "Competition 8", "Description 8"),
+            Competition(8, "Competition 8", "Description 8")
         )
 
         competitionAdapter = CompetitionAdapter(competitionList) { competition ->

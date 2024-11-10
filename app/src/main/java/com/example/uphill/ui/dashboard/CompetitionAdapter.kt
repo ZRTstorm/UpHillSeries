@@ -20,7 +20,7 @@ class CompetitionAdapter(private val items: List<Competition>, private val onCli
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CompetitionViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_competition, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_competition, parent, false)
         return CompetitionViewHolder(view)
     }
 

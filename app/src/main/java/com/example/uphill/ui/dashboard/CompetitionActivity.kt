@@ -14,7 +14,6 @@ class CompetitionActivity : AppCompatActivity() {
 
         val competitionId = intent.getIntExtra("competition_id", -1)
 
-        // 임시로 데이터를 불러오는 예시 (실제 구현에서는 데이터베이스나 네트워크에서 가져와야 함)
         val competition = getCompetitionById(competitionId)
         findViewById<TextView>(R.id.titleTextView).text = competition?.title
         findViewById<TextView>(R.id.descriptionTextView).text = competition?.description

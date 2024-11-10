@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(project(":sdk"))
     implementation(libs.androidx.annotation)
+    implementation(libs.androidx.activity)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

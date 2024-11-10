@@ -5,7 +5,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.uphill.R
 
-// CompetitionActivity.kt
 class CompetitionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -13,4 +13,6 @@
     <string name="로그인">로그인</string>
     <string name="loading">Loading</string>
     <string name="plus">+</string>
+    <string name="room_title">room_title</string>
+    <string name="description">description</string>
 </resources>

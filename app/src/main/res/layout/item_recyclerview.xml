@@ -7,7 +7,7 @@
     android:layout_marginLeft="8dp"
     android:layout_marginTop="8dp"
     android:layout_marginRight="8dp"
-    android:background="@color/skyblue">
+    android:background="#BCD8E3">
 
     <ImageView
         android:id="@+id/iv_profile"

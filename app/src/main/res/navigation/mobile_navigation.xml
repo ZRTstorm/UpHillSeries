@@ -15,11 +15,11 @@
         android:name="com.example.uphill.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
-    <fragment
+    <activity
         android:id="@+id/navigation_record"
-        android:name="com.example.uphill.ui.record.RecordFragment"
+        android:name="com.example.uphill.ui.record.RecordActivity"
         android:label="@string/title_record"
-        tools:layout="@layout/fragment_record" />
+        tools:layout="@layout/activity_record" />
     <fragment
         android:id="@+id/navigation_search"
         android:name="com.example.uphill.ui.search.SearchFragment"

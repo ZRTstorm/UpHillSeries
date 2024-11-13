@@ -1,11 +1,9 @@
 package com.example.uphill.objdetection
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import org.opencv.core.Core
 import android.media.MediaMetadataRetriever
-import android.net.Uri
 import org.opencv.android.Utils
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -17,8 +15,6 @@ private const val TAG = "ACTIVITY_DETECTION"
 var targetFPS = 4
 
 class ActivityDetection {
-    private val portraitModeWidth = 200
-    private val portraitModeHeight = 300
     private var threshold = 15.0
 
     var bitmap: Bitmap? = null
@@ -28,14 +24,59 @@ class ActivityDetection {
     fun setThreshold(th: Double){
         threshold = th
     }
+    private fun calcDiff(bitmapArray: ArrayList<Bitmap>): ArrayList<Mat>?{
+        bitmap = bitmapArray[0]
+        if(bitmap==null){
+            return null
+        }
 
-    private fun calcDiff(context: Context, videoUri: Uri): ArrayList<Mat>?{
+        // Make grayscale
+        val grayFrameArrayList = arrayListOf<Mat>()
+        bitmapArray.forEach {
+            val image = Mat(it.width, it.height, CvType.CV_8UC1)
+            val grayimage = Mat()
+
+            Utils.bitmapToMat(it, image)
+            val resizedImage = Mat()
+            val size = Size(portraitSize.width.toDouble(), portraitSize.height.toDouble())
+
+            Imgproc.resize(image, resizedImage, size)
+            Imgproc.cvtColor(resizedImage, grayimage, Imgproc.COLOR_RGB2GRAY)
+
+            grayFrameArrayList.add(grayimage)
+        }
+        if (grayFrameArrayList.size>0) {
+            Log.d(TAG, "Video grayscale successes. #"+grayFrameArrayList.size)
+        } else {
+            Log.e(TAG, "Video grayscale fail")
+            return null
+        }
+        // Calc diff
+        val diffList = arrayListOf<Mat>()
+        for (i in grayFrameArrayList.indices){
+            if (i<2) continue
+            val dst = Mat()
+            Core.absdiff(grayFrameArrayList[i-2], grayFrameArrayList[i], dst)
+            //Log.d(TAG,dst.rows().toString()+","+dst.cols().toString())
+            diffList.add(dst)
+        }
+        if (diffList.size>0) {
+            Log.d(TAG, "Video diff calc successes. #"+diffList.size)
+        } else {
+            Log.e(TAG, "Video diff calc fail")
+            return null
+        }
+
+        return diffList
+    }
+    private fun calcDiffFromFile(videoPath: String): ArrayList<Mat>?{
         // Load the video
         val retriever = MediaMetadataRetriever()
         val frameArrayList = arrayListOf<Bitmap>()
+        Log.d(TAG, "Video path: $videoPath")
         try {
             // 비디오 파일을 설정
-            retriever.setDataSource(context, videoUri)
+            retriever.setDataSource(videoPath)
 
             // 썸네일 추출
             bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST)
@@ -45,11 +86,12 @@ class ActivityDetection {
             val image = Mat(bitmap!!.width, bitmap!!.height, CvType.CV_8UC1)
             Utils.bitmapToMat(bitmap, image)
             val resizedImage = Mat()
-            val size = Size(portraitModeWidth.toDouble(), portraitModeHeight.toDouble())
+            val size = Size(portraitSize.width.toDouble(), portraitSize.height.toDouble())
             Imgproc.resize(image, resizedImage, size)
             bitmap =
                 bitmap!!.config?.let {
-                    Bitmap.createBitmap(portraitModeWidth,portraitModeHeight,
+                    Bitmap.createBitmap(
+                        portraitSize.width,portraitSize.height,
                         it
                     )
                 }
@@ -89,7 +131,7 @@ class ActivityDetection {
 
             Utils.bitmapToMat(it, image)
             val resizedImage = Mat()
-            val size = Size(portraitModeWidth.toDouble(), portraitModeHeight.toDouble())
+            val size = Size(portraitSize.width.toDouble(), portraitSize.height.toDouble())
 
             Imgproc.resize(image, resizedImage, size)
             Imgproc.cvtColor(resizedImage, grayimage, Imgproc.COLOR_RGB2GRAY)
@@ -152,9 +194,17 @@ class ActivityDetection {
         }
         return ret
     }
-    suspend fun detect(context: Context, videoUri: Uri){
-        val diffList = calcDiff(context, videoUri)
+    suspend fun detectFromFile(videoPath: String){
+        val diffList = calcDiffFromFile(videoPath)
         if(diffList==null){
+            Log.e(TAG, "Different calculating fail")
+            return
+        }
+        locationList = calcDiffCenter(diffList)
+    }
+    suspend fun detect(bitmapArray: ArrayList<Bitmap>){
+        val diffList = calcDiff(bitmapArray)
+        if (diffList==null){
             Log.e(TAG, "Different calculating fail")
             return
         }
@@ -170,5 +220,9 @@ class ActivityDetection {
         locationList!!.forEach {
             Log.d(TAG,"${cnt++}: (${it[1].toInt()},${it[0].toInt()})")
         }
+    }
+
+    companion object {
+        val portraitSize = android.util.Size(200, 300)
     }
 }

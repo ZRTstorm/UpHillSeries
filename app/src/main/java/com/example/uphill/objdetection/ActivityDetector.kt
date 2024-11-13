@@ -1,9 +1,10 @@
 package com.example.uphill.objdetection
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object ActivityDetector {
     private const val TAG = "ACTIVITY_DETECTOR"
@@ -13,15 +14,49 @@ object ActivityDetector {
     var isProcessing = false
     var thumbnail: Bitmap? = null
 
-    suspend fun detect(context: Context, videoUri: Uri):ArrayList<DoubleArray>?{
-        if(isProcessing){
-            Log.d(TAG, "detector has been processing")
-            return null
+    fun detect(videoPath: String, callback: (Boolean) -> Unit){
+        CoroutineScope(Dispatchers.IO).launch {
+            if (isProcessing) {
+                Log.d(TAG, "detector has been processing")
+                return@launch
+            }
+            Log.d(TAG, "detector start")
+
+            isProcessing = true
+
+            try {
+                activityDetection.detectFromFile(videoPath)
+                thumbnail = activityDetection.bitmap
+                isProcessing = false
+                callback(true)
+            } catch (e: Exception){
+                Log.e(TAG, "Exception: $e")
+                isProcessing = false
+                callback(false)
+            }
+
         }
-        isProcessing = true
-        activityDetection.detect(context,videoUri)
-        thumbnail = activityDetection.bitmap
-        isProcessing = false
-        return activityDetection.locationList
+    }
+    fun detectImages(bitmapArray: ArrayList<Bitmap>, callback: (Boolean) -> Unit){
+        CoroutineScope(Dispatchers.IO).launch {
+            if (isProcessing) {
+                Log.d(TAG, "detector has been processing")
+                return@launch
+            }
+            Log.d(TAG, "detector start")
+            isProcessing = true
+            try {
+                activityDetection.detect(bitmapArray)
+                thumbnail = activityDetection.bitmap
+                isProcessing = false
+                Log.d(TAG, "detector end")
+                activityDetection.printLocationLogs()
+                callback(true)
+            } catch (e: Exception){
+                Log.e(TAG, "Exception: $e")
+                isProcessing = false
+                callback(false)
+            }
+        }
     }
 }

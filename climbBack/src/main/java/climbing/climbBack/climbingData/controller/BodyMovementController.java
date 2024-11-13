@@ -22,17 +22,18 @@ public class BodyMovementController {
 
     private final BodyMovementService bodyMovementService;
 
-    @PostMapping("/{userId}")
+    @PostMapping("/{userId}/{climbingDataId}")
     @Operation(summary = "등반 패턴 기록", description = "App 에서 분석한 등반 패턴을 기록 한다")
     public ResponseEntity<Map<String, String>> saveClimbingPattern(@RequestBody List<BodyMovementDto> bodyMovementDtoList,
-                                                    @Parameter(description = "등반 패턴을 분석한 App User 의 ID") @PathVariable Long userId) {
+                                                                   @Parameter(description = "등반 패턴을 분석한 App User 의 ID") @PathVariable Long userId,
+                                                                   @Parameter(description = "등반 패턴을 기록할 등반 기록의 ID") @PathVariable Long climbingDataId) {
 
         // 응답용 객체 생성
         Map<String, String> response = new HashMap<>();
 
         // 등반 패턴 기록
         try {
-            bodyMovementService.savePositionList(bodyMovementDtoList, userId);
+            bodyMovementService.savePositionList(bodyMovementDtoList, userId, climbingDataId);
         } catch (RuntimeException e) {
             response.put("errorMessage", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);

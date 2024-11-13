@@ -4,6 +4,7 @@ import climbing.climbBack.entryQueue.domain.EntryCountDto;
 import climbing.climbBack.entryQueue.service.EntryQueueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
@@ -14,6 +15,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 public class WebSocketEventListener {
 
     private final EntryQueueService entryQueueService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // Client 와 WebSocket 연결 Listener
     // App 에서 로그인 할 때 , Websocket 연결
@@ -29,6 +31,10 @@ public class WebSocketEventListener {
 
         // userId - SessionId 저장
         entryQueueService.saveUserSession(userId, sessionId);
+
+        // 기본 구독 경로로 sessionId 전송
+        assert sessionId != null;
+        messagingTemplate.convertAndSend("/queue/session-id", sessionId);
     }
 
     // Client 와 WebSocket 해제 Listener
@@ -40,6 +46,10 @@ public class WebSocketEventListener {
 
         // header -> userId 추출
         Long userId = getUserIdByHeader(headers);
+
+        if (userId == null) {
+            userId = entryQueueService.getUserIdBySessionId(headers.getSessionId());
+        }
 
         // UserId - SessionId 저장소 에서 sessionId 삭제
         entryQueueService.deleteUserSession(userId);
@@ -59,9 +69,11 @@ public class WebSocketEventListener {
     }
 
     // 헤더 에서 userID 추출
+    // Header 에 userId 가 없는 경우 null 반환
     private Long getUserIdByHeader(StompHeaderAccessor headers) {
         String userId = headers.getFirstNativeHeader("userId");
-        assert userId != null;
-        return Long.valueOf(userId);
+
+        if (userId == null) return null;
+        else return Long.valueOf(userId);
     }
 }

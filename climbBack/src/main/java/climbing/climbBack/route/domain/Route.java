@@ -28,6 +28,8 @@ public class Route {
     private ClimbingCenter climbingCenter;
 
     // 루트 x 좌표 & y 좌표
-    private Integer xPos;
-    private Integer yPos;
+    private Integer startX;
+    private Integer startY;
+    private Integer endX;
+    private Integer endY;
 }

@@ -1,5 +1,6 @@
 package climbing.climbBack.entryQueue.service;
 
+import climbing.climbBack.climbingData.domain.ClimbingSocketMessage;
 import climbing.climbBack.entryQueue.domain.EntryCountDto;
 import climbing.climbBack.entryQueue.domain.EntryQueue;
 import climbing.climbBack.entryQueue.repository.EntryQueueRepository;
@@ -48,6 +49,14 @@ public class EntryQueueService {
         userSessionMap.remove(userId);
     }
 
+    // sessionId 를 사용 하여 userId 역 조회 서비스
+    // Mapping 되는 userId 가 없는 경우 null 반환
+    public Long getUserIdBySessionId(String sessionId) {
+        for (Map.Entry<Long, String> entry : userSessionMap.entrySet()) {
+            if (entry.getValue().equals(sessionId)) return entry.getKey();
+        }
+        return null;
+    }
 
     // 대기열 Data 생성 서비스
     @Transactional
@@ -180,6 +189,11 @@ public class EntryQueueService {
         }
     }
 
+    // routeId - userId HashMap 데이터 삭제 서비스
+    public void deleteUserFromMap(Long routeId) {
+        routeUserMap.remove(routeId);
+    }
+
     // 모든 대기열 Data 조회 서비스
     @Transactional(readOnly = true)
     public List<EntryQueue> getAllEntryData() {
@@ -206,6 +220,13 @@ public class EntryQueueService {
         // { routeId : user 의 position } 형태로 조회
         return entryQueueRepository.findPositionRouteByUserId(userId)
                 .orElse(new EntryCountDto());
+    }
+
+    // 특정 center 의 대기 인원 조회 서비스
+    @Transactional(readOnly = true)
+    public List<EntryCountDto> getCenterCount(Long climbingCenterId) {
+        // { routeId : COUNT } 형태로 조회
+        return entryQueueRepository.countEntryByClimbingCenter(climbingCenterId);
     }
 
     // userId 와 일치 하는 Data 의 routeId 를 조회 하는 서비스
@@ -235,13 +256,29 @@ public class EntryQueueService {
         return -1L;
     }
 
-    // User 에게 WebSocket 을 통해 message 전송
-    // Destination : /queue/notification
+    // User 에게 WebSocket 을 통해 message 전송 1
+    // Destination : /queue/notification-{sessionId}
+    // message : String
     public void notifyToUser(Long userId, String message) {
         String sessionId = userSessionMap.get(userId);
 
         if (sessionId != null) {
-            messagingTemplate.convertAndSendToUser(sessionId, "/queue/notification", message);
+            messagingTemplate.convertAndSend("/queue/notification-" + sessionId, message);
+        }
+    }
+
+    // User 에게 WebSocket 을 통해 message 전송 2
+    // Destination : /queue/notification-{sessionId}
+    // message : ClimbingSocketMessage
+    public void notifyToUserClimbing(Long userId, Long climbingDataId, String message) {
+        String sessionId = userSessionMap.get(userId);
+
+        if (sessionId != null) {
+            ClimbingSocketMessage socketMessage = new ClimbingSocketMessage();
+            socketMessage.setMessage(message);
+            socketMessage.setClimbingDataId(climbingDataId);
+
+            messagingTemplate.convertAndSend("/queue/notification-" + sessionId, socketMessage);
         }
     }
 }

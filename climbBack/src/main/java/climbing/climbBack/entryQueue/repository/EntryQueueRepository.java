@@ -65,4 +65,10 @@ public interface EntryQueueRepository extends JpaRepository<EntryQueue, Long> {
 
     @Query("select e.routeId from EntryQueue e where e.userId = :userId")
     Long findRouteIdByUserId(@Param("userId") Long routeId);
+
+    @Query("select new climbing.climbBack.entryQueue.domain.EntryCountDto(r.id, count(e)) " +
+            "from Route r left join EntryQueue e on r.id = e.routeId " +
+            "where r.climbingCenter.id = :climbingCenterId " +
+            "group by r.id")
+    List<EntryCountDto> countEntryByClimbingCenter(@Param("climbingCenterId") Long climbingCenterId);
 }

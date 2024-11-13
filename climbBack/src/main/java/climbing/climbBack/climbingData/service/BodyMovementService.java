@@ -6,16 +6,15 @@ import climbing.climbBack.climbingData.domain.ClimbingData;
 import climbing.climbBack.climbingData.domain.MovementOutputDto;
 import climbing.climbBack.climbingData.repository.BodyMovementRepository;
 import climbing.climbBack.climbingData.repository.ClimbingDataRepository;
+import climbing.climbBack.route.domain.Route;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +24,35 @@ public class BodyMovementService {
     private final BodyMovementRepository bodyMovementRepository;
     private final ClimbingDataRepository climbingDataRepository;
 
+    @Transactional
+    public void savePositionList(List<BodyMovementDto> dtoList, Long userId, Long climbingDataId) {
+        // climbingData 프록시 객체 참조 획득
+        ClimbingData climbingData = climbingDataRepository.getReferenceById(climbingDataId);
+
+        // dtoList -> BodyMovement List 변환 작업
+        List<BodyMovement> movementList = new ArrayList<>();
+
+        for (BodyMovementDto dto : dtoList) {
+            BodyMovement item = new BodyMovement();
+
+            item.setSequence(dto.getSequence());
+            item.setXPos(dto.getXPos());
+            item.setYPos(dto.getYPos());
+
+            // ClimbingData 할당
+            item.setClimbingData(climbingData);
+
+            movementList.add(item);
+        }
+
+        // BodyMovement List 저장
+        bodyMovementRepository.saveAll(movementList);
+    }
+
     // BodyMovement Data 에 ClimbingData 를 Mapping
     // Mapping 해서 만든 BodyMovement Entity List 를 DB 에 저장
     @Transactional
-    public void savePositionList(List<BodyMovementDto> dtoList, Long userId) {
+    public void savePositionListPrevious(List<BodyMovementDto> dtoList, Long userId) {
         // userId 와 일치 하는 Data 중 가장 최근에 만들어진 등반 기록
         Optional<ClimbingData> data = climbingDataRepository.findTopByUserId(userId);
 
@@ -80,6 +104,13 @@ public class BodyMovementService {
             throw new IllegalStateException("ClimbingData does not have any position Data : ID = " + climbingId);
         }
 
+        // climbingData 의 route 정보 획득
+        Optional<ClimbingData> climbingOpt = climbingDataRepository.findById(climbingId);
+        if (climbingOpt.isEmpty()) throw new IllegalStateException("ClimbingPattern : ClimbingData Error");
+
+        // climbingData 의 루트 정보 획득
+        Route route = climbingOpt.get().getRoute();
+
         // BodyMovement List 를 BodyMovementDto List 로 변환
         List<BodyMovementDto> dtoList = dataList.stream()
                 .map(bodyMovement -> new BodyMovementDto(
@@ -94,6 +125,10 @@ public class BodyMovementService {
         // 응답 객체 -> imageURL 채우기
         // 응답 객체 -> 시작 홀드 , 탑 홀드 좌표값 채우기
         // 응답 객체 -> 좌표 리스트 채우기
+        output.setStartX(route.getStartX());
+        output.setStartY(route.getStartY());
+        output.setEndX(route.getEndX());
+        output.setEndY(route.getEndY());
         output.setMovements(dtoList);
 
         return output;

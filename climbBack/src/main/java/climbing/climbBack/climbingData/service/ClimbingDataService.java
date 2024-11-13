@@ -72,7 +72,8 @@ public class ClimbingDataService {
         ClimbingData climbingData = recordClimbingData(routeId, true);
 
         // 등반에 성공 했음을 Client 에게 알림
-        // entryQueueService.notifyToUser(climbingData.getUsers().getId(), "successToClimbing");
+        // 성공 알림 메시지 + climbingDataId
+        entryQueueService.notifyToUserClimbing(climbingData.getUsers().getId(), climbingData.getId(), "successToClimbing");
 
         // 대기열 조정 명령
         changeTurnOfUser(routeId);
@@ -90,7 +91,11 @@ public class ClimbingDataService {
         }
 
         // 등반 실패 기록 저장
-        recordClimbingData(routeId, false);
+        ClimbingData climbingData = recordClimbingData(routeId, false);
+
+        // 실패 등반 정보를 Client 에게 알림
+        // 실패 알림 메시지 + climbingDataId
+        entryQueueService.notifyToUserClimbing(climbingData.getUsers().getId(), climbingData.getId(), "failureToClimbing");
 
         // 대기열 조정 명령
         changeTurnOfUser(routeId);

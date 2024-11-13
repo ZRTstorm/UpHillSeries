@@ -1,6 +1,5 @@
 package com.example.httptest2
 
-import androidx.collection.objectListOf
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient

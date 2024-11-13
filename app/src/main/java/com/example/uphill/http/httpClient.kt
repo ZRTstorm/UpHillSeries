@@ -8,8 +8,6 @@ import okhttp3.Request
 import java.io.IOException
 import java.util.ArrayList
 
-const val TAG = "HTTP_CLIENT"
-const val SERVER_NAME = "copytixe.iptime.org"
 
 class HttpClient(private val userId:Int) {
     private val client = OkHttpClient()
@@ -22,14 +20,22 @@ class HttpClient(private val userId:Int) {
             .url(server_name+"climbing/users/"+userId+"/data")
             .build()
 
-        client.newCall(request).execute().use { response ->
-            if(!response.isSuccessful) throw IOException("Unexpected code $response")
+        try{
+            client.newCall(request).execute().use { response ->
+                if(!response.isSuccessful) throw IOException("Unexpected code $response")
 
-            val jsonResponse = response.body?.string()
-            val listType = object:TypeToken<List<ClimbingDataItem>>() {}.type
-            val temp:List<ClimbingDataItem> = Gson().fromJson(jsonResponse, listType)
-            climbingData = ClimbingData(ArrayList(temp))
+                val jsonResponse = response.body?.string()
+                val listType = object:TypeToken<List<ClimbingDataItem>>() {}.type
+                val temp:List<ClimbingDataItem> = Gson().fromJson(jsonResponse, listType)
+                climbingData = ClimbingData(ArrayList(temp))
+            }
+        } catch (e:Exception){
+            e.printStackTrace()
         }
         return climbingData
+    }
+    companion object{
+        const val TAG = "HTTP_CLIENT"
+        const val SERVER_NAME = "copytixe.iptime.org"
     }
 }

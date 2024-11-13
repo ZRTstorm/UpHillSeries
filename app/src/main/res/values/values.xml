@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">227338494165-cknludqaf8lnsab3a4arlel2le2j5b8s.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">227338494165</string>
+    <string name="google_api_key" translatable="false">AIzaSyDE85KE7E9F7dTHXzIvj_SWHanVxHdD8MM</string>
+    <string name="google_app_id" translatable="false">1:227338494165:android:9cc2ac2dac5cd93b37c25c</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDE85KE7E9F7dTHXzIvj_SWHanVxHdD8MM</string>
+    <string name="google_storage_bucket" translatable="false">uphill-721cb.firebasestorage.app</string>
+    <string name="project_id" translatable="false">uphill-721cb</string>
+</resources>

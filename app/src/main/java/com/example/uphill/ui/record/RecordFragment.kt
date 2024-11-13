@@ -27,7 +27,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
-const val TAG = "RECORD_FRAGMENT"
 class RecordFragment : Fragment() {
 
     private var _binding: FragmentRecordBinding? = null
@@ -103,5 +102,9 @@ class RecordFragment : Fragment() {
         }else{
             Log.e(TAG, "imageView is not initialized")
         }
+    }
+
+    companion object{
+        private const val TAG = "RECORD_FRAGMENT"
     }
 }

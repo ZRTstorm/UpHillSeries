@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "227338494165",
+    "project_id": "uphill-721cb",
+    "storage_bucket": "uphill-721cb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227338494165:android:9cc2ac2dac5cd93b37c25c",
+        "android_client_info": {
+          "package_name": "com.example.uphill"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227338494165-pi1m28nj3re2ub393qs0tod6i0b2n80u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.uphill",
+            "certificate_hash": "bf1e2e80de1aabdcd2261d5def0e27a8dc1f379d"
+          }
+        },
+        {
+          "client_id": "227338494165-cknludqaf8lnsab3a4arlel2le2j5b8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDE85KE7E9F7dTHXzIvj_SWHanVxHdD8MM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "227338494165-cknludqaf8lnsab3a4arlel2le2j5b8s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

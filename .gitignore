@@ -167,3 +167,23 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/androidstudio,kotlin
+
+# Gradle 관련 디렉토리
+/.gradle
+
+# 로컬 설정
+/.idea
+
+# 사용자 특정 설정
+/.gradle/
+/.gradle/*
+/gradle-app.setting
+.idea/
+.idea/libraries
+.idea/codeStyles/
+
+# Android 디렉토리
+/app/build
+
+# 빌드 산출물
+app/build/

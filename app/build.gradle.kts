@@ -55,8 +55,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(project(":sdk"))
     implementation(libs.androidx.annotation)
+
+    // activity detection
+    implementation(project(":sdk"))
+    // background processing
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import com.example.uphill.R
 import com.example.uphill.objdetection.ActivityDetection
 import com.example.uphill.objdetection.ActivityDetector
+import com.example.uphill.objdetection.targetFPS
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -82,7 +83,7 @@ class RecordActivity : AppCompatActivity() {
             imageAnalysis.setAnalyzer(cameraExcutor) { image ->
 
                 val currentTime = System.currentTimeMillis()
-                if (recording != null && currentTime - lastCaptureTime >= 1000) {
+                if (recording != null && currentTime - lastCaptureTime >= 1000 / targetFPS) {
                     Log.d(TAG, "Video is being recorded")
                     addBitmapToList(image.toBitmap())
                     lastCaptureTime = currentTime

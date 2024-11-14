@@ -24,7 +24,8 @@ class CompetitionActivity : AppCompatActivity() {
 
     private fun getCompetitionById(id: Int): Competition? {
         val competitionList = listOf(
-            Competition(1, 1, "Competition 1", "Description 1"),
+            Competition(1, 1, "TCBC2024", "더클라임에서 연말을 맞이하여 2024-12-20일에 대회를 개최합니다.\n\n" +
+                    "남자: 난이도 자율, 난이도 빨강, 난이도 보라, 난이도 회색\n" + "여자: 난이도 자율, 난이도 빨강, 난이도 보라, 난이도 회색 "),
             Competition(2, 1, "Competition 2", "Description 2"),
             Competition(3, 1, "Competition 3", "Description 3"),
             Competition(4, 1, "Competition 4", "Description 4"),

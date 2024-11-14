@@ -96,6 +96,9 @@ class SplashActivity : AppCompatActivity() {
                 finish()
             }catch (e: ApiException){
                 Log.w(TAG, "Google sign in failed", e)
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
             }
         }
     }

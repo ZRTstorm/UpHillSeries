@@ -185,7 +185,8 @@ class RecordActivity : AppCompatActivity() {
         ActivityDetector.detectImages(bitmapArray){success ->
             runOnUiThread{
                 if(success){
-                    Toast.makeText(this, "object detection success", Toast.LENGTH_SHORT).show()
+                   // Toast.makeText(this, "object detection success", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, ActivityDetector.toString(), Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this, "object detection fail", Toast.LENGTH_SHORT).show()
                 }

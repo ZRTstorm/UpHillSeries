@@ -9,7 +9,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.httptest2.HttpClient
 import com.example.uphill.data.UserInfo
+import com.example.uphill.http.SocketClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -78,6 +80,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -86,16 +89,24 @@ class SplashActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == RC_SIGN_IN){
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try{
-                val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle(account.idToken!!)
-                Log.d(TAG, "Google sign in success")
+            val idToken = task.result.idToken
+            when{
+                idToken != null -> {
+                    try{
+                        val account = task.getResult(ApiException::class.java)
+                        firebaseAuthWithGoogle(account.idToken!!)
+                        Log.d(TAG, "Google sign in success")
 
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }catch (e: ApiException){
-                Log.w(TAG, "Google sign in failed", e)
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }catch (e: ApiException){
+                        Log.w(TAG, "Google sign in failed", e)
+                    }
+                }
+                else -> {
+                    Log.w(TAG, "No ID token")
+                }
             }
         }
     }
@@ -115,6 +126,12 @@ class SplashActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     UserInfo.user = auth.currentUser
+                    UserInfo.user?.getIdToken(true)?.addOnSuccessListener { result ->
+                        val token = result.token
+                        val httpClient = HttpClient(1)
+                        httpClient.login(token!!)
+
+                    }
                     Log.d(TAG, "Firebase Auth Success")
                 } else {
                     Log.e(TAG, "Firebase Auth Failed")

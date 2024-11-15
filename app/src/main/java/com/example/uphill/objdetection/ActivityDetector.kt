@@ -51,12 +51,19 @@ object ActivityDetector {
                 isProcessing = false
                 Log.d(TAG, "detector end")
                 activityDetection.printLocationLogs()
+                //todo
                 callback(true)
             } catch (e: Exception){
                 Log.e(TAG, "Exception: $e")
                 isProcessing = false
                 callback(false)
             }
+
+
         }
+    }
+
+    override fun toString(): String {
+        return activityDetection.toString()
     }
 }

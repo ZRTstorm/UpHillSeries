@@ -4,4 +4,5 @@ import com.google.firebase.auth.FirebaseUser
 
 object UserInfo {
     var user: FirebaseUser? = null
+    var userId: Int? = null
 }

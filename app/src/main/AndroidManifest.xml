@@ -60,6 +60,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.record.RecordActivity"/>
+
+
+
     </application>
+
 
 </manifest>

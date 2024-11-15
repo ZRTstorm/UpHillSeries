@@ -46,13 +46,9 @@ public class BodyMovementController {
 
     @GetMapping("/{climbingDataId}")
     @Operation(summary = "등반 패턴 조회", description = "등반 패턴을 재현할 수 있는 모든 데이터를 제공한다")
-    public MovementOutputDto getClimbingPatternData(@PathVariable Long climbingDataId) {
+    public List<BodyMovementDto> getClimbingPatternData(@PathVariable Long climbingDataId) {
 
         // 등반 패턴 재현 객체 조회
-        try {
-            return bodyMovementService.getClimbingPattern(climbingDataId);
-        } catch (RuntimeException e) {
-            return new MovementOutputDto();
-        }
+        return bodyMovementService.getClimbingPattern(climbingDataId);
     }
 }

@@ -92,9 +92,31 @@ public class BodyMovementService {
     }
 
     // 등반 기록에 저장된 등반 패턴 기록 조회
+    @Transactional(readOnly = true)
+    public List<BodyMovementDto> getClimbingPattern(Long climbingId) {
+        // ClimbingDataId 와 Mapping 되는 모든 BodyMovement Data 조회
+        List<BodyMovement> dataList = bodyMovementRepository.findByClimbingDataId(climbingId);
+
+        // Movement Data 가 채워져 있는지 검사
+        if (dataList.isEmpty()) {
+            log.info("ClimbingData does not have any position Data : ID = {}", climbingId);
+            throw new IllegalStateException("ClimbingData does not have any position Data : ID = " + climbingId);
+        }
+
+        // BodyMovement List 를 BodyMovementDto List 로 변환
+
+        return dataList.stream()
+                .map(bodyMovement -> new BodyMovementDto(
+                        bodyMovement.getSequence(),
+                        bodyMovement.getXPos(),
+                        bodyMovement.getYPos()
+                )).toList();
+    }
+
+
     // { 루트 이미지 , 시작 홀드와 탑 홀드 좌표값 , 등반 패턴 좌표값 }
     @Transactional(readOnly = true)
-    public MovementOutputDto getClimbingPattern(Long climbingId) {
+    public MovementOutputDto getClimbingPatternPrevious(Long climbingId) {
         // ClimbingDataId 와 Mapping 되는 모든 BodyMovement Data 조회
         List<BodyMovement> dataList = bodyMovementRepository.findByClimbingDataId(climbingId);
 

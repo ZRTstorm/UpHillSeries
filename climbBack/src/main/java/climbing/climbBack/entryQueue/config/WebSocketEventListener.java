@@ -3,15 +3,23 @@ package climbing.climbBack.entryQueue.config;
 import climbing.climbBack.entryQueue.domain.EntryCountDto;
 import climbing.climbBack.entryQueue.service.EntryQueueService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class WebSocketEventListener {
 
     private final EntryQueueService entryQueueService;
@@ -21,20 +29,27 @@ public class WebSocketEventListener {
     // App 에서 로그인 할 때 , Websocket 연결
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
+        // Connection Log
+        log.info("WebSocket connection is Started");
+
         // SessionId 추출
         StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = headers.getSessionId();
 
         // userId 는 WebSocket 연결 시 헤더에 직접 담아서 전송 해야 한다
         // { userId : xxx } 형식
-        Long userId = getUserIdByHeader(headers);
+        Long userId = (Long) headers.getSessionAttributes().get("userId");
+
+        if (userId == null) {
+            log.warn("userId is not in Parameter.");
+            return;
+        }
 
         // userId - SessionId 저장
         entryQueueService.saveUserSession(userId, sessionId);
 
         // 기본 구독 경로로 sessionId 전송
-        assert sessionId != null;
-        messagingTemplate.convertAndSend("/queue/session-id", sessionId);
+        // Client 구독 방식
     }
 
     // Client 와 WebSocket 해제 Listener
@@ -45,7 +60,7 @@ public class WebSocketEventListener {
         StompHeaderAccessor headers = StompHeaderAccessor.wrap(event.getMessage());
 
         // header -> userId 추출
-        Long userId = getUserIdByHeader(headers);
+        Long userId = (Long) headers.getSessionAttributes().get("userId");
 
         if (userId == null) {
             userId = entryQueueService.getUserIdBySessionId(headers.getSessionId());
@@ -65,6 +80,23 @@ public class WebSocketEventListener {
             } else {
                 entryQueueService.deleteEntry(userId);
             }
+        }
+
+        log.info("WebSocket Disconnected Successfully");
+    }
+
+    // 구독 Event Listener
+    @EventListener
+    public void handleSessionSubscribeEvent(SessionSubscribeEvent event) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+
+        if (accessor.getCommand() == StompCommand.SUBSCRIBE) {
+            // 구독한 경로
+            String destination = accessor.getDestination();
+            log.info("User subscribe in destination = {}", destination);
+
+            assert destination != null;
+            messagingTemplate.convertAndSend(destination, "User subscribe in destination");
         }
     }
 

@@ -1,12 +1,10 @@
 package climbing.climbBack.route.service;
 
-import climbing.climbBack.route.domain.Difficulty;
-import climbing.climbBack.route.domain.Route;
-import climbing.climbBack.route.domain.RouteDto;
-import climbing.climbBack.route.domain.RouteGetDto;
+import climbing.climbBack.route.domain.*;
 import climbing.climbBack.route.repository.ClimbingCenterRepository;
 import climbing.climbBack.route.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RouteService {
 
     private final RouteRepository routeRepository;
@@ -33,22 +32,41 @@ public class RouteService {
         route.setId(routeDto.getRouteId());
         route.setDifficulty(routeDto.getDifficulty());
         route.setClimbingCenter(climbingCenterRepository.getReferenceById(routeDto.getClimbingCenterId()));
-        route.setXPos(routeDto.getXPos());
-        route.setYPos(route.getYPos());
+        route.setStartX(routeDto.getStartX());
+        route.setStartY(routeDto.getStartY());
+        route.setEndX(routeDto.getEndX());
+        route.setEndY(routeDto.getEndY());
 
         routeRepository.save(route);
     }
 
+    // 암장 등록 서비스
+    @Transactional
+    public void createCenter(String centerName) {
+        ClimbingCenter climbingCenter = new ClimbingCenter();
+        climbingCenter.setCenterName(centerName);
+
+        climbingCenterRepository.save(climbingCenter);
+    }
+
     // 루트 조회 서비스 ( Image Data 제외 )
+    // { routeId , difficulty , centerId }
     @Transactional(readOnly = true)
     public List<RouteGetDto> findAllRoutes() {
         return routeRepository.findAllRoutesExceptImage();
     }
 
     // 암장 별 루트 조회 서비스 ( Image Data 제외 )
+    // { routeId , difficulty , centerId }
     @Transactional(readOnly = true)
     public List<RouteGetDto> findRoutesByCenter(Long centerId) {
         return routeRepository.findRoutesByCenterIdExceptImage(centerId);
+    }
+
+    // 암장 전체 조회 서비스
+    @Transactional(readOnly = true)
+    public List<CenterGetDto> findAllCenters() {
+        return climbingCenterRepository.findAllCenters();
     }
 
     // 루트 삭제 서비스
@@ -72,7 +90,49 @@ public class RouteService {
 
     // 루트 이미지 저장 서비스
     @Transactional
-    public void saveRouteImage(Long routeId, MultipartFile multipartFile) throws IOException {
+    public void saveRouteImage(Long routeId, String imageData) {
+        // 루트 Data 획득
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new IllegalStateException("Route is not in DB : route = " + routeId));
+
+        route.setImageData(imageData);
+    }
+
+    // 루트 이미지 조회 서비스
+    @Transactional(readOnly = true)
+    public RouteImageDto getRouteImage(Long routeId) {
+        // 루트 Data 획득
+        Route route = routeRepository.findById(routeId)
+                .orElseThrow(() -> new IllegalStateException("Route is not in DB : route = " + routeId));
+
+        // RouteImageDto 채우기
+        RouteImageDto dto = new RouteImageDto();
+        dto.setImageData(route.getImageData());
+        dto.setStartX(route.getStartX());
+        dto.setStartY(route.getStartY());
+        dto.setEndX(route.getEndX());
+        dto.setEndY(route.getEndY());
+
+        return dto;
+    }
+
+    // 암장 이미지 조회 서비스
+    @Transactional(readOnly = true)
+    public CenterImageDto getCenterImage(Long centerId) {
+        Optional<String> centerImage = climbingCenterRepository.findCenterImage(centerId);
+
+        if (centerImage.isEmpty()) {
+            log.info("CenterImage is not in DB : centerId = {}", centerId);
+            throw new IllegalStateException("CenterImage is not in DB");
+        }
+
+        return new CenterImageDto(centerImage.get());
+    }
+
+    // 루트 이미지 저장 서비스 Previous
+    // Binary Image Data -> Base64 Encoding String Data
+    @Transactional
+    public void saveRouteImagePrevious(Long routeId, MultipartFile multipartFile) throws IOException {
         // 루트 Data 획득
         Route route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new IllegalStateException("Route is not in DB : route = " + routeId));

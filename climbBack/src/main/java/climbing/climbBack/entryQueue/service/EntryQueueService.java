@@ -7,6 +7,8 @@ import climbing.climbBack.entryQueue.repository.EntryQueueRepository;
 import climbing.climbBack.route.service.RouteGroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -262,8 +264,16 @@ public class EntryQueueService {
     public void notifyToUser(Long userId, String message) {
         String sessionId = userSessionMap.get(userId);
 
+        // Accessor 헤더 설정
+        SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
+        accessor.setSessionId(sessionId);
+        accessor.setLeaveMutable(true);
+
+        // MessageHeaders 변환
+        MessageHeaders headers = accessor.getMessageHeaders();
+
         if (sessionId != null) {
-            messagingTemplate.convertAndSend("/queue/notification-" + sessionId, message);
+            messagingTemplate.convertAndSend("/queue/notification/1", "entry OK");
         }
     }
 
@@ -278,7 +288,15 @@ public class EntryQueueService {
             socketMessage.setMessage(message);
             socketMessage.setClimbingDataId(climbingDataId);
 
-            messagingTemplate.convertAndSend("/queue/notification-" + sessionId, socketMessage);
+            // Accessor 헤더 설정
+            SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
+            accessor.setSessionId(sessionId);
+            accessor.setLeaveMutable(true);
+
+            // MessageHeaders 변환
+            MessageHeaders headers = accessor.getMessageHeaders();
+
+            messagingTemplate.convertAndSendToUser(sessionId, "/queue/notification", socketMessage, headers);
         }
     }
 }

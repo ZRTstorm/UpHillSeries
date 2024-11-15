@@ -1,9 +1,7 @@
 package climbing.climbBack.route.controller;
 
-import climbing.climbBack.route.domain.Difficulty;
-import climbing.climbBack.route.domain.RouteDto;
-import climbing.climbBack.route.domain.RouteGetDto;
-import climbing.climbBack.route.domain.RouteGroupDto;
+import climbing.climbBack.route.domain.*;
+import climbing.climbBack.route.repository.ClimbingCenterRepository;
 import climbing.climbBack.route.service.RouteGroupService;
 import climbing.climbBack.route.service.RouteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,6 +73,16 @@ public class RouteController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    // 암장 등록 Controller
+    @PostMapping("/climbingCenter/register")
+    @Operation(summary = "암장 등록", description = "이미지 데이터를 제외한 암장 정보를 저장한다")
+    public ResponseEntity<?> registerCenter(@RequestBody String centerName) {
+
+        routeService.createCenter(centerName);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Center is Saved");
+    }
+
     // 모든 루트 조회 Controller
     @GetMapping("/route")
     @Operation(summary = "모든 루트 조회", description = "이미지 데이터를 제외한 루트의 모든 정보를 조회한다")
@@ -90,6 +98,14 @@ public class RouteController {
             @Parameter(description = "조회할 암장의 ID") @PathVariable Long climbingCenterId) {
 
         return routeService.findRoutesByCenter(climbingCenterId);
+    }
+
+    // 모든 암장 조회 Controller
+    @GetMapping("/climbingCenter")
+    @Operation(summary = "모든 암장 조회", description = "이미지 데이터를 제외한 모든 암장 정보를 조회한다")
+    public List<CenterGetDto> getAllCentersExceptImage() {
+
+        return routeService.findAllCenters();
     }
 
     // 루트 삭제 Controller
@@ -111,14 +127,14 @@ public class RouteController {
     @Operation(summary = "루트 이미지 저장", description = "DB 에 저장된 루트에 대해 이미지 데이터를 추가한다")
     public ResponseEntity<Map<String, String>> uploadRouteImage(
             @Parameter(description = "이미지를 저장하는 루트 ID") @PathVariable Long routeId,
-            @RequestParam("imageFile") MultipartFile imageFile) {
+            @RequestBody String imageData) {
 
         // 응답용 객체 생성
         Map<String, String> response = new HashMap<>();
 
         // 루트 이미지 저장
         try {
-            routeService.saveRouteImage(routeId, imageFile);
+            routeService.saveRouteImage(routeId, imageData);
 
             response.put("message", "Image saved Successfully");
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -132,6 +148,28 @@ public class RouteController {
 
             response.put("errorMessage", e.getMessage());
             return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    // 루트 이미지 조회 Controller
+    @GetMapping("/{routeId}/routeImage")
+    @Operation(summary = "루트 이미지 조회", description = "루트 이미지 및 좌표를 조회 한다")
+    public RouteImageDto getRouteImage(
+            @Parameter(description = "조회할 루트 ID") @PathVariable Long routeId) {
+
+        return routeService.getRouteImage(routeId);
+    }
+
+    // 암장 이미지 조회 Controller
+    @GetMapping("/{climbingCenterId}/centerImage")
+    @Operation(summary = "암장 이미지 조회", description = "암장 ID 와 일치하는 이미지 데이터를 조회한다")
+    public CenterImageDto getCenterImage(
+            @Parameter(description = "조회할 암장 ID") @PathVariable Long climbingCenterId) {
+
+        try {
+            return routeService.getCenterImage(climbingCenterId);
+        } catch (RuntimeException e) {
+            return new CenterImageDto();
         }
     }
 }

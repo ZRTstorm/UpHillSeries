@@ -62,10 +62,7 @@ dependencies {
     implementation("org.hildan.krossbow:krossbow-stomp-core:7.0.0")
     implementation("org.hildan.krossbow:krossbow-websocket-builtin:7.0.0")
     implementation("org.hildan.krossbow:krossbow-websocket-okhttp:7.0.0")
-//    implementation("org.java-websocket:Java-WebSocket:1.5.2")           // Java WebSocket 라이브러리
-//    implementation("com.github.NaikSoftware:stomp-protocol-android:1.6.6") // STOMP 프로토콜 라이브러리
-//    implementation("io.reactivex.rxjava2:rxjava:2.2.21")                   // RxJava
-//    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")                 // RxAndroid
+
 
     // activity detection
     implementation(project(":sdk"))

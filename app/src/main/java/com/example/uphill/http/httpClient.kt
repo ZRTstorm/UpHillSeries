@@ -69,8 +69,7 @@ class HttpClient(private val userId:Int) {
                     val gson = Gson()
                     val userId = gson.fromJson(responseData, UserId::class.java)
                     UserInfo.userId = userId.userId
-                    //Log.d(TAG, userId.toString())
-                    //SocketClient.startWebSocket()
+                    SocketClient.connect()
                 } else{
                     Log.e(TAG, "Request failed. ${response.code}")
                 }

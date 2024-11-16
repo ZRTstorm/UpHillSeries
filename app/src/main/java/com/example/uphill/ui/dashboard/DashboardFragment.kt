@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.uphill.R
+import com.example.uphill.ui.dashboard.competition.AddCompetitionActivity
+import com.example.uphill.ui.dashboard.competition.Competition
+import com.example.uphill.ui.dashboard.competition.CompetitionActivity
+import com.example.uphill.ui.dashboard.competition.CompetitionAdapter
 
 class DashboardFragment : Fragment() {
 

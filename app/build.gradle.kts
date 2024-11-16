@@ -65,7 +65,6 @@ dependencies {
     implementation(libs.play.services.basement)
     implementation(libs.androidx.activity)
 
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -82,5 +81,9 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.video)
     implementation(libs.androidx.camera.extensions)
+
+    // qrcode
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation(libs.core)
 
 }

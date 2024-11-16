@@ -1,6 +1,5 @@
 package com.example.uphill
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -11,9 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.uphill.databinding.ActivityMainBinding
-import com.example.uphill.ui.record.RecordActivity
 import org.opencv.android.OpenCVLoader
-import org.opencv.core.Core
 
 const val TAG = "UPHILL"
 
@@ -55,8 +52,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_record -> {
-                    val intent = Intent(this, RecordActivity::class.java)
-                    startActivity(intent)
+                    navController.navigate(R.id.navigation_record)
                     true
                 }
                 R.id.navigation_search -> {

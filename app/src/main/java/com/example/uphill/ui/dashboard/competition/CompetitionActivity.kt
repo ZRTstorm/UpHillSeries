@@ -1,4 +1,4 @@
-package com.example.uphill.ui.dashboard
+package com.example.uphill.ui.dashboard.competition
 
 import android.os.Bundle
 import android.widget.TextView

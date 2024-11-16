@@ -3,14 +3,22 @@ package org.opencv.core
 import org.opencv.core.Mat.*
 import java.lang.RuntimeException
 
+@OptIn(ExperimentalUnsignedTypes::class)
 fun Mat.get(row: Int, col: Int, data: UByteArray)  = this.get(row, col, data.asByteArray())
+@OptIn(ExperimentalUnsignedTypes::class)
 fun Mat.get(indices: IntArray, data: UByteArray)  = this.get(indices, data.asByteArray())
+@OptIn(ExperimentalUnsignedTypes::class)
 fun Mat.put(row: Int, col: Int, data: UByteArray)  = this.put(row, col, data.asByteArray())
+@OptIn(ExperimentalUnsignedTypes::class)
 fun Mat.put(indices: IntArray, data: UByteArray)  = this.put(indices, data.asByteArray())
 
+@OptIn(ExperimentalUnsignedTypes::class)
 fun Mat.get(row: Int, col: Int, data: UShortArray)  = this.get(row, col, data.asShortArray())
+@OptIn(ExperimentalUnsignedTypes::class)
 fun Mat.get(indices: IntArray, data: UShortArray)  = this.get(indices, data.asShortArray())
+@OptIn(ExperimentalUnsignedTypes::class)
 fun Mat.put(row: Int, col: Int, data: UShortArray)  = this.put(row, col, data.asShortArray())
+@OptIn(ExperimentalUnsignedTypes::class)
 fun Mat.put(indices: IntArray, data: UShortArray)  = this.put(indices, data.asShortArray())
 
 /***
@@ -49,45 +57,53 @@ class AtableUByte(val mat: Mat, val indices: IntArray): Atable<UByte> {
 
     constructor(mat: Mat, row: Int, col: Int) : this(mat, intArrayOf(row, col))
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun getV(): UByte {
         val data = UByteArray(1)
         mat.get(indices, data)
         return data[0]
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun setV(v: UByte) {
         val data = ubyteArrayOf(v)
         mat.put(indices, data)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun getV2c(): Tuple2<UByte> {
         val data = UByteArray(2)
         mat.get(indices, data)
         return Tuple2(data[0], data[1])
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun setV2c(v: Tuple2<UByte>) {
         val data = ubyteArrayOf(v._0, v._1)
         mat.put(indices, data)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun getV3c(): Tuple3<UByte> {
         val data = UByteArray(3)
         mat.get(indices, data)
         return Tuple3(data[0], data[1], data[2])
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun setV3c(v: Tuple3<UByte>) {
         val data = ubyteArrayOf(v._0, v._1, v._2)
         mat.put(indices, data)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun getV4c(): Tuple4<UByte> {
         val data = UByteArray(4)
         mat.get(indices, data)
         return Tuple4(data[0], data[1], data[2], data[3])
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun setV4c(v: Tuple4<UByte>) {
         val data = ubyteArrayOf(v._0, v._1, v._2, v._3)
         mat.put(indices, data)
@@ -98,45 +114,53 @@ class AtableUShort(val mat: Mat, val indices: IntArray): Atable<UShort> {
 
     constructor(mat: Mat, row: Int, col: Int) : this(mat, intArrayOf(row, col))
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun getV(): UShort {
         val data = UShortArray(1)
         mat.get(indices, data)
         return data[0]
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun setV(v: UShort) {
         val data = ushortArrayOf(v)
         mat.put(indices, data)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun getV2c(): Tuple2<UShort> {
         val data = UShortArray(2)
         mat.get(indices, data)
         return Tuple2(data[0], data[1])
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun setV2c(v: Tuple2<UShort>) {
         val data = ushortArrayOf(v._0, v._1)
         mat.put(indices, data)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun getV3c(): Tuple3<UShort> {
         val data = UShortArray(3)
         mat.get(indices, data)
         return Tuple3(data[0], data[1], data[2])
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun setV3c(v: Tuple3<UShort>) {
         val data = ushortArrayOf(v._0, v._1, v._2)
         mat.put(indices, data)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun getV4c(): Tuple4<UShort> {
         val data = UShortArray(4)
         mat.get(indices, data)
         return Tuple4(data[0], data[1], data[2], data[3])
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun setV4c(v: Tuple4<UShort>) {
         val data = ushortArrayOf(v._0, v._1, v._2, v._3)
         mat.put(indices, data)

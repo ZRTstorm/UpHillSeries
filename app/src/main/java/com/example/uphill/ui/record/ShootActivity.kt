@@ -2,33 +2,30 @@ package com.example.uphill.ui.record
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.util.Size
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.camera.core.impl.ImageAnalysisConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.uphill.R
-import com.example.uphill.objdetection.ActivityDetection
 import com.example.uphill.objdetection.ActivityDetector
 import com.example.uphill.objdetection.targetFPS
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
 
-class RecordActivity : AppCompatActivity() {
+class ShootActivity : AppCompatActivity() {
 
     private lateinit var viewFinder: PreviewView
     private lateinit var btnRecord: Button
@@ -40,7 +37,7 @@ class RecordActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_record)
+        setContentView(R.layout.activity_shoot)
 
         viewFinder = findViewById(R.id.viewFinder)
         btnRecord = findViewById(R.id.btnRecord)
@@ -186,6 +183,8 @@ class RecordActivity : AppCompatActivity() {
             runOnUiThread{
                 if(success){
                     Toast.makeText(this, "object detection success", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this,ResultActivity::class.java)
+                    startActivity(intent)
                 } else {
                     Toast.makeText(this, "object detection fail", Toast.LENGTH_SHORT).show()
                 }

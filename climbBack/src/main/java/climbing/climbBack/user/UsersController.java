@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ import java.util.Optional;
 public class UsersController {
 
     private final UsersService usersService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody TokenRequest tokenRequest) {
@@ -79,6 +81,8 @@ public class UsersController {
     @SendTo("/queue/notification/1")
     public String receiveMessage(String message) {
         log.info("Message into Server = {}", message);
+
+        messagingTemplate.convertAndSend("/queue/notification/1", "From Server 2 : " + message);
         return "From Server : " + message;
     }
 }

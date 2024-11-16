@@ -104,6 +104,8 @@ public class EntryQueueService {
         // 대기열 pos 조정
         entryQueueRepository.decreasePositionByRouteId(routeId);
 
+        log.info("we note destination");
+
         // WebSocket 으로 이용 허가 message 전송
         notifyToUser(userId, "allowToUseRoute");
     }
@@ -259,26 +261,14 @@ public class EntryQueueService {
     }
 
     // User 에게 WebSocket 을 통해 message 전송 1
-    // Destination : /queue/notification-{sessionId}
+    // Destination : /queue/notification/ + userId
     // message : String
     public void notifyToUser(Long userId, String message) {
-        String sessionId = userSessionMap.get(userId);
-
-        // Accessor 헤더 설정
-        SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
-        accessor.setSessionId(sessionId);
-        accessor.setLeaveMutable(true);
-
-        // MessageHeaders 변환
-        MessageHeaders headers = accessor.getMessageHeaders();
-
-        if (sessionId != null) {
-            messagingTemplate.convertAndSend("/queue/notification/1", "entry OK");
-        }
+        messagingTemplate.convertAndSend("/queue/notification/" + userId, message);
     }
 
     // User 에게 WebSocket 을 통해 message 전송 2
-    // Destination : /queue/notification-{sessionId}
+    // Destination : /queue/notification/ + userId
     // message : ClimbingSocketMessage
     public void notifyToUserClimbing(Long userId, Long climbingDataId, String message) {
         String sessionId = userSessionMap.get(userId);
@@ -288,15 +278,7 @@ public class EntryQueueService {
             socketMessage.setMessage(message);
             socketMessage.setClimbingDataId(climbingDataId);
 
-            // Accessor 헤더 설정
-            SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
-            accessor.setSessionId(sessionId);
-            accessor.setLeaveMutable(true);
-
-            // MessageHeaders 변환
-            MessageHeaders headers = accessor.getMessageHeaders();
-
-            messagingTemplate.convertAndSendToUser(sessionId, "/queue/notification", socketMessage, headers);
+            messagingTemplate.convertAndSend("/queue/notification/" + userId, socketMessage);
         }
     }
 }

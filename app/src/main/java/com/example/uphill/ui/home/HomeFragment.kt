@@ -52,7 +52,7 @@ class HomeFragment : Fragment() {
             }
         }
         CoroutineScope(Dispatchers.IO).launch{
-            val httpClient = HttpClient(1)
+            val httpClient = HttpClient()
             val data = httpClient.getClimbingData()
             if(data!=null){
                 if (data.items.size>0){

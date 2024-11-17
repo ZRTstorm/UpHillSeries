@@ -5,23 +5,20 @@ import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.util.Size
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.camera.core.impl.ImageAnalysisConfig
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.uphill.R
-import com.example.uphill.objdetection.ActivityDetection
+import com.example.uphill.http.SocketClient
 import com.example.uphill.objdetection.ActivityDetector
 import com.example.uphill.objdetection.targetFPS
 import java.text.SimpleDateFormat
@@ -34,7 +31,7 @@ class RecordActivity : AppCompatActivity() {
     private lateinit var btnRecord: Button
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
-    private var cameraExcutor = Executors.newSingleThreadExecutor()
+    private var cameraExecutor = Executors.newSingleThreadExecutor()
     private var bitmapArray = arrayListOf<Bitmap>()
     private var lastCaptureTime: Long = 0
 
@@ -80,7 +77,7 @@ class RecordActivity : AppCompatActivity() {
             val imageAnalysis = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
-            imageAnalysis.setAnalyzer(cameraExcutor) { image ->
+            imageAnalysis.setAnalyzer(cameraExecutor) { image ->
 
                 val currentTime = System.currentTimeMillis()
                 if (recording != null && currentTime - lastCaptureTime >= 1000 / targetFPS) {
@@ -127,6 +124,7 @@ class RecordActivity : AppCompatActivity() {
             recording = null
             btnRecord.text = "Record"
         } else {
+            SocketClient.recordingStartTime = System.currentTimeMillis()
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis()) + ".mp4")
                 put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")

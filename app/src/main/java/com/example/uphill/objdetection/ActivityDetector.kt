@@ -2,6 +2,7 @@ package com.example.uphill.objdetection
 
 import android.graphics.Bitmap
 import android.util.Log
+import com.example.httptest2.HttpClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,6 +52,11 @@ object ActivityDetector {
                 isProcessing = false
                 Log.d(TAG, "detector end")
                 activityDetection.printLocationLogs()
+
+                val httpClient = HttpClient()
+
+                httpClient.postMovementData(activityDetection.getMovementData(), 1)
+
                 //todo
                 callback(true)
             } catch (e: Exception){

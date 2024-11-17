@@ -5,6 +5,8 @@ import android.util.Log
 import org.opencv.core.Core
 import android.media.MediaMetadataRetriever
 import android.widget.Toast
+import com.example.uphill.data.model.MovementData
+import com.example.uphill.data.model.MovementDataItem
 import org.opencv.android.Utils
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -220,6 +222,16 @@ class ActivityDetection {
 
 
         Log.d(TAG,this.toString())
+    }
+    fun getMovementData():MovementData{
+        val ret = MovementData()
+        if(locationList==null){
+            return ret
+        }
+        ret.addAll(locationList!!.mapIndexed { index, it ->
+            MovementDataItem(index, it[1].toInt(), it[0].toInt())
+        })
+        return ret
     }
 
     override fun toString(): String {

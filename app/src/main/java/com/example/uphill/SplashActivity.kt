@@ -3,6 +3,9 @@ package com.example.uphill
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -18,6 +21,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.net.URL
 
 class SplashActivity : AppCompatActivity() {
     private lateinit var googleSignInClinet: GoogleSignInClient
@@ -128,15 +135,32 @@ class SplashActivity : AppCompatActivity() {
                     UserInfo.user = auth.currentUser
                     UserInfo.user?.getIdToken(true)?.addOnSuccessListener { result ->
                         val token = result.token
-                        val httpClient = HttpClient(1)
+                        val httpClient = HttpClient()
                         httpClient.login(token!!)
 
                     }
+                    val photoUrl = UserInfo.user?.photoUrl
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val bitmap = loadImageFromUri(photoUrl.toString())
+                        UserInfo.photo = bitmap
+                        Log.d(TAG, "bitmap: $bitmap")
+                    }
+
                     Log.d(TAG, "Firebase Auth Success")
                 } else {
                     Log.e(TAG, "Firebase Auth Failed")
                 }
             }
+    }
+    private fun loadImageFromUri(uri: String): Bitmap? {
+        return try {
+            val url = URL(uri)
+            val inputStream = url.openStream()
+            BitmapFactory.decodeStream(inputStream)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     companion object{

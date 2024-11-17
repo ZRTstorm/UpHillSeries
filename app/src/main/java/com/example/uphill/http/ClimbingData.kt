@@ -1,5 +1,6 @@
 package com.example.httptest2
 
+import com.example.uphill.data.model.MovementData
 import java.time.LocalDate
 
 class ClimbingData(val items: ArrayList<ClimbingDataItem>){

@@ -73,7 +73,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
-    implementation(libs.firebase.messaging.ktx)
 
 
     testImplementation(libs.junit)

@@ -8,4 +8,5 @@ object UserInfo {
     var userId: Int? = null
     var photo: Bitmap? = null
     var lastClimbingId: Int? = 1
+    var isCompetitionEntered: Boolean = false
 }

@@ -45,7 +45,6 @@ android {
 
 dependencies {
 
-    implementation(libs.okhttp3.okhttp)
     implementation(libs.gson)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -57,6 +56,14 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.annotation)
 
+    // web
+    implementation(libs.okhttp3.okhttp)
+
+    implementation("org.hildan.krossbow:krossbow-stomp-core:7.0.0")
+    implementation("org.hildan.krossbow:krossbow-websocket-builtin:7.0.0")
+    implementation("org.hildan.krossbow:krossbow-websocket-okhttp:7.0.0")
+
+
     // activity detection
     implementation(project(":sdk"))
     // background processing
@@ -64,6 +71,10 @@ dependencies {
     implementation (libs.kotlinx.coroutines.android)
     implementation(libs.play.services.basement)
     implementation(libs.androidx.activity)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
+    implementation(libs.firebase.messaging.ktx)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

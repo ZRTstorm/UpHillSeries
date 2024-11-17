@@ -3,19 +3,28 @@ package com.example.uphill
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.httptest2.HttpClient
 import com.example.uphill.data.UserInfo
+import com.example.uphill.http.SocketClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.net.URL
 
 class SplashActivity : AppCompatActivity() {
     private lateinit var googleSignInClinet: GoogleSignInClient
@@ -78,6 +87,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -86,19 +96,24 @@ class SplashActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == RC_SIGN_IN){
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try{
-                val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle(account.idToken!!)
-                Log.d(TAG, "Google sign in success")
+            val idToken = task.result.idToken
+            when{
+                idToken != null -> {
+                    try{
+                        val account = task.getResult(ApiException::class.java)
+                        firebaseAuthWithGoogle(account.idToken!!)
+                        Log.d(TAG, "Google sign in success")
 
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }catch (e: ApiException){
-                Log.w(TAG, "Google sign in failed", e)
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }catch (e: ApiException){
+                        Log.w(TAG, "Google sign in failed", e)
+                    }
+                }
+                else -> {
+                    Log.w(TAG, "No ID token")
+                }
             }
         }
     }
@@ -118,11 +133,34 @@ class SplashActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     UserInfo.user = auth.currentUser
+                    UserInfo.user?.getIdToken(true)?.addOnSuccessListener { result ->
+                        val token = result.token
+                        val httpClient = HttpClient()
+                        httpClient.login(token!!)
+
+                    }
+                    val photoUrl = UserInfo.user?.photoUrl
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val bitmap = loadImageFromUri(photoUrl.toString())
+                        UserInfo.photo = bitmap
+                        Log.d(TAG, "bitmap: $bitmap")
+                    }
+
                     Log.d(TAG, "Firebase Auth Success")
                 } else {
                     Log.e(TAG, "Firebase Auth Failed")
                 }
             }
+    }
+    private fun loadImageFromUri(uri: String): Bitmap? {
+        return try {
+            val url = URL(uri)
+            val inputStream = url.openStream()
+            BitmapFactory.decodeStream(inputStream)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     companion object{

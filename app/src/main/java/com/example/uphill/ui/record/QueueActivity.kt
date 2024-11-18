@@ -3,41 +3,85 @@ package com.example.uphill.ui.record
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.example.httptest2.HttpClient
+import com.example.uphill.MainActivity
 import com.example.uphill.R
+import com.example.uphill.data.UserInfo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 class QueueActivity : AppCompatActivity() {
+
+    private var httpJob: Job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + httpJob)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_queue)
 
-        // Intent에서 route_id 받기
-        val routeId = intent.getIntExtra("routeId", 0)
 
-        if (routeId != 0) { // 0이면 잘못 받음
-            // TextView에 route_id 표시
-            val routeIdTextView: TextView = findViewById(R.id.textView2)
-            routeIdTextView.text = "$routeId" + "번 루트"
-            //TODO 서버와 연결해서 텍스트와 이미지 표시
-        } else {
-            Toast.makeText(this, "Route ID를 받지 못했습니다.", Toast.LENGTH_SHORT).show()
-        }
+        val routeId: Int = UserInfo.capturedRouteId?:1
+
+        val countdownTextView: TextView = findViewById(R.id.countdown_text)
+        countdownTextView.text = "10"
 
         // 거절 버튼 클릭 리스너 설정
-        val reject_button = findViewById<Button>(R.id.button10)
-        reject_button.setOnClickListener {
-            navigateToRecordFragment()
+        val rejectButton = findViewById<Button>(R.id.button10)
+        rejectButton.setOnClickListener {
+            rejectEntry()
         }
         // 수락 버튼 클릭 리스너 설정
-        val accept_button = findViewById<Button>(R.id.button9)
-        accept_button.setOnClickListener {
-            routeRegistration(routeId)
+        val acceptButton = findViewById<Button>(R.id.button9)
+        acceptButton.setOnClickListener {
+            acceptEntry()
         }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                rejectEntry()
+            }
+        })
+
+        val timer = object : CountDownTimer(10000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                countdownTextView.text = (millisUntilFinished / 1000).toString()
+            }
+            override fun onFinish() {
+                if(!isFinishing){
+                    rejectEntry()
+                }
+            }
+        }
+        timer.start()
+
+
+
     }
+    private fun rejectEntry(){
+        val httpClient = HttpClient()
+        scope.launch {
+            httpClient.rejectEntry()
+        }
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        startActivity(intent)
+        finish()
+    }
+    private fun acceptEntry(){
+        Log.d("QueueActivity", "accept_button clicked")
+        routeRegistration()
+    }
+
 
     private fun navigateToRecordFragment() {
         // RecordFragment로 이동
@@ -47,9 +91,13 @@ class QueueActivity : AppCompatActivity() {
             .addToBackStack(null) // 뒤로가기 버튼을 누르면 이전 상태로 돌아가도록 설정
             .commit()
     }
-    private fun routeRegistration(routeId : Int){
+    private fun routeRegistration(){
         // TODO 서버와 연결
         val intent = Intent(this,AcceptActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

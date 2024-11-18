@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
@@ -18,9 +19,17 @@ import androidx.camera.video.*
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.httptest2.HttpClient
+import com.example.uphill.MainActivity
 import com.example.uphill.R
+import com.example.uphill.http.SocketClient
 import com.example.uphill.objdetection.ActivityDetector
 import com.example.uphill.objdetection.targetFPS
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -34,6 +43,12 @@ class ShootActivity : AppCompatActivity() {
     private var cameraExcutor = Executors.newSingleThreadExecutor()
     private var bitmapArray = arrayListOf<Bitmap>()
     private var lastCaptureTime: Long = 0
+
+    private lateinit var handler: Handler
+    private val scope = CoroutineScope(Dispatchers.Main + Job())
+
+    private var httpJob: Job = Job()
+    private val httpScope = CoroutineScope(Dispatchers.IO + httpJob)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +64,7 @@ class ShootActivity : AppCompatActivity() {
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
         }
+        handler = Handler(mainLooper)
 
         btnRecord.setOnClickListener {
             Log.d(TAG, "captureVideo button clicked")
@@ -118,11 +134,14 @@ class ShootActivity : AppCompatActivity() {
         val contentResolver = applicationContext.contentResolver
         val videoUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, ContentValues())
 
+
         val curRecording = recording
         if (curRecording != null) {
             curRecording.stop()
             recording = null
             btnRecord.text = "Record"
+
+
         } else {
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis()) + ".mp4")
@@ -144,6 +163,7 @@ class ShootActivity : AppCompatActivity() {
                         is VideoRecordEvent.Start -> {
                             btnRecord.text = "Recording"
                             btnRecord.isEnabled = true
+                            SocketClient.setEndEventHandleFunction{ onEndSignalReceived() }
                         }
 
                         is VideoRecordEvent.Finalize -> {
@@ -157,6 +177,14 @@ class ShootActivity : AppCompatActivity() {
                                 recording = null
                                 btnRecord.text = "Record"
                                 btnRecord.isEnabled = true
+
+                                httpScope.launch {
+                                    val httpClient = HttpClient()
+                                    httpClient.rejectEntry()
+                                }
+                                val intent = Intent(this, ResultActivity::class.java)
+                                startActivity(intent)
+                                finish()
                             } else {
                                 recording?.close()
                                 recording = null
@@ -177,14 +205,33 @@ class ShootActivity : AppCompatActivity() {
                 }
         }
     }
+
+
+
+    private fun stopRecording(){
+        Log.d(TAG, "stopRecording")
+        if (recording != null) {
+            recording?.stop()
+        }
+    }
+    private fun onEndSignalReceived(){
+        scope.launch {
+            delay(5000)
+            stopRecording()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        SocketClient.setEndEventHandleFunction {}
+    }
+
     private fun detectObject(){
         Log.d(TAG, "bitmap size: ${bitmapArray.size}")
         ActivityDetector.detectImages(bitmapArray){success ->
             runOnUiThread{
                 if(success){
                     Toast.makeText(this, "object detection success", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this,ResultActivity::class.java)
-                    startActivity(intent)
                 } else {
                     Toast.makeText(this, "object detection fail", Toast.LENGTH_SHORT).show()
                 }
@@ -196,6 +243,6 @@ class ShootActivity : AppCompatActivity() {
     companion object {
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        private const val TAG = "RecordActivity"
+        private const val TAG = "ShootActivity"
     }
 }

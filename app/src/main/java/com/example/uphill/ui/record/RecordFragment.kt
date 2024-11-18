@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.uphill.data.UserInfo
 import com.example.uphill.databinding.FragmentRecordBinding
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
@@ -25,6 +26,7 @@ class RecordFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         // ActivityResultLauncher 초기화
         qrScannerLauncher = registerForActivityResult(
@@ -43,11 +45,12 @@ class RecordFragment : Fragment() {
                         val jsonObject = JSONObject(scannedContent)
                         if (jsonObject.has("routeId")) {
                             val routeId = jsonObject.getInt("routeId")
+                            UserInfo.capturedRouteId = routeId
 
                             // queueActivity로 이동
-                            val intent = Intent(requireContext(), QueueActivity::class.java)
-                            intent.putExtra("routeId", routeId)
-                            startActivity(intent)
+                            // val intent = Intent(requireContext(), QueueActivity::class.java)
+                            // .putExtra("routeId", routeId)
+                            // startActivity(intent)
                         } else {
                             Toast.makeText(requireContext(), "routeId가 포함되지 않은 QR 코드입니다.", Toast.LENGTH_SHORT).show()
                         }
@@ -75,6 +78,8 @@ class RecordFragment : Fragment() {
 
         // QR 코드 스캔 시작 버튼
         binding.button8.setOnClickListener {
+
+
             val integrator = IntentIntegrator(requireActivity())
             integrator.setBeepEnabled(false) // 비프음 비활성화
             integrator.setOrientationLocked(true) // 방향 고정 활성화
@@ -90,4 +95,5 @@ class RecordFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

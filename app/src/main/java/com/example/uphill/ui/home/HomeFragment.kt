@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.httptest2.ClimbingData
 import com.example.httptest2.HttpClient
+import com.example.uphill.data.UserInfo
 import com.example.uphill.databinding.FragmentHomeBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -49,6 +51,8 @@ class HomeFragment : Fragment() {
         }
         CoroutineScope(Dispatchers.IO).launch{
             val httpClient = HttpClient()
+
+            waitForUserID()
             val data = httpClient.getClimbingData()
             if(data!=null){
                 if (data.items.size>0){
@@ -63,6 +67,14 @@ class HomeFragment : Fragment() {
         }.start()
 
         return root
+    }
+    private suspend fun waitForUserID():Int{
+        return withContext(Dispatchers.Default){
+            while(UserInfo.userId==null){
+                delay(100)
+            }
+            UserInfo.userId!!
+        }
     }
 
     override fun onDestroyView() {

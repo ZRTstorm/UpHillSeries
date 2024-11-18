@@ -30,5 +30,6 @@ class ResultActivity : AppCompatActivity() {
         // HomeActivity로 이동
         val intent = Intent(this,MainActivity::class.java)
         startActivity(intent)
+        finish()
     }
 }

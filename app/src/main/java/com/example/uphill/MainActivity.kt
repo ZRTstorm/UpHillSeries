@@ -1,7 +1,9 @@
 package com.example.uphill
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -25,12 +27,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (OpenCVLoader.initLocal()) {
-            Log.d(TAG, "OpenCV init successes")
-        }
         val navView: BottomNavigationView = binding.navView
 
         navController = findNavController(R.id.nav_host_fragment_activity_main)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                showExitDialog()
+            }
+        })
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
@@ -70,5 +74,19 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    private fun showExitDialog(){
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle("앱 종료")
+        builder.setMessage("앱을 종료하시겠습니까?")
+        builder.setPositiveButton("예"){ dialog, _ ->
+            dialog.dismiss()
+            finishAffinity()
+        }
+        builder.setNegativeButton("아니오"){ dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 }

@@ -2,6 +2,7 @@ package com.example.uphill.ui.record
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,8 @@ class AcceptActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_accept)
+
+        Log.d("AcceptActivity", "onCreate called")
 
         val start_button = findViewById<Button>(R.id.button13)
         start_button.setOnClickListener {

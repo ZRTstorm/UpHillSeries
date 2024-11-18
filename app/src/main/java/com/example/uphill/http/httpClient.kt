@@ -1,13 +1,17 @@
 package com.example.httptest2
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.core.content.ContextCompat.startForegroundService
 import com.example.uphill.data.Convert
 import com.example.uphill.data.UserInfo
 import com.example.uphill.data.model.ClimbingRoute
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.UserId
 import com.example.uphill.http.SocketClient
+import com.example.uphill.http.WebSocketService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.MediaType.Companion.toMediaType
@@ -17,14 +21,15 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
+import java.util.ArrayList
 
 
-class HttpClient() {
+class HttpClient {
     private val client = OkHttpClient()
-    private val server_name = "http://$SERVER_NAME:8080/"
+    private val server_name = "http://$SERVER_NAME:8080"
 
     // users-controller
-    fun login(idToken:String){
+    fun login(idToken:String, context: Context){
         val url = "$server_name/users/auth/login"
         val json = """
             {
@@ -50,7 +55,9 @@ class HttpClient() {
                     val gson = Gson()
                     val userId = gson.fromJson(responseData, UserId::class.java)
                     UserInfo.userId = userId.userId
-                    SocketClient.connect()
+                    val serviceIntent = Intent(context, WebSocketService::class.java)
+                    startForegroundService(context, serviceIntent)
+                    Log.d(TAG, "Login success. ID: ${userId.userId}")
                 } else{
                     Log.e(TAG, "Request failed. ${response.code}")
                 }
@@ -153,13 +160,27 @@ class HttpClient() {
         val url = "$server_name/entryQueue/${UserInfo.userId}/reject"
 
         val json = """ """
-        post(url, json, "Reject entry success")
+        val requestBody: RequestBody = json.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("accept","*/*")
+            .post(requestBody)
+            .build()
+        Log.d(TAG, request.body.toString())
+        try {
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                Log.d(TAG, "Reject success")
+            }
+        }catch (e: Exception){
+            Log.e(TAG, "Reject failed", e)
+        }
     }
     fun registerEntry(routeId: Int){
         val url = "$server_name/entryQueue/register"
         val json = """
             {
-                "userId": ${UserInfo.userId}
+                "userId": ${UserInfo.userId},
                 "routeId": $routeId
             }
             """
@@ -167,13 +188,14 @@ class HttpClient() {
     }
     // climbing-data-controller
     fun getClimbingData():ClimbingData?{
-        val url = server_name+"climbing/users/"+UserInfo.userId
+        val url = server_name+"/climbing/users/${UserInfo.userId}/data"
         fun op(response:Response):ClimbingData?{
             Log.d(TAG, "Get climbing data success")
             if (response.body == null) return null
             val jsonResponse = response.body?.string()
             val listType = object:TypeToken<List<ClimbingDataItem>>() {}.type
-            return Gson().fromJson(jsonResponse, listType)
+            val temp:List<ClimbingDataItem> = Gson().fromJson(jsonResponse, listType)
+            return ClimbingData(ArrayList(temp))
         }
         return get(url, ::op)
     }

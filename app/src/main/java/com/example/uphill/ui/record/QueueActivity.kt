@@ -24,6 +24,7 @@ class QueueActivity : AppCompatActivity() {
 
     private var httpJob: Job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + httpJob)
+    private var isFinished = false
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +57,7 @@ class QueueActivity : AppCompatActivity() {
                 countdownTextView.text = (millisUntilFinished / 1000).toString()
             }
             override fun onFinish() {
-                if(!isFinishing){
+                if(!isFinished){
                     rejectEntry()
                 }
             }
@@ -71,6 +72,7 @@ class QueueActivity : AppCompatActivity() {
         scope.launch {
             httpClient.rejectEntry()
         }
+        isFinished = true
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
@@ -79,6 +81,7 @@ class QueueActivity : AppCompatActivity() {
     }
     private fun acceptEntry(){
         Log.d("QueueActivity", "accept_button clicked")
+        isFinished = true
         routeRegistration()
     }
 

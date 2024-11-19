@@ -158,8 +158,5 @@ class WebSocketService: Service() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        val httpClient = HttpClient()
-        httpClient.rejectEntry()
-        sessionListenerJob.cancel()
     }
 }

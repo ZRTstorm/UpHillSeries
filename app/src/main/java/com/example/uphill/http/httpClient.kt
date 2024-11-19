@@ -222,12 +222,12 @@ class HttpClient {
         }
     }
     fun postMovementData(movementData: MovementData, climbingDataId:Int){
-        val url = server_name+"bodyMovement/"+UserInfo.userId+"/$climbingDataId"
+        val url = server_name+"/bodyMovement/"+UserInfo.userId+"/$climbingDataId"
         val json = Gson().toJson(movementData)
         post(url, json, "Send movement data success")
     }
     fun getMovementData(climbingDataId: Int):MovementData?{
-        val url = server_name+"bodyMovement/$climbingDataId"
+        val url = server_name+"/bodyMovement/$climbingDataId"
         fun op(response:Response):MovementData?{
             Log.d(TAG, "Get movement data success")
             if (response.body == null) return null

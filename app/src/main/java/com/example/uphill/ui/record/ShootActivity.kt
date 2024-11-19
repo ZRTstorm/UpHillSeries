@@ -178,10 +178,6 @@ class ShootActivity : AppCompatActivity() {
                                 btnRecord.text = "Record"
                                 btnRecord.isEnabled = true
 
-                                httpScope.launch {
-                                    val httpClient = HttpClient()
-                                    httpClient.rejectEntry()
-                                }
                                 val intent = Intent(this, ResultActivity::class.java)
                                 startActivity(intent)
                                 finish()

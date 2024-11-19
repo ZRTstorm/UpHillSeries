@@ -104,12 +104,8 @@ class WebSocketService: Service() {
                 Log.d(TAG, "allowToUseRoute")
                 SocketClient.handleEndEvent()
             }
-            "start" -> {
+            "StartToClimbing" -> {
                 SocketClient.climbingStartTime = System.currentTimeMillis()
-            }
-            "end" -> {
-                SocketClient.climbingEndTime = System.currentTimeMillis()
-                SocketClient.handleEndEvent()
             }
         }
     }
@@ -119,6 +115,14 @@ class WebSocketService: Service() {
         val receivedMessage = gson.fromJson(message, com.example.uphill.data.model.climbingMessage::class.java)
         Log.d(TAG, "message: ${receivedMessage.message}")
         Log.d(TAG, "id: ${receivedMessage.climbingDataId}")
+
+        when(receivedMessage.message){
+            "successToClimbing" -> {
+                UserInfo.lastClimbingId = receivedMessage.climbingDataId
+                SocketClient.climbingEndTime = System.currentTimeMillis()
+                SocketClient.handleEndEvent()
+            }
+        }
     }
 
     private fun showNotification(){

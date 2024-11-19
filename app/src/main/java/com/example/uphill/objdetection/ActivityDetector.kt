@@ -3,6 +3,7 @@ package com.example.uphill.objdetection
 import android.graphics.Bitmap
 import android.util.Log
 import com.example.httptest2.HttpClient
+import com.example.uphill.data.UserInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,7 +56,11 @@ object ActivityDetector {
 
                 val httpClient = HttpClient()
 
-                httpClient.postMovementData(activityDetection.getMovementData(), 1)
+                if(UserInfo.lastClimbingId == null){
+                    Log.e(TAG, "lastClimbingId is null")
+                } else{
+                    httpClient.postMovementData(activityDetection.getMovementData())
+                }
 
                 //todo
                 callback(true)

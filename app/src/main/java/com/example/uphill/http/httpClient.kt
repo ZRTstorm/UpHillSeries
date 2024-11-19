@@ -7,6 +7,10 @@ import android.util.Log
 import androidx.core.content.ContextCompat.startForegroundService
 import com.example.uphill.data.Convert
 import com.example.uphill.data.UserInfo
+import com.example.uphill.data.model.BattleRoomData
+import com.example.uphill.data.model.BattleRoomDataList
+import com.example.uphill.data.model.BattleRoomRegistryReceivedData
+import com.example.uphill.data.model.BattleRoomRegistrySendData
 import com.example.uphill.data.model.ClimbingRoute
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.UserId
@@ -221,10 +225,11 @@ class HttpClient {
             Log.e(TAG, "Error Occurred", e)
         }
     }
-    fun postMovementData(movementData: MovementData, climbingDataId:Int){
-        val url = server_name+"/bodyMovement/"+UserInfo.userId+"/$climbingDataId"
+    fun postMovementData(movementData: MovementData){
+        val url = server_name+"/bodyMovement/"+UserInfo.userId+"/${UserInfo.lastClimbingId}"
         val json = Gson().toJson(movementData)
         post(url, json, "Send movement data success")
+        UserInfo.lastClimbingId = null
     }
     fun getMovementData(climbingDataId: Int):MovementData?{
         val url = server_name+"/bodyMovement/$climbingDataId"
@@ -236,6 +241,85 @@ class HttpClient {
         }
         return get(url, ::op)
     }
+
+    // battle-room-controller
+    fun participantBattleRoom(battleRoomId: Int){
+        val url = "$server_name/battleRoom/${UserInfo.userId}/$battleRoomId/participant"
+        fun op(response: Response){
+            Log.d(TAG, "participant success")
+        }
+        post(url, ::op)
+    }
+    fun registryBattleRoom(battleRoomRegistrySendData: BattleRoomRegistrySendData):BattleRoomRegistryReceivedData?{
+        val url = "$server_name/battleRoom/${UserInfo.userId}/registry"
+        val json = Gson().toJson(battleRoomRegistrySendData)
+        fun op(response: Response):BattleRoomRegistryReceivedData?{
+            Log.d(TAG, "registry success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            return Gson().fromJson(jsonResponse, BattleRoomRegistryReceivedData::class.java)
+        }
+        return post(url, json, ::op)
+    }
+    fun finishBattle(battleRoomId: Int){
+        val url = "$server_name/battleRoom/${UserInfo.userId}/$battleRoomId/end"
+        fun op(response: Response){
+            Log.d(TAG, "finish success")
+        }
+        patch(url, ::op)
+    }
+    fun getAllBattleRoom():BattleRoomDataList?{
+        val url = "$server_name/battleRoom/${UserInfo.userId}/all"
+        fun op(response: Response):BattleRoomDataList?{
+            Log.d(TAG, "get all success")
+            if (response.body == null) return BattleRoomDataList()
+            val jsonResponse = response.body?.string()
+            val listType = object:TypeToken<BattleRoomDataList>() {}.type
+            return Gson().fromJson(jsonResponse, listType)
+        }
+        return get(url, ::op)
+    }
+    fun getRoomFromCode(participantCode: String): BattleRoomData?{
+        val url = "$server_name/battleRoom/$participantCode"
+        fun op(response: Response):BattleRoomData?{
+            Log.d(TAG, "get room from code success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            return Gson().fromJson(jsonResponse, BattleRoomData::class.java)
+        }
+        return get(url, ::op)
+    }
+    fun getRoomFromCrewId(crewId: Int):BattleRoomDataList?{
+        val url = "$server_name/battleRoom/$crewId/all"
+        fun op(response: Response):BattleRoomDataList?{
+            Log.d(TAG, "get room from crewId success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            val listType = object:TypeToken<BattleRoomDataList>() {}.type
+            return Gson().fromJson(jsonResponse, listType)
+        }
+
+        return get(url, ::op)
+    }
+    fun deleteBattleRoom(battleRoomId: Int){
+        val url = "$server_name/battleRoom/${UserInfo.userId}/$battleRoomId"
+        val request = Request.Builder()
+            .url(url)
+            .delete()
+            .build()
+
+        try {
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                Log.d(TAG, "Delete room success")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+
     companion object{
         const val TAG = "HTTP_CLIENT"
         const val SERVER_NAME = "copytixe.iptime.org"
@@ -244,6 +328,27 @@ class HttpClient {
     private fun <R> get(url: String, operation:(Response) -> R): R?{
         val request = Request.Builder()
             .url(url)
+            .build()
+
+        try{
+            client.newCall(request).execute().use { response ->
+                if(!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                return operation(response)
+            }
+        } catch (e:Exception){
+            Log.e(TAG, "Error Occurred", e)
+            return null
+        }
+    }
+    private fun <R> post(url: String, operation: (Response) -> R): R?{
+        val json = """ """
+        val requestBody: RequestBody = json.toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("accept", "*/*")
+            .post(requestBody)
             .build()
 
         try{
@@ -319,6 +424,27 @@ class HttpClient {
 
         val request = Request.Builder()
             .url(url)
+            .patch(requestBody)
+            .build()
+
+        try{
+            client.newCall(request).execute().use { response ->
+                if(!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                return operation(response)
+            }
+        } catch (e:Exception){
+            Log.e(TAG, "Error Occurred", e)
+            return null
+        }
+    }
+    private fun <R> patch(url: String, operation:(Response) -> R): R?{
+        val json = """ """
+        val requestBody: RequestBody = json.toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("accept", "*/*")
             .patch(requestBody)
             .build()
 

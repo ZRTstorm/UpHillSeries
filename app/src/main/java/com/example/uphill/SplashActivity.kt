@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.httptest2.HttpClient
+import com.example.uphill.data.AppStatus
 import com.example.uphill.data.UserInfo
 import com.example.uphill.http.SocketClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -24,6 +25,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.opencv.android.OpenCVLoader
 import java.net.URL
 
 class SplashActivity : AppCompatActivity() {
@@ -33,6 +35,15 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+        if (!AppStatus.isOpenCVInitialized){
+            if (OpenCVLoader.initLocal()) {
+                Log.d(TAG, "OpenCV init successes")
+            }
+            AppStatus.isOpenCVInitialized = true
+        } else{
+            Log.d(TAG, "OpenCV already initialized")
+        }
 
         if(allPermissionsGranted()){
             Log.d(TAG, "All permission granted")
@@ -53,13 +64,17 @@ class SplashActivity : AppCompatActivity() {
         return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             arrayOf(
                 Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.FOREGROUND_SERVICE,
+                Manifest.permission.POST_NOTIFICATIONS,
                 Manifest.permission.READ_MEDIA_IMAGES,
                 Manifest.permission.READ_MEDIA_VIDEO,
-                Manifest.permission.READ_MEDIA_AUDIO,
+                Manifest.permission.READ_MEDIA_AUDIO
             )
         } else {
             arrayOf(
                 Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
             )
@@ -136,7 +151,7 @@ class SplashActivity : AppCompatActivity() {
                     UserInfo.user?.getIdToken(true)?.addOnSuccessListener { result ->
                         val token = result.token
                         val httpClient = HttpClient()
-                        httpClient.login(token!!)
+                        httpClient.login(token!!, applicationContext)
 
                     }
                     val photoUrl = UserInfo.user?.photoUrl

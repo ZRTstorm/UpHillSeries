@@ -1,4 +1,4 @@
-package com.example.uphill.ui.dashboard
+package com.example.uphill.ui.dashboard.competition
 
 import android.view.LayoutInflater
 import android.view.View

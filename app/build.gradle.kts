@@ -67,9 +67,12 @@ dependencies {
     // activity detection
     implementation(project(":sdk"))
     // background processing
+    implementation(libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
+    implementation(libs.play.services.basement)
+    implementation(libs.androidx.activity)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
-    implementation(libs.firebase.messaging.ktx)
 
 
     testImplementation(libs.junit)
@@ -77,16 +80,23 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // firebase auth
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.play.services.auth)
 
     // camera
-    implementation("androidx.camera:camera-core:1.4.0")
-    implementation("androidx.camera:camera-camera2:1.4.0")
-    implementation("androidx.camera:camera-lifecycle:1.4.0")
-    implementation("androidx.camera:camera-view:1.4.0")
-    implementation("androidx.camera:camera-video:1.4.0")
-    implementation("androidx.camera:camera-extensions:1.4.0")
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.camera.video)
+    implementation(libs.androidx.camera.extensions)
 
+    // qrcode
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation(libs.core)
+
+
+    // background work
+    implementation ("androidx.work:work-runtime-ktx:2.7.1")
 }

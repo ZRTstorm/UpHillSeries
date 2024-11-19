@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="369dp"
-        android:layout_height="207dp"
+        android:layout_width="369sp"
+        android:layout_height="207sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.619"
@@ -21,13 +21,13 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="266dp"
-        android:layout_height="116dp"
+        android:layout_width="279dp"
+        android:layout_height="129dp"
         android:fontFamily="@font/tmoneyroundwindextrabold"
         android:gravity="center"
         android:text="@string/오름길"
         android:textColor="@color/white"
-        android:textSize="75sp"
+        android:textSize="80sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="@+id/imageView3"

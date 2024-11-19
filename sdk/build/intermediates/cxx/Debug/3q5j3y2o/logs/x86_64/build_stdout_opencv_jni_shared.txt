@@ -1,2 +1,0 @@
-ninja: Entering directory `C:\Users\kys87\AndroidStudioProjects\Uphill_front\sdk\.cxx\Debug\3q5j3y2o\x86_64'
-ninja: no work to do.

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 
 class SearchViewModel : ViewModel() {
 
+//    TODO search view 다듬기
     private val _text = MutableLiveData<String>().apply {
         value = "This is record Fragment"
     }

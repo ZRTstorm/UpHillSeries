@@ -30,5 +30,11 @@
     <string name="loginString">login</string>
     <string name="room_title">room_title</string>
     <string name="description">description</string>
+    <string name="메인">오름길</string>
+    <string name="대회">대회</string>
+    <string name="기록">기록</string>
+    <string name="크루">크루</string>
+    <string name="홈">홈</string>
+    <string name="crew_title">crew명</string>
 
 </resources>

@@ -49,6 +49,9 @@ public class UsersController {
             // 사용자 이름 추출
             String name = decodedToken.getName();
 
+            // 사용자 프로필 이미지 URL 추출
+            String profile = decodedToken.getPicture();
+
             // DB 에서 사용자 조회
             Optional<Users> userOpt = usersService.getUserByUid(uid);
 
@@ -58,6 +61,7 @@ public class UsersController {
                 newUser.setUid(uid);
                 newUser.setEmail(email);
                 newUser.setNickname(name);
+                newUser.setProfile(profile);
                 newUser.setRole(UserRole.USER);
 
                 Users users = usersService.saveUsers(newUser);

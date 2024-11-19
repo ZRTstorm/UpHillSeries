@@ -1,12 +1,10 @@
 package climbing.climbBack.battleRoom.service;
 
-import climbing.climbBack.battleRoom.domain.BattleCreateDto;
-import climbing.climbBack.battleRoom.domain.BattleRoom;
-import climbing.climbBack.battleRoom.domain.BattleSearchDto;
-import climbing.climbBack.battleRoom.domain.Participant;
+import climbing.climbBack.battleRoom.domain.*;
 import climbing.climbBack.battleRoom.repository.BattleRoomRepository;
 import climbing.climbBack.battleRoom.repository.CrewManRepository;
 import climbing.climbBack.battleRoom.repository.ParticipantRepository;
+import climbing.climbBack.climbingData.repository.ClimbingDataRepository;
 import climbing.climbBack.route.repository.RouteRepository;
 import climbing.climbBack.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +29,7 @@ public class BattleRoomService {
 
     private final CrewManRepository crewManRepository;
     private final ParticipantRepository participantRepository;
+    private final ClimbingDataRepository climbingDataRepository;
 
     // BattleRoom 생성 서비스
     @Transactional
@@ -73,11 +72,11 @@ public class BattleRoomService {
     // BattleRoom 삭제 -> Battle 참여 Participants 삭제
     @Transactional
     public void deleteBattleRoom(Long battleRoomId) {
-        // battleRoom ID 와 Mapping 되는 BattleRoom 삭제
-        battleRoomRepository.deleteById(battleRoomId);
-
         // Battle 에 참여한 모든 Participant Data 삭제
         participantRepository.deleteAllByBattleRoomId(battleRoomId);
+
+        // battleRoom ID 와 Mapping 되는 BattleRoom 삭제
+        battleRoomRepository.deleteById(battleRoomId);
     }
 
     // Battle 종료 처리 서비스
@@ -148,6 +147,7 @@ public class BattleRoomService {
                 .map(battleRoom -> new BattleSearchDto(
                         battleRoom.getId(),
                         battleRoom.getTitle(),
+                        battleRoom.getContent(),
                         battleRoom.getAdminUser().getNickname(),
                         battleRoom.getRoute().getId(),
                         true
@@ -176,5 +176,43 @@ public class BattleRoomService {
         participant.setBattleRoom(battleRoom);
 
         participantRepository.save(participant);
+    }
+
+    // BattleRoom ID 와 Mapping 되는 BattleRoom Info 조회
+    @Transactional(readOnly = true)
+    public BattleSearchDto battleInfo(Long battleRoomId) {
+        // BattleRoom 조회
+        BattleRoom battleRoom = battleRoomRepository.findBattleRoomInfo(battleRoomId);
+
+        // BattleRoom -> BattleSearchDto 변환
+        BattleSearchDto searchDto = new BattleSearchDto();
+
+        searchDto.setTitle(battleRoom.getTitle());
+        searchDto.setContent(battleRoom.getContent());
+        searchDto.setAdminName(battleRoom.getAdminUser().getNickname());
+        searchDto.setRouteId(battleRoom.getRoute().getId());
+        searchDto.setProgress(battleRoom.getProgress());
+
+        return searchDto;
+    }
+
+    // BattleRoom 에 Participant - ClimbingData 삽입 서비스
+    @Transactional
+    public void entryBattle(Long battleRoomId, Long userId, Long climbingDataId) {
+        // battleRoomID & climbingDataID Matching
+        Optional<Participant> participantOpt = participantRepository.findParticipantByBattleAndUser(battleRoomId, userId);
+
+        if (participantOpt.isEmpty()) {
+            log.info("Entry Battle : Participant Data is not DB = {}", userId);
+            throw new IllegalStateException("Entry Battle : Participant Data is not DB");
+        }
+
+        Participant participant = participantOpt.get();
+        participant.setClimbingData(climbingDataRepository.getReferenceById(climbingDataId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<BattleDataDto> getAllBattleData(Long battleRoomId) {
+        return participantRepository.findBattleDtoById(battleRoomId);
     }
 }

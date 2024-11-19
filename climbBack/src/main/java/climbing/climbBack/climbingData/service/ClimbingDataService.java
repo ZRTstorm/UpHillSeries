@@ -2,6 +2,7 @@ package climbing.climbBack.climbingData.service;
 
 import climbing.climbBack.climbingData.domain.ClimbingData;
 import climbing.climbBack.climbingData.domain.ClimbingDataDto;
+import climbing.climbBack.climbingData.repository.BodyMovementRepository;
 import climbing.climbBack.climbingData.repository.ClimbingDataRepository;
 import climbing.climbBack.entryQueue.service.EntryQueueService;
 
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class ClimbingDataService {
 
     private final ClimbingDataRepository climbingDataRepository;
+    private final BodyMovementRepository bodyMovementRepository;
     private final RouteRepository routeRepository;
     private final UsersRepository usersRepository;
 
@@ -111,6 +113,9 @@ public class ClimbingDataService {
         if (!climbingDataRepository.existsById(climbingDataId)) {
             throw new EmptyResultDataAccessException("ClimbingData is not found with ID = " + climbingDataId, 1);
         }
+
+        // climbingData 와 연관된 BodyMovement Data 삭제
+        bodyMovementRepository.deleteAllByClimbingDataId(climbingDataId);
 
         // climbingDataId 와 Matching 되는 등반 기록 데이터 삭제
         climbingDataRepository.deleteById(climbingDataId);

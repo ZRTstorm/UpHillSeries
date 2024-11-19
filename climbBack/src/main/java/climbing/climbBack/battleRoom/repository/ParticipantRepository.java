@@ -1,5 +1,6 @@
 package climbing.climbBack.battleRoom.repository;
 
+import climbing.climbBack.battleRoom.domain.BattleDataDto;
 import climbing.climbBack.battleRoom.domain.BattleSearchDto;
 import climbing.climbBack.battleRoom.domain.Participant;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 
@@ -18,9 +20,22 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     void deleteAllByBattleRoomId(@Param("battleRoomId") Long battleRoomId);
 
     // User 가 참여한 모든 BattleRoom 정보 조회 Query
-    @Query("select distinct new climbing.climbBack.battleRoom.domain.BattleSearchDto(br.id, br.title, au.nickname, r.id, br.progress) " +
+    @Query("select distinct new climbing.climbBack.battleRoom.domain.BattleSearchDto(br.id, br.title, br.content, au.nickname, r.id, br.progress) " +
             "from Participant p " +
-            "join p.battleRoom br join br.route r join br.adminUser au " +
+            "join fetch p.battleRoom br join fetch br.route r join fetch br.adminUser au " +
             "where p.users.id = :userId")
     List<BattleSearchDto> findAllBattleByUser(@Param("userId") Long userId);
+
+    // BattleRoomId & UserId 와 Matching 되는 Participant 조회 Query
+    @Query("select p from Participant p where p.battleRoom.id = :battleRoomId and p.users.id = :userId")
+    Optional<Participant> findParticipantByBattleAndUser(@Param("battleRoomId") Long battleRoomId,
+                                                         @Param("userId") Long userId);
+
+    // battleRoom 에 등록된 모든 ClimbingData 조회 Query
+    @Query("select new climbing.climbBack.battleRoom.domain.BattleDataDto(" +
+            "cd.id, u.nickname, cd.success, cd.climbingTime) " +
+            "from Participant p " +
+            "join fetch p.climbingData cd join fetch cd.users u " +
+            "where p.battleRoom.id = :battleRoomId")
+    List<BattleDataDto> findBattleDtoById(@Param("battleRoomId") Long battleRoomId);
 }

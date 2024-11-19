@@ -21,4 +21,10 @@ public interface BattleRoomRepository extends JpaRepository<BattleRoom, Long> {
             "from BattleRoom br join fetch br.route r join fetch br.adminUser au " +
             "where br.crewId = :crewId")
     List<BattleRoom> findAllRoomByCrew(@Param("crewId") Long crewId);
+
+    // BattleRoom 기본 조회 Query
+    @Query("select br " +
+            "from BattleRoom br join fetch br.route r join fetch br.adminUser au " +
+            "where br.id = :battleRoomId")
+    BattleRoom findBattleRoomInfo(@Param("battleRoomId") Long battleRoomId);
 }

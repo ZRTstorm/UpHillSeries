@@ -20,6 +20,9 @@ public class Users {
     // User Nickname
     private String nickname;
 
+    // User Profile 사진
+    private String profile;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 }

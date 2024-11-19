@@ -16,6 +16,9 @@ public class BattleSearchDto {
     // BattleRoom Title
     private String title;
 
+    // BattleRoom Content
+    private String content;
+
     // BattleRoom Admin
     private String adminName;
 

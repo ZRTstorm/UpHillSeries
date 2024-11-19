@@ -1,14 +1,12 @@
 package climbing.climbBack.battleRoom.controller;
 
-import climbing.climbBack.battleRoom.domain.BattleCreateDto;
-import climbing.climbBack.battleRoom.domain.BattleRegisterDto;
-import climbing.climbBack.battleRoom.domain.BattleRoom;
-import climbing.climbBack.battleRoom.domain.BattleSearchDto;
+import climbing.climbBack.battleRoom.domain.*;
 import climbing.climbBack.battleRoom.service.BattleRoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -124,5 +122,39 @@ public class BattleRoomController {
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    // BattleRoom 기본 정보 조회 Controller
+    @GetMapping("/{battleRoomId}")
+    @Operation(summary = "배틀룸 조회", description = "배틀룸 기본 정보를 조회 한다")
+    public BattleSearchDto infoBattleRoom(
+            @Parameter(description = "조회 하고자 하는 배틀룸 ID") @PathVariable Long battleRoomId) {
+
+        return battleRoomService.battleInfo(battleRoomId);
+    }
+
+    // Participant - ClimbingData 삽입 Controller
+    @PostMapping("/{userId}/{battleRoomId}/{climbingDataId}")
+    @Operation(summary = "등반 기록 대회 등록", description = "등반 기록을 대회에 등록 한다")
+    public ResponseEntity<?> entryBattle(
+            @Parameter(description = "요청을 보내는 APP User 의 ID") @PathVariable Long userId,
+            @Parameter(description = "조회 하고자 하는 배틀룸 ID") @PathVariable Long battleRoomId,
+            @Parameter(description = "등록 하고자 하는 등반 기록 ID") @PathVariable Long climbingDataId) {
+
+        try {
+            battleRoomService.entryBattle(battleRoomId, userId, climbingDataId);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    // BattleRoom 에 등록된 모든 ClimbingData 조회 Controller
+    @GetMapping("/{battleRoomId}/climbingData")
+    @Operation(summary = "배틀 대회 기록 조회", description = "배틀에 등록된 모든 등반 기록을 조회 한다")
+    public List<BattleDataDto> getBattleData(
+            @Parameter(description = "조회 하고자 하는 배틀룸 ID") @PathVariable Long battleRoomId) {
+
+        return battleRoomService.getAllBattleData(battleRoomId);
     }
 }

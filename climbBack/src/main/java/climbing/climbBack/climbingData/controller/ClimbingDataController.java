@@ -108,7 +108,7 @@ public class ClimbingDataController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 등반 기록 전체 조회 Controller

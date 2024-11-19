@@ -46,6 +46,9 @@ public class UsersController {
             // 사용자 이메일 추출
             String email = decodedToken.getEmail();
 
+            // 사용자 이름 추출
+            String name = decodedToken.getName();
+
             // DB 에서 사용자 조회
             Optional<Users> userOpt = usersService.getUserByUid(uid);
 
@@ -54,6 +57,7 @@ public class UsersController {
                 Users newUser = new Users();
                 newUser.setUid(uid);
                 newUser.setEmail(email);
+                newUser.setNickname(name);
                 newUser.setRole(UserRole.USER);
 
                 Users users = usersService.saveUsers(newUser);

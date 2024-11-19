@@ -61,6 +61,9 @@ public class ClimbingDataService {
 
         // 등반 기록 임시 저장소 저장
         climbingDataMap.put(routeId, climbingData);
+
+        // 등반 시작 알림 메시지
+        entryQueueService.notifyToUser(userId, "StartToClimbing");
     }
 
     // 등반 성공 기록 저장 서비스

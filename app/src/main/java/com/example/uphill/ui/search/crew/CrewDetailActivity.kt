@@ -1,8 +1,12 @@
 package com.example.uphill.ui.search.crew;
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.example.uphill.R
 import com.example.uphill.databinding.ActivityCrewDetailBinding
+import com.example.uphill.ui.search.SearchFragment
 
 class CrewDetailActivity : AppCompatActivity() {
 
@@ -22,5 +26,15 @@ class CrewDetailActivity : AppCompatActivity() {
         binding.crewName.text = crewName
         binding.crewAdminId.text = crewAdminId
         binding.crewNumber.text = "Crew Members: $crewNumber"
+
+        val join_button = findViewById<Button>(R.id.button14)
+        join_button.setOnClickListener {
+            //TODO 서버에 크루조인
+
+            val searchFragment = SearchFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.navigation_search, searchFragment) // fragmentContainer는 FrameLayout ID
+                .commit()
+        }
     }
 }

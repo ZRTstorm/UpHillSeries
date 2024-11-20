@@ -7,6 +7,31 @@
     android:layout_height="match_parent"
     tools:context=".ui.record.QueueActivity">
 
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="41dp"
+        android:layout_marginBottom="43dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/imageView5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="46dp"
+        android:src="@drawable/logo"
+        app:layout_constraintBottom_toTopOf="@+id/textView6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
     <Button
         android:id="@+id/button9"
         android:layout_width="wrap_content"
@@ -29,13 +54,14 @@
         app:layout_constraintStart_toEndOf="@+id/button9" />
 
     <TextView
-        android:id="@+id/countdown_text"
+        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="309dp"
-        android:text="10"
-        android:textSize="48sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="72dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toTopOf="@+id/button9"
+        app:layout_constraintStart_toEndOf="@+id/button9" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

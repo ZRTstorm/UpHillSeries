@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.uphill.R
 import com.example.uphill.databinding.FragmentSearchBinding
+import android.content.Context
+import android.util.Log
+import org.json.JSONObject
 
 class SearchFragment : Fragment() {
 
@@ -23,46 +24,92 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val informationViewModel =
-            ViewModelProvider(this).get(SearchViewModel::class.java)
-
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // TODO 서버에서 받아와 POST리스트에 넣도록 변경
-        val list = ArrayList<Post>()
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-        list.add(Post(R.drawable.logo))
-
-        // 어댑터 초기화
-        searchAdapter = SearchAdapter(list)
-
-        // RecyclerView 설정
+        // RecyclerView 및 어댑터 초기화
+        val crewList = loadCrews(requireContext())
+        searchAdapter = SearchAdapter(crewList)
         binding.searchRecycle.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = searchAdapter
         }
 
+        // SearchView 초기화 및 리스너 설정
+        binding.searchView.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    searchAdapter.filter(it) // 검색어로 필터링
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    searchAdapter.filter(it) // 텍스트 변경 시 필터링
+                }
+                return true
+            }
+        })
+
         return root
+    }
+
+    // JSON 파일 읽기
+    private fun readJsonFile(context: Context, fileName: String): String {
+        return context.assets.open(fileName).bufferedReader().use { it.readText() }
+    }
+
+    // JSON 파일 목록 가져오기
+    private fun getJsonFilesFromAssets(context: Context, folder: String = "crew"): List<String> {
+        return context.assets.list(folder)?.filter { it.endsWith(".json") } ?: emptyList()
+    }
+
+
+
+    // JSON 데이터 파싱
+    private fun parseJsonToCrew(jsonString: String): Crew {
+        val jsonObject = JSONObject(jsonString)
+        val crewId = jsonObject.getInt("crew_id")
+        val crewName = jsonObject.getString("crew_name")
+        val crewAdminId = jsonObject.getString("crew_adminId")
+        val crewMember = jsonObject.getJSONObject("crew_member").toMap()
+        val crewNumber = jsonObject.getInt("crew_number")
+
+        return Crew(crewId, crewName, crewAdminId, crewMember.toString(), crewNumber)
+    }
+
+    // JSONObject -> Map 확장 함수
+    private fun JSONObject.toMap(): Map<String, String> {
+        val map = mutableMapOf<String, String>()
+        val keys = keys()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            map[key] = getString(key)
+        }
+        return map
+    }
+
+    // Crews 로드
+    private fun loadCrews(context: Context): ArrayList<Crew> {
+        val list = ArrayList<Crew>()
+
+        // JSON 파일 이름 동적으로 가져오기
+        val jsonFiles = getJsonFilesFromAssets(context, "crew")
+        jsonFiles.forEach { fileName ->
+            val jsonContent = readJsonFile(context, "crew/$fileName")
+            val crew = parseJsonToCrew(jsonContent)
+            if (crew != null) list.add(crew)
+        }
+
+
+        Log.d("SearchAdapter", "Item count: ${list.size}")
+        return list
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-}
 
-// Post 데이터 클래스 정의
-data class Post(val imageResId: Int)
-
-fun searchcrew(){
-    //TODO 서버와 연결 필요
 }

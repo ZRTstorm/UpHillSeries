@@ -24,6 +24,8 @@ playServicesAuth = "21.2.0"
 playServicesBasement = "18.4.0"
 activity = "1.9.3"
 zxingAndroidEmbedded = "3.6.0"
+legacySupportV4 = "1.0.0"
+fragmentKtx = "1.5.6"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -56,6 +58,8 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 play-services-basement = { group = "com.google.android.gms", name = "play-services-basement", version.ref = "playServicesBasement" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

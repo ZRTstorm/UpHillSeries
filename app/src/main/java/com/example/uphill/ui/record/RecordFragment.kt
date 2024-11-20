@@ -47,10 +47,10 @@ class RecordFragment : Fragment() {
                             val routeId = jsonObject.getInt("routeId")
                             UserInfo.capturedRouteId = routeId
 
-                            // queueActivity로 이동
-                            // val intent = Intent(requireContext(), QueueActivity::class.java)
-                            // .putExtra("routeId", routeId)
-                            // startActivity(intent)
+                             // queueActivity로 이동
+                             val intent = Intent(requireContext(), QueueActivity::class.java)
+                             .putExtra("routeId", routeId)
+                             startActivity(intent)
                         } else {
                             Toast.makeText(requireContext(), "routeId가 포함되지 않은 QR 코드입니다.", Toast.LENGTH_SHORT).show()
                         }

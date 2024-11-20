@@ -10,7 +10,7 @@
     android:background="#5078DCFF">
 
     <TextView
-        android:id="@+id/crew_title"
+        android:id="@+id/crewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
@@ -20,12 +20,12 @@
         android:textColor="#AA000000"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/crew_description"
+        app:layout_constraintBottom_toTopOf="@+id/crewDescription"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/crew_description"
+        android:id="@+id/crewDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="78dp"
@@ -36,5 +36,5 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crew_title" />
+        app:layout_constraintTop_toBottomOf="@+id/crewTitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

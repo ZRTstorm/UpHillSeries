@@ -7,4 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".ui.search.crew.CrewDetailActivity">
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="29dp"
+        tools:layout_editor_absoluteY="31dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="28dp"
+        tools:layout_editor_absoluteY="71dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

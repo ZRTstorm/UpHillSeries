@@ -32,39 +32,22 @@ class QueueActivity : AppCompatActivity() {
 
         val routeId: Int = UserInfo.capturedRouteId?:1
 
-        val countdownTextView: TextView = findViewById(R.id.countdown_text)
-        countdownTextView.text = "10"
 
         // 거절 버튼 클릭 리스너 설정
-        val rejectButton = findViewById<Button>(R.id.button10)
+        val rejectButton = findViewById<Button>(R.id.button9)
         rejectButton.setOnClickListener {
             rejectEntry()
         }
         // 수락 버튼 클릭 리스너 설정
-        val acceptButton = findViewById<Button>(R.id.button9)
+        val acceptButton = findViewById<Button>(R.id.button10)
         acceptButton.setOnClickListener {
-            acceptEntry()
+            acceptEntry(routeId)
         }
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
                 rejectEntry()
             }
         })
-
-        val timer = object : CountDownTimer(10000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                countdownTextView.text = (millisUntilFinished / 1000).toString()
-            }
-            override fun onFinish() {
-                if(!isFinishing){
-                    rejectEntry()
-                }
-            }
-        }
-        timer.start()
-
-
-
     }
     private fun rejectEntry(){
         val httpClient = HttpClient()
@@ -77,23 +60,15 @@ class QueueActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
-    private fun acceptEntry(){
+    private fun acceptEntry(routeId: Int){
         Log.d("QueueActivity", "accept_button clicked")
-        routeRegistration()
+        routeRegistration(routeId)
     }
 
 
-    private fun navigateToRecordFragment() {
-        // RecordFragment로 이동
-        val recordFragment = RecordFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.navigation_record, recordFragment) // fragmentContainer는 FrameLayout ID
-            .addToBackStack(null) // 뒤로가기 버튼을 누르면 이전 상태로 돌아가도록 설정
-            .commit()
-    }
-    private fun routeRegistration(){
+    private fun routeRegistration(routeId: Int){
         // TODO 서버와 연결
-        val intent = Intent(this,AcceptActivity::class.java)
+        val intent = Intent(this,AcceptActivity::class.java).putExtra("routeId", routeId)
         startActivity(intent)
     }
 

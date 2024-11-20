@@ -1,0 +1,11 @@
+{
+    "crew_id": 3,
+    "crew_name": "Example Crew3",
+    "crew_adminId": "admin3",
+    "crew_member": {
+        "member1": "John Doe",
+        "member2": "Jane Doe"
+    },
+    "crew_number": 2
+}
+

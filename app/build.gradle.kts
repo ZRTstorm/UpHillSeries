@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.fragment.ktx)
 
 
     testImplementation(libs.junit)

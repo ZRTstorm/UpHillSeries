@@ -32,7 +32,7 @@ data class ClimbingDataItem(
     }
     fun getClimbingTimeString():String{
         var ret = ""
-        var sec = climbingTime
+        var sec = climbingTime/1000
         if(sec>3600){
             val hour = sec/3600
             sec/=3600

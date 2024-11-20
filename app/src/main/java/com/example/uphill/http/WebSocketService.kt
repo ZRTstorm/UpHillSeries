@@ -62,11 +62,11 @@ class WebSocketService: Service() {
     }
 
     private fun connect() {
+
+
         val entryUrl = "ws://${SocketClient.url}/socket-entry?userId=${UserInfo.userId}"
         val subscriptionUrl = "/queue/notification/${UserInfo.userId}"
         Log.d(TAG, "try connect userId: ${UserInfo.userId}")
-
-
 
         scope.launch {
             session = client.connect(entryUrl)
@@ -105,6 +105,7 @@ class WebSocketService: Service() {
                 SocketClient.handleEndEvent()
             }
             "StartToClimbing" -> {
+                AppStatus.isStart = true
                 SocketClient.climbingStartTime = System.currentTimeMillis()
             }
         }
@@ -118,6 +119,7 @@ class WebSocketService: Service() {
 
         when(receivedMessage.message){
             "successToClimbing" -> {
+                AppStatus.isEnd = true
                 UserInfo.lastClimbingId = receivedMessage.climbingDataId
                 SocketClient.climbingEndTime = System.currentTimeMillis()
                 SocketClient.handleEndEvent()

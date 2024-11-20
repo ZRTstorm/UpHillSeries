@@ -10,19 +10,28 @@ import com.example.httptest2.ClimbingData
 import com.example.uphill.R
 import java.util.Locale
 
-class ClimbingDataAdapter(private val itemList: ClimbingData) : RecyclerView.Adapter<ClimbingDataAdapter.MyViewHolder>() {
+class ClimbingDataAdapter(private val itemList: ClimbingData, private val clickListener: OnItemClickListener) : RecyclerView.Adapter<ClimbingDataAdapter.ViewHolder>() {
 
-    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.item_text)
         val statusCircle: ImageView = itemView.findViewById(R.id.status_circle)
+
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    clickListener.onItemClick(position)
+                }
+            }
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_climbing_data, parent, false)
-        return MyViewHolder(itemView)
+        return ViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = itemList.items[position]
         val str = "루트 번호: ${item.routeId}" +
                 "\n등반 시각: ${String.format(Locale.KOREA, "%02d:%02d",item.getCreatedTime()?.hour,item.getCreatedTime()?.minute)}" +
@@ -38,4 +47,8 @@ class ClimbingDataAdapter(private val itemList: ClimbingData) : RecyclerView.Ada
     }
 
     override fun getItemCount() = itemList.items.size
+
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
 }

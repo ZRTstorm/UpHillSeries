@@ -1,5 +1,6 @@
 package com.example.uphill.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,16 +13,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.httptest2.ClimbingData
 import com.example.httptest2.HttpClient
+import com.example.uphill.data.AppStatus
 import com.example.uphill.data.UserInfo
+import com.example.uphill.data.model.AnimationMovementData
+import com.example.uphill.data.model.MovementData
 import com.example.uphill.databinding.FragmentHomeBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -30,6 +35,9 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     var climbingData:ClimbingData? = null//HttpClient(1).getClimbingData()
+
+    private var httpJob: Job = Job()
+    private val httpScope = CoroutineScope(Dispatchers.IO + httpJob)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,7 +96,26 @@ class HomeFragment : Fragment() {
         val recyclerView: RecyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         val data = climbingData!!.getDateData(date)
-        val adapter = ClimbingDataAdapter(data)
+        val adapter = ClimbingDataAdapter(data, this)
         recyclerView.adapter = adapter
+    }
+
+    override fun onItemClick(position: Int) {
+        Log.d(TAG, "Item clicked at position $position, data: ${climbingData?.items?.get(position)}")
+        val httpClient = HttpClient()
+
+        httpScope.launch {
+            // TODO: test code. Must get climbingDataId from climbingData
+            val data = httpClient.getMovementData(1)
+            if(data!=null){
+                AppStatus.animationData = AnimationMovementData(data)
+            }
+            val intent = Intent(requireContext(), CompareActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    companion object {
+        private const val TAG = "HomeFragment"
     }
 }

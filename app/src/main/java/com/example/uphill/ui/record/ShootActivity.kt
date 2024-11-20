@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import com.example.httptest2.HttpClient
 import com.example.uphill.MainActivity
 import com.example.uphill.R
+import com.example.uphill.data.AppStatus
 import com.example.uphill.http.SocketClient
 import com.example.uphill.objdetection.ActivityDetector
 import com.example.uphill.objdetection.targetFPS
@@ -46,9 +47,6 @@ class ShootActivity : AppCompatActivity() {
 
     private lateinit var handler: Handler
     private val scope = CoroutineScope(Dispatchers.Main + Job())
-
-    private var httpJob: Job = Job()
-    private val httpScope = CoroutineScope(Dispatchers.IO + httpJob)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,8 +120,10 @@ class ShootActivity : AppCompatActivity() {
         return null
     }
     private fun addBitmapToList(bitmap:Bitmap){
-        bitmapArray.add(bitmap)
-        Log.d(TAG, "bitmap size: ${bitmapArray.size}")
+        if(AppStatus.isStart&&!AppStatus.isEnd){
+            bitmapArray.add(bitmap)
+            Log.d(TAG, "bitmap size: ${bitmapArray.size}")
+        }
     }
 
     private fun captureVideo() {
@@ -177,6 +177,8 @@ class ShootActivity : AppCompatActivity() {
                                 recording = null
                                 btnRecord.text = "Record"
                                 btnRecord.isEnabled = true
+
+                                AppStatus.initClimbingStatus()
 
                                 val intent = Intent(this, ResultActivity::class.java)
                                 startActivity(intent)

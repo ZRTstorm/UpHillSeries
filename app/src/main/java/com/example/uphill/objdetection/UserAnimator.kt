@@ -6,10 +6,12 @@ import android.graphics.Bitmap
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import kotlin.math.exp
 import kotlin.math.round
 
 private const val TAG = "USER_ANIMATOR"
 
+// Y position is first, and X position is second
 class UserAnimator(val view:ImageView, val location:ArrayList<DoubleArray>, val climbingRoute: ClimbingRoute) {
     private val basicMagnifier = 4.7
     private var xMagnifier = 4.0
@@ -57,11 +59,11 @@ class UserAnimator(val view:ImageView, val location:ArrayList<DoubleArray>, val 
         xMagnifier=basicMagnifier * expectedXDiff/realXDiff
         yMagnifier=basicMagnifier * expectedYDiff/realYDiff
     }
-    suspend fun calc(){
+    fun calc(){
         val movingPath:ArrayList<DoubleArray> = arrayListOf()
 
         calcMag()
-        for (i:Int in startFrame()..endFrame()){
+        for (i:Int in startFrame()..<endFrame()){
             var y = location[i+1][0] - location[i][0]
             var x = location[i+1][1] - location[i][1]
             y*=yMagnifier
@@ -119,16 +121,27 @@ class UserAnimator(val view:ImageView, val location:ArrayList<DoubleArray>, val 
         animator.start()
 
     }
-    suspend fun startToEndTest(){
+    fun startToEndTest(primeXd: Double, primeYd: Double){
         val duration:Long = 5000
-        var y = location[endFrame()][0] - location[startFrame()][0]
-        var x = location[endFrame()][1] - location[startFrame()][1]
-        y*=yMagnifier
-        x*=xMagnifier
+//        var y = location[endFrame()][0] - location[startFrame()][0]
+//        var x = location[endFrame()][1] - location[startFrame()][1]
+//        y*=yMagnifier
+//        x*=xMagnifier
+
+        val primeX = (primeXd * basicMagnifier).toFloat()
+        val primeY = (primeYd * basicMagnifier).toFloat()
+
+        val expectedXDiff = climbingRoute.end.x - climbingRoute.start.x
+        val expectedYDiff = climbingRoute.end.y - climbingRoute.start.y
+        var y = expectedYDiff * basicMagnifier
+        var x = expectedXDiff * basicMagnifier
+
+        Log.d(TAG, "view: ${view.x}, ${view.y}")
+        Log.d(TAG, "start: $primeX, $primeY")
         Log.d(TAG, "move to $x, $y")
         val path = android.graphics.Path().apply {
-            moveTo(view.x, view.y)
-            lineTo(view.x + x.toFloat(), view.y + y.toFloat())
+            moveTo(primeX, primeY)
+            lineTo(primeX+ x.toFloat(), primeY - y.toFloat())
         }
         val animator = ObjectAnimator.ofFloat(view, View.X, View.Y, path)
         animator.duration = duration

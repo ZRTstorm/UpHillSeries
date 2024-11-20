@@ -11,10 +11,12 @@
         android:id="@+id/videoView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="97dp"
         android:layout_marginBottom="97dp"
         app:layout_constraintBottom_toTopOf="@+id/button12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.7"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

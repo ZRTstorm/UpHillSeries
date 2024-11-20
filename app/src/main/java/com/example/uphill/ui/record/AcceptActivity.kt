@@ -30,11 +30,11 @@ class AcceptActivity : AppCompatActivity() {
         val routeId: Int = UserInfo.capturedRouteId?:1
 
         val countdownTextView: TextView = findViewById(R.id.countdown_text)
-        countdownTextView.text = "11"
+        countdownTextView.text = "10"
 
         Log.d("AcceptActivity", "onCreate called")
 
-        val timer = object : CountDownTimer(11000, 1000) {
+        val timer = object : CountDownTimer(10000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 countdownTextView.text = (millisUntilFinished / 1000).toString()
             }

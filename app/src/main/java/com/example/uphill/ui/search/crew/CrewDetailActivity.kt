@@ -1,22 +1,26 @@
-package com.example.uphill.ui.search.crew
+package com.example.uphill.ui.search.crew;
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.uphill.R
+import com.example.uphill.databinding.ActivityCrewDetailBinding
 
 class CrewDetailActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityCrewDetailBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_crew_detail)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-    }
+        binding = ActivityCrewDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
+        // Intent에서 데이터 수신
+        val crewName = intent.getStringExtra("crew_name") ?: "No Name"
+        val crewAdminId = intent.getStringExtra("crew_admin_id") ?: "Unknown Admin"
+        val crewNumber = intent.getIntExtra("crew_number", 0)
+
+        // 데이터를 UI에 표시
+        binding.crewName.text = crewName
+        binding.crewAdminId.text = crewAdminId
+        binding.crewNumber.text = "Crew Members: $crewNumber"
+    }
 }

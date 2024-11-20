@@ -19,6 +19,7 @@ import com.example.httptest2.HttpClient
 import com.example.uphill.R
 import com.example.uphill.data.AppStatus
 import com.example.uphill.data.UserInfo
+import com.example.uphill.ui.record.AcceptActivity
 import com.example.uphill.ui.record.QueueActivity
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -122,7 +123,7 @@ class WebSocketService: Service() {
     }
 
     private fun showNotification(){
-        val intent = Intent(applicationContext, QueueActivity::class.java).apply {
+        val intent = Intent(applicationContext, AcceptActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)

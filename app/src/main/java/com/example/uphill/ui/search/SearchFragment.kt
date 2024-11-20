@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.uphill.databinding.FragmentSearchBinding
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import com.example.uphill.ui.search.crew.CrewDetailActivity
 import org.json.JSONObject
 
 class SearchFragment : Fragment() {
@@ -29,13 +31,22 @@ class SearchFragment : Fragment() {
 
         // RecyclerView 및 어댑터 초기화
         val crewList = loadCrews(requireContext())
-        searchAdapter = SearchAdapter(crewList)
+        searchAdapter = SearchAdapter(crewList) { crew ->
+            // 클릭 시 CrewDetailActivity로 이동
+            val intent = Intent(requireContext(), CrewDetailActivity::class.java).apply {
+                putExtra("crew_name", crew.crewName)
+                putExtra("crew_admin_id", crew.crewAdminId)
+                putExtra("crew_number", crew.crewNumber)
+            }
+            startActivity(intent)
+        }
+
         binding.searchRecycle.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = searchAdapter
         }
 
-        // SearchView 초기화 및 리스너 설정
+        // SearchView 초기화
         binding.searchView.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
@@ -54,6 +65,7 @@ class SearchFragment : Fragment() {
 
         return root
     }
+
 
     // JSON 파일 읽기
     private fun readJsonFile(context: Context, fileName: String): String {

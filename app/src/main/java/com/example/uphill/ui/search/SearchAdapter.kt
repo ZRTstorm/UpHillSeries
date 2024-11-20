@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.uphill.databinding.ItemSearchrecyclerBinding
 
-class SearchAdapter(private val originalList: ArrayList<Crew>) :
-    RecyclerView.Adapter<SearchAdapter.CustomViewHolder>() {
+class SearchAdapter(
+    private val originalList: ArrayList<Crew>,
+    private val onItemClicked: (Crew) -> Unit // 클릭 콜백 추가
+) : RecyclerView.Adapter<SearchAdapter.CustomViewHolder>() {
 
     private var filteredList: ArrayList<Crew> = ArrayList(originalList)
 
@@ -18,6 +20,11 @@ class SearchAdapter(private val originalList: ArrayList<Crew>) :
         fun bind(item: Crew) {
             binding.crewTitle.text = item.crewName
             binding.crewDescription.text = "크루원: ${item.crewNumber}명"
+
+            // 클릭 이벤트 설정
+            binding.root.setOnClickListener {
+                onItemClicked(item) // 클릭 시 콜백 호출
+            }
         }
     }
 
@@ -30,19 +37,19 @@ class SearchAdapter(private val originalList: ArrayList<Crew>) :
         holder.bind(filteredList[position])
     }
 
-    override fun getItemCount() = filteredList.size
+    override fun getItemCount(): Int = filteredList.size
 
-    // 필터링 로직 추가
     @SuppressLint("NotifyDataSetChanged")
     fun filter(query: String) {
         filteredList = if (query.isEmpty()) {
-            ArrayList(originalList) // 검색어가 비어 있으면 전체 데이터
+            ArrayList(originalList)
         } else {
             originalList.filter {
-                it.crewName.contains(query, ignoreCase = true) // crewTitle 기준 필터링
+                it.crewName.contains(query, ignoreCase = true)
             } as ArrayList<Crew>
         }
-        notifyDataSetChanged() // RecyclerView 갱신
+        notifyDataSetChanged()
     }
 }
+
 

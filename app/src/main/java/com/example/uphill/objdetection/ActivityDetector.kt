@@ -60,6 +60,7 @@ object ActivityDetector {
                 activityDetection.printLocationLogs()
 
                 val httpClient = HttpClient()
+                AppStatus.lastMovementData = activityDetection.getMovementData().deepCopy()
 
                 if(UserInfo.lastClimbingId == null){
                     Log.e(TAG, "lastClimbingId is null")

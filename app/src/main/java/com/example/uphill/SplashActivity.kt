@@ -117,11 +117,6 @@ class SplashActivity : AppCompatActivity() {
                     try{
                         val account = task.getResult(ApiException::class.java)
                         firebaseAuthWithGoogle(account.idToken!!)
-                        Log.d(TAG, "Google sign in success")
-
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
                     }catch (e: ApiException){
                         Log.w(TAG, "Google sign in failed", e)
                     }
@@ -162,6 +157,10 @@ class SplashActivity : AppCompatActivity() {
                     }
 
                     Log.d(TAG, "Firebase Auth Success")
+
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 } else {
                     Log.e(TAG, "Firebase Auth Failed")
                 }

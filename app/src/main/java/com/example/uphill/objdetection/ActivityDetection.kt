@@ -59,7 +59,7 @@ class ActivityDetection {
         // Calc diff
         val diffList = arrayListOf<Mat>()
         for (i in grayFrameArrayList.indices){
-            if (i<2) continue
+            if (i<3) continue
             val dst = Mat()
             Core.absdiff(grayFrameArrayList[i-2], grayFrameArrayList[i], dst)
             //Log.d(TAG,dst.rows().toString()+","+dst.cols().toString())

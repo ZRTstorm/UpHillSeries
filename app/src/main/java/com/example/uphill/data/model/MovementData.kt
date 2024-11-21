@@ -13,4 +13,9 @@ class MovementData : ArrayList<MovementDataItem>(){
         }
         return arrayList
     }
+    fun deepCopy(): MovementData {
+        val data = MovementData()
+        data.addAll(this)
+        return data
+    }
 }

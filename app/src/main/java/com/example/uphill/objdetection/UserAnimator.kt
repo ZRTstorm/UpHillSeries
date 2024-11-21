@@ -155,7 +155,7 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
         return relativeX
     }
     private fun getRelativeLocationY(loc:Int):Float{
-        val relativeY = botY - (loc * (botY - topY) / ActivityDetection.portraitSize.height)
+        val relativeY = botY + (loc * (botY - topY) / ActivityDetection.portraitSize.height)
 
         return relativeY
     }
@@ -167,7 +167,7 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
     }
     private fun getRelativeLocationY(loc:DoubleArray):Float{
         val y = loc[0]
-        val relativeY = botY - (y * (botY-topY)/ActivityDetection.portraitSize.height)
+        val relativeY = botY + (y * (botY-topY)/ActivityDetection.portraitSize.height)
 
         return relativeY.toFloat()
     }

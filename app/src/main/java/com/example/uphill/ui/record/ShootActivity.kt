@@ -123,8 +123,10 @@ class ShootActivity : AppCompatActivity() {
         return null
     }
     private fun addBitmapToList(bitmap:Bitmap){
+        if(AppStatus.isStart && !(AppStatus.isEnd)) {
             bitmapArray.add(getRotatedBitmap(bitmap, rotation.toFloat())!!)
-            Log.d(TAG, "bitmap size: ${bitmapArray.size}")
+        }
+        Log.d("RecordingBitmapSize", "bitmap size: ${bitmapArray.size}")
     }
     private fun getRotatedBitmap(bitmap: Bitmap?, degrees: Float): Bitmap? {
         if (bitmap == null) return null

@@ -50,8 +50,8 @@ class InformationFragment : Fragment() {
             }
         }
         btn2.setOnClickListener {
-            //val intent = Intent(requireContext(), DTestActivity::class.java)
-            //startActivity(intent)
+            val intent = Intent(requireContext(), DTestActivity::class.java)
+            startActivity(intent)
 
         }
         btn3.setOnClickListener {

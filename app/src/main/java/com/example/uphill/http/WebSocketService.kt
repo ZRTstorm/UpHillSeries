@@ -99,7 +99,6 @@ class WebSocketService: Service() {
         Log.d(TAG, "Received message: $message")
         when(message){
             "allowToUseRoute" -> {
-                AppStatus.isStart = true
                 showNotification()
                 //TODO: this is debug code. remove under it.
                 Log.d(TAG, "allowToUseRoute")

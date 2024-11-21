@@ -2,6 +2,7 @@ package com.example.uphill.data
 
 import android.graphics.Bitmap
 import com.example.uphill.data.model.AnimationMovementData
+import com.example.uphill.data.model.MovementData
 import org.opencv.core.Mat
 
 object AppStatus {
@@ -13,6 +14,7 @@ object AppStatus {
 
     var originBitmapList: ArrayList<Bitmap>? = null
     var diffBitmapList: ArrayList<Bitmap>? = null
+    var lastMovementData: MovementData? = null
 
     var isOpenCVInitialized = false
 

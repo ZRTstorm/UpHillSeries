@@ -1,17 +1,17 @@
-package com.example.uphill.ui.search.crew;
+package com.example.uphill.ui.search.crew
 
-import android.content.Intent
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.uphill.R
 import com.example.uphill.databinding.ActivityCrewDetailBinding
-import com.example.uphill.ui.search.SearchFragment
 
 class CrewDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCrewDetailBinding
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCrewDetailBinding.inflate(layoutInflater)
@@ -27,14 +27,11 @@ class CrewDetailActivity : AppCompatActivity() {
         binding.crewAdminId.text = crewAdminId
         binding.crewNumber.text = "Crew Members: $crewNumber"
 
-        val join_button = findViewById<Button>(R.id.button14)
-        join_button.setOnClickListener {
-            //TODO 서버에 크루조인
-
-            val searchFragment = SearchFragment()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.navigation_search, searchFragment) // fragmentContainer는 FrameLayout ID
-                .commit()
+        // Join 버튼 클릭 시
+        val joinButton = findViewById<Button>(R.id.button14)
+        joinButton.setOnClickListener {
+            // TODO: 서버에 크루 조인 로직 구현
+            finish() // 현재 액티비티 종료로 SearchFragment로 복귀
         }
     }
 }

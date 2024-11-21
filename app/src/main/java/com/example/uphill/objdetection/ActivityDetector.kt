@@ -3,6 +3,7 @@ package com.example.uphill.objdetection
 import android.graphics.Bitmap
 import android.util.Log
 import com.example.httptest2.HttpClient
+import com.example.uphill.data.AppStatus
 import com.example.uphill.data.UserInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +49,10 @@ object ActivityDetector {
             Log.d(TAG, "detector start")
             isProcessing = true
             try {
+                AppStatus.originBitmapList = arrayListOf()
+                for (bitmap in bitmapArray){
+                    AppStatus.originBitmapList!!.add(bitmap)
+                }
                 activityDetection.detect(bitmapArray)
                 thumbnail = activityDetection.bitmap
                 isProcessing = false

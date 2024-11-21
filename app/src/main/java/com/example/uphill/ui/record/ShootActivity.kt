@@ -120,10 +120,8 @@ class ShootActivity : AppCompatActivity() {
         return null
     }
     private fun addBitmapToList(bitmap:Bitmap){
-        if(AppStatus.isStart&&!AppStatus.isEnd){
             bitmapArray.add(bitmap)
             Log.d(TAG, "bitmap size: ${bitmapArray.size}")
-        }
     }
 
     private fun captureVideo() {
@@ -140,6 +138,13 @@ class ShootActivity : AppCompatActivity() {
             curRecording.stop()
             recording = null
             btnRecord.text = "Record"
+
+            detectObject()
+            AppStatus.initClimbingStatus()
+
+            val intent = Intent(this, ResultActivity::class.java)
+            startActivity(intent)
+            finish()
 
 
         } else {

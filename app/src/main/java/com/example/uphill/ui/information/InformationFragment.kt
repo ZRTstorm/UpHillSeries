@@ -1,5 +1,6 @@
 package com.example.uphill.ui.information
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import com.example.httptest2.HttpClient
 import com.example.uphill.data.UserInfo
 import com.example.uphill.databinding.FragmentHomeBinding
 import com.example.uphill.databinding.FragmentInformationBinding
+import com.example.uphill.ui.record.ShootActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,12 +40,23 @@ class InformationFragment : Fragment() {
             binding.imageView13.setImageBitmap(UserInfo.photo)
         }
         val btn = binding.button
+        val btn2 = binding.button2
+        val btn3 = binding.button3
 
         btn.setOnClickListener {
             val httpClient = HttpClient()
             scope.launch {
                 httpClient.registerEntry(1)
             }
+        }
+        btn2.setOnClickListener {
+            val intent = Intent(requireContext(), DTestActivity::class.java)
+            startActivity(intent)
+
+        }
+        btn3.setOnClickListener {
+            val intent = Intent(requireContext(), ShootActivity::class.java)
+            startActivity(intent)
         }
 
         return root

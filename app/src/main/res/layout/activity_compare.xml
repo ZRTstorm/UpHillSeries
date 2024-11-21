@@ -19,11 +19,25 @@
     <ImageView
         android:id="@+id/movingView"
         android:layout_width="34dp"
-        android:layout_height="41dp"
-        android:layout_marginStart="60dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="410dp"
         android:layout_marginBottom="280dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/movingView2"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/green_circle" />
+
+    <ImageView
+        android:id="@+id/movingView2"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginBottom="251dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/movingView"
+        app:layout_constraintStart_toStartOf="@+id/movingView"
+        app:layout_constraintTop_toBottomOf="@+id/movingView"
+        app:srcCompat="@drawable/button_background" />
 </androidx.constraintlayout.widget.ConstraintLayout>

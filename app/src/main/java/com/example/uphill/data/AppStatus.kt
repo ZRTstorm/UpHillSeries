@@ -11,6 +11,7 @@ object AppStatus {
 
     var animationData: AnimationMovementData? = null
     var animationData2: AnimationMovementData? = null
+    var animationRouteId: Int? = null
 
     var originBitmapList: ArrayList<Bitmap>? = null
     var diffBitmapList: ArrayList<Bitmap>? = null
@@ -25,5 +26,6 @@ object AppStatus {
     fun initAnimationData(){
         animationData = null
         animationData2 = null
+        animationRouteId = null
     }
 }

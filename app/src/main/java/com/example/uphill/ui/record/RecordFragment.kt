@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.uphill.data.AppStatus
 import com.example.uphill.data.UserInfo
 import com.example.uphill.databinding.FragmentRecordBinding
 import com.google.zxing.integration.android.IntentIntegrator
@@ -49,7 +50,6 @@ class RecordFragment : Fragment() {
 
                              // queueActivity로 이동
                              val intent = Intent(requireContext(), QueueActivity::class.java)
-                             .putExtra("routeId", routeId)
                              startActivity(intent)
                         } else {
                             Toast.makeText(requireContext(), "routeId가 포함되지 않은 QR 코드입니다.", Toast.LENGTH_SHORT).show()

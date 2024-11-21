@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
-class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener {
+class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener, ClimbingDataAdapter.OnItemLongClickListener {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -35,6 +35,7 @@ class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener {
     private val binding get() = _binding!!
 
     var climbingData:ClimbingData? = null//HttpClient(1).getClimbingData()
+    var selectedDayClimbingData: ClimbingData? = null
 
     private var httpJob: Job = Job()
     private val httpScope = CoroutineScope(Dispatchers.IO + httpJob)
@@ -92,28 +93,59 @@ class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener {
 
 
     private fun updateData(date:LocalDate){
+        AppStatus.initAnimationData()
         if(climbingData==null) return
         val recyclerView: RecyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this.context)
-        val data = climbingData!!.getDateData(date)
-        val adapter = ClimbingDataAdapter(data, this)
+        selectedDayClimbingData = climbingData!!.getDateData(date)
+        val adapter = ClimbingDataAdapter(selectedDayClimbingData!!, this, this)
         recyclerView.adapter = adapter
     }
 
     override fun onItemClick(position: Int) {
-        Log.d(TAG, "Item clicked at position $position, data: ${climbingData?.items?.get(position)}")
+        Log.d(TAG, "Item clicked at position $position, data: ${selectedDayClimbingData?.items?.get(position)}")
         val httpClient = HttpClient()
 
         httpScope.launch {
-            // TODO: test code. Must get climbingDataId from climbingData
-            val climbingId = climbingData?.items?.get(position)?.id
+            val climbingId = selectedDayClimbingData?.items?.get(position)?.id
             val data = httpClient.getMovementData(climbingId!!)
             if(data!=null){
-                AppStatus.animationData = AnimationMovementData(data)
+                if(AppStatus.animationRouteId!=null){
+                    if((AppStatus.animationRouteId!!)!=selectedDayClimbingData?.items?.get(position)?.routeId){
+                        Log.d(TAG, "wrong route")
+                        return@launch
+                    }
+                } else{
+                    AppStatus.animationData = AnimationMovementData(data)
+                }
+                AppStatus.animationRouteId = selectedDayClimbingData?.items?.get(position)?.routeId
+            } else{
+                Log.d(TAG, "data is null")
+                AppStatus.animationData = null
+                return@launch
             }
             val intent = Intent(requireContext(), CompareActivity::class.java)
             startActivity(intent)
         }
+    }
+    override fun onItemLongClick(position: Int) {
+        Log.d(TAG, "Item long clicked at position $position, data: ${selectedDayClimbingData?.items?.get(position)}")
+
+        val httpClient = HttpClient()
+
+        httpScope.launch {
+            val climbingId = selectedDayClimbingData?.items?.get(position)?.id
+            val data = httpClient.getMovementData(climbingId!!)
+            if (data != null) {
+                AppStatus.animationRouteId = selectedDayClimbingData?.items?.get(position)?.routeId
+                AppStatus.animationData2 = AnimationMovementData(data)
+                Log.d(TAG, "set animationData2: ${AppStatus.animationData2}")
+            }else{
+                Log.d(TAG, "data is null")
+                return@launch
+            }
+        }
+
     }
 
     companion object {

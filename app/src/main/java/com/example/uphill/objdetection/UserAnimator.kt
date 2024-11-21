@@ -22,10 +22,11 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
     private val topY = parentView.y + parentView.height/2 - parentView.width * 0.75F - view.height/2
     private val botY = parentView.y + parentView.height/2 + parentView.width * 0.75F - view.height/2
     private val leftX = 0.0F - view.width/2.0F
-    private val rightX = (parentView.width - view.width/2).toFloat()
+    private val rightX = parentView.width - view.width/2.0F
 
     var xOffset = 0.0F
     var yOffset = 0.0F
+
 
     var startTime = 0.0
     var endTime = -1.0
@@ -64,6 +65,12 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
 
         Log.d(TAG, "From: (${location[startFrame()][1]},${location[startFrame()][0]})")
         Log.d(TAG, "To  : (${location[endFrame()][1]},${location[endFrame()][0]})")
+        Log.d(TAG, "expectedXDiff: $expectedXDiff")
+        Log.d(TAG, "expectedYDiff: $expectedYDiff")
+        Log.d(TAG, "realXDiff: $realXDiff")
+        Log.d(TAG, "realYDiff: $realYDiff")
+
+
 
         xMagnifier=expectedXDiff/realXDiff
         yMagnifier=expectedYDiff/realYDiff
@@ -71,28 +78,37 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
         Log.d(TAG, "yMagnifier: $yMagnifier")
     }
     fun calc(){
-        val movingPath:ArrayList<DoubleArray> = arrayListOf()
+        val movingPath:ArrayList<FloatArray> = arrayListOf()
+
+        Log.d(TAG, "leftX: $leftX, rightX: $rightX")
+        Log.d(TAG, "topY: $topY, botY: $botY")
 
         calcMag()
 
         location.forEach{
-            val x = (it[1] - location[startFrame()][1]) * xMagnifier
-            val y = (it[0] - location[startFrame()][0]) * yMagnifier
-            movingPath.add(doubleArrayOf(x, y))
+            val x = getRelativeLocationX((it[1] - location[startFrame()][1]) * xMagnifier + climbingRoute.start.x)
+            val y = getRelativeLocationY((it[0] - location[startFrame()][0]) * yMagnifier + climbingRoute.start.y)
+            val floatArray = FloatArray(2)
+            floatArray[0] = y
+            floatArray[1] = x
+            movingPath.add(floatArray)
         }
 
         val startX = getRelativeLocationX(climbingRoute.start.x)
         val startY = getRelativeLocationY(climbingRoute.start.y)
+
         val endX = getRelativeLocationX(climbingRoute.end.x)
         val endY = getRelativeLocationY(climbingRoute.end.y)
 
         val path = android.graphics.Path().apply {
             moveTo(xOffset + startX, yOffset + startY)
             movingPath.forEach{
-                lineTo(xOffset + getRelativeLocationX(it), yOffset + getRelativeLocationY(it))
+                Log.d(TAG, "origin: ${it[1]}, ${it[0]}")
+                lineTo(xOffset + it[1], yOffset + it[0])
             }
 
-            lineTo(endX, endY)
+            lineTo(xOffset + endX, yOffset + endY)
+            Log.d(TAG, "endX: $endX, endY: $endY")
         }
         animator = ObjectAnimator.ofFloat(view, View.X, View.Y, path)
         animator!!.duration = duration * location.size
@@ -155,19 +171,19 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
         return relativeX
     }
     private fun getRelativeLocationY(loc:Int):Float{
-        val relativeY = botY + (loc * (botY - topY) / ActivityDetection.portraitSize.height)
+        val relativeY = botY - (loc * (botY - topY) / ActivityDetection.portraitSize.height)
 
         return relativeY
     }
-    private fun getRelativeLocationX(loc:DoubleArray):Float{
-        val x = loc[1]
+    private fun getRelativeLocationX(loc:Double):Float{
+        val x = loc
         val relativeX = leftX + x * (rightX-leftX)/ActivityDetection.portraitSize.width
 
         return relativeX.toFloat()
     }
-    private fun getRelativeLocationY(loc:DoubleArray):Float{
-        val y = loc[0]
-        val relativeY = botY + (y * (botY-topY)/ActivityDetection.portraitSize.height)
+    private fun getRelativeLocationY(loc:Double):Float{
+        val y = loc
+        val relativeY = botY - (y * (botY-topY)/ActivityDetection.portraitSize.height)
 
         return relativeY.toFloat()
     }

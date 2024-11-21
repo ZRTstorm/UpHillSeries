@@ -1,5 +1,6 @@
 package com.example.uphill.ui.home
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,9 @@ import com.example.httptest2.ClimbingData
 import com.example.uphill.R
 import java.util.Locale
 
-class ClimbingDataAdapter(private val itemList: ClimbingData, private val clickListener: OnItemClickListener) : RecyclerView.Adapter<ClimbingDataAdapter.ViewHolder>() {
+class ClimbingDataAdapter(private val itemList: ClimbingData, private val clickListener: OnItemClickListener, private val longClickListener: OnItemLongClickListener) : RecyclerView.Adapter<ClimbingDataAdapter.ViewHolder>() {
+
+    private var selectedPosition = RecyclerView.NO_POSITION
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.item_text)
@@ -38,6 +41,20 @@ class ClimbingDataAdapter(private val itemList: ClimbingData, private val clickL
                 "\n등반 시간: ${item.getClimbingTimeString()}"
         holder.textView.text = str
 
+        if(selectedPosition == position){
+            holder.itemView.setBackgroundColor(Color.LTGRAY)
+            holder.textView.setTextColor(Color.BLACK)
+        }else{
+            holder.itemView.setBackgroundColor(Color.WHITE)
+            holder.textView.setTextColor(Color.BLACK)
+        }
+        holder.itemView.setOnLongClickListener {
+            selectedPosition = position
+            notifyDataSetChanged()
+            longClickListener.onItemLongClick(position)
+            true
+        }
+
         // 성공 여부에 따라 원의 색상 변경
         if (item.success) {
             holder.statusCircle.setImageResource(R.drawable.green_circle)
@@ -50,5 +67,8 @@ class ClimbingDataAdapter(private val itemList: ClimbingData, private val clickL
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
+    }
+    interface OnItemLongClickListener {
+        fun onItemLongClick(position: Int)
     }
 }

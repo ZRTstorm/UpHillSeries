@@ -13,6 +13,7 @@ import com.example.uphill.data.model.BattleRoomRegistryReceivedData
 import com.example.uphill.data.model.BattleRoomRegistrySendData
 import com.example.uphill.data.model.ClimbingRoute
 import com.example.uphill.data.model.MovementData
+import com.example.uphill.data.model.RouteImageData
 import com.example.uphill.data.model.UserId
 import com.example.uphill.http.SocketClient
 import com.example.uphill.http.WebSocketService
@@ -93,12 +94,13 @@ class HttpClient {
         post(url, json, "Register route success")
     }
     fun registerCenter(){}
-    fun getRouteImage(routeId:Int):Bitmap?{
+    fun getRouteImageData(routeId:Int):RouteImageData?{
         val url = "$server_name/routes/$routeId/routeImage"
-        fun op(response:Response):Bitmap? {
+        fun op(response:Response):RouteImageData? {
             Log.d(TAG, "Get route image success")
             if (response.body == null) return null
-            return Convert.base64ToBitmap(response.body!!.string())
+            val routeImageData = Gson().fromJson(response.body!!.string(), RouteImageData::class.java)
+            return routeImageData
         }
         return get(url, ::op)
     }
@@ -231,6 +233,7 @@ class HttpClient {
     }
     fun getMovementData(climbingDataId: Int):MovementData?{
         val url = server_name+"/bodyMovement/$climbingDataId"
+        Log.d(TAG, "Get movement data. dataId: $climbingDataId")
         fun op(response:Response):MovementData?{
             Log.d(TAG, "Get movement data success")
             if (response.body == null) return null

@@ -73,9 +73,7 @@ class HttpClient {
     // route-Controller
     fun uploadRouteImage(image: Bitmap, routeId:Int){
         val url = "$server_name/routes/$routeId/upload"
-        val json = """
-            "${Convert.bitmapToBase64(image)}"
-        """
+        val json = Convert.bitmapToBase64(image)
 
         post(url,json, "Upload route image success")
     }

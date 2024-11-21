@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
@@ -44,6 +45,7 @@ class ShootActivity : AppCompatActivity() {
     private var cameraExcutor = Executors.newSingleThreadExecutor()
     private var bitmapArray = arrayListOf<Bitmap>()
     private var lastCaptureTime: Long = 0
+    private var rotation = 0
 
     private lateinit var handler: Handler
     private val scope = CoroutineScope(Dispatchers.Main + Job())
@@ -92,6 +94,7 @@ class ShootActivity : AppCompatActivity() {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
             imageAnalysis.setAnalyzer(cameraExcutor) { image ->
+                rotation = image.imageInfo.rotationDegrees
 
                 val currentTime = System.currentTimeMillis()
                 if (recording != null && currentTime - lastCaptureTime >= 1000 / targetFPS) {
@@ -120,8 +123,15 @@ class ShootActivity : AppCompatActivity() {
         return null
     }
     private fun addBitmapToList(bitmap:Bitmap){
-            bitmapArray.add(bitmap)
+            bitmapArray.add(getRotatedBitmap(bitmap, rotation.toFloat())!!)
             Log.d(TAG, "bitmap size: ${bitmapArray.size}")
+    }
+    private fun getRotatedBitmap(bitmap: Bitmap?, degrees: Float): Bitmap? {
+        if (bitmap == null) return null
+        if (degrees == 0F) return bitmap
+        val m = Matrix()
+        m.setRotate(degrees, bitmap.width.toFloat() / 2, bitmap.height.toFloat() / 2)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, m, true)
     }
 
     private fun captureVideo() {
@@ -178,6 +188,7 @@ class ShootActivity : AppCompatActivity() {
                                     Toast.makeText(this, "Cannot find the path", Toast.LENGTH_SHORT).show()
                                     Log.e(TAG, "Cannot find the path")
                                 }
+
 
                                 recording = null
                                 btnRecord.text = "Record"

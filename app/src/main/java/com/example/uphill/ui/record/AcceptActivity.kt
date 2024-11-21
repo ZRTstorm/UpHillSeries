@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 class AcceptActivity : AppCompatActivity() {
     private var httpJob: Job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + httpJob)
+
+    private var isFinished = false
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +41,7 @@ class AcceptActivity : AppCompatActivity() {
                 countdownTextView.text = (millisUntilFinished / 1000).toString()
             }
             override fun onFinish() {
-                if(!isFinishing){
+                if(!isFinished){
                     rejectEntry()
                 }
             }
@@ -51,6 +53,8 @@ class AcceptActivity : AppCompatActivity() {
         start_button.setOnClickListener {
             val intent = Intent(this,ShootActivity::class.java)
             startActivity(intent)
+            isFinished = true
+            finish()
         }
         val reject_button = findViewById<Button>(R.id.button7)
         reject_button.setOnClickListener {
@@ -66,7 +70,13 @@ class AcceptActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
+
         startActivity(intent)
         finish()
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        isFinished = true
+    }
+
 }

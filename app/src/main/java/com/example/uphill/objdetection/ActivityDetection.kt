@@ -5,6 +5,8 @@ import android.util.Log
 import org.opencv.core.Core
 import android.media.MediaMetadataRetriever
 import android.widget.Toast
+import com.bumptech.glide.util.Util
+import com.example.uphill.data.AppStatus
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.MovementDataItem
 import org.opencv.android.Utils
@@ -65,6 +67,12 @@ class ActivityDetection {
         }
         if (diffList.size>0) {
             Log.d(TAG, "Video diff calc successes. #"+diffList.size)
+            AppStatus.diffBitmapList = arrayListOf()
+            for (mat in diffList) {
+                val bitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888)
+                Utils.matToBitmap(mat, bitmap)
+                AppStatus.diffBitmapList!!.add(bitmap)
+            }
         } else {
             Log.e(TAG, "Video diff calc fail")
             return null
@@ -143,6 +151,10 @@ class ActivityDetection {
         }
         if (grayFrameArrayList.size>0) {
             Log.d(TAG, "Video grayscale successes. #"+grayFrameArrayList.size)
+            AppStatus.originBitmapList = arrayListOf()
+            for (bitmap in frameArrayList){
+                AppStatus.originBitmapList!!.add(bitmap)
+            }
         } else {
             Log.e(TAG, "Video grayscale fail")
             return null
@@ -158,10 +170,13 @@ class ActivityDetection {
         }
         if (diffList.size>0) {
             Log.d(TAG, "Video diff calc successes. #"+diffList.size)
+
+
         } else {
             Log.e(TAG, "Video diff calc fail")
             return null
         }
+
 
         return diffList
     }

@@ -63,11 +63,11 @@ class WebSocketService: Service() {
     }
 
     private fun connect() {
+
+
         val entryUrl = "ws://${SocketClient.url}/socket-entry?userId=${UserInfo.userId}"
         val subscriptionUrl = "/queue/notification/${UserInfo.userId}"
         Log.d(TAG, "try connect userId: ${UserInfo.userId}")
-
-
 
         scope.launch {
             session = client.connect(entryUrl)
@@ -105,12 +105,9 @@ class WebSocketService: Service() {
                 Log.d(TAG, "allowToUseRoute")
                 SocketClient.handleEndEvent()
             }
-            "start" -> {
+            "StartToClimbing" -> {
+                AppStatus.isStart = true
                 SocketClient.climbingStartTime = System.currentTimeMillis()
-            }
-            "end" -> {
-                SocketClient.climbingEndTime = System.currentTimeMillis()
-                SocketClient.handleEndEvent()
             }
         }
     }
@@ -120,6 +117,15 @@ class WebSocketService: Service() {
         val receivedMessage = gson.fromJson(message, com.example.uphill.data.model.climbingMessage::class.java)
         Log.d(TAG, "message: ${receivedMessage.message}")
         Log.d(TAG, "id: ${receivedMessage.climbingDataId}")
+
+        when(receivedMessage.message){
+            "successToClimbing" -> {
+                AppStatus.isEnd = true
+                UserInfo.lastClimbingId = receivedMessage.climbingDataId
+                SocketClient.climbingEndTime = System.currentTimeMillis()
+                SocketClient.handleEndEvent()
+            }
+        }
     }
 
     private fun showNotification(){
@@ -159,8 +165,5 @@ class WebSocketService: Service() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        val httpClient = HttpClient()
-        httpClient.rejectEntry()
-        sessionListenerJob.cancel()
     }
 }

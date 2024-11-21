@@ -66,6 +66,11 @@ dependencies {
 
     // activity detection
     implementation(project(":sdk"))
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    implementation ("jp.wasabeef:glide-transformations:4.3.0")
+
+
+
     // background processing
     implementation(libs.kotlinx.coroutines.core)
     implementation (libs.kotlinx.coroutines.android)
@@ -101,4 +106,5 @@ dependencies {
 
     // background work
     implementation ("androidx.work:work-runtime-ktx:2.7.1")
+
 }

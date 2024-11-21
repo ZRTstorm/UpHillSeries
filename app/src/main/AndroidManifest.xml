@@ -77,6 +77,10 @@
         <activity
             android:name=".ui.record.CustomCaptureActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.home.CompareActivity"
+            android:exported="false" />
+        <activity android:name=".ui.information.DTestActivity"
+            android:exported="false" />
 
         <service
             android:name=".http.WebSocketService"

@@ -143,4 +143,22 @@ public class RouteService {
         // 인코딩 이미지 데이터를 루트에 저장
         route.setImageData(encodedImage);
     }
+
+    // 루프 좌표 수정 서비스
+    @Transactional
+    public void editRouteSet(RouteSetDto setDto, Long routeId) {
+        // 루트 조회
+        Optional<Route> routeOpt = routeRepository.findById(routeId);
+
+        if (routeOpt.isEmpty()) {
+            log.info("Route is not in DB = {}", routeId);
+            throw new IllegalStateException("Route is not in DB");
+        }
+
+        Route route = routeOpt.get();
+        route.setStartX(setDto.getStartX());
+        route.setStartY(setDto.getStartY());
+        route.setEndX(setDto.getEndX());
+        route.setEndY(setDto.getEndY());
+    }
 }

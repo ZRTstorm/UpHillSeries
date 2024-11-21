@@ -65,7 +65,13 @@ public class BattleRoomService {
         String shortUUID = uuid.replace("-", "").substring(0, 8);
         battleRoom.setParticipantCode(shortUUID);
 
-        return battleRoomRepository.save(battleRoom);
+        // BattleRoom 생성
+        BattleRoom savedBattle = battleRoomRepository.save(battleRoom);
+
+        // admin 참여자 설정
+        participantBattle(userId, savedBattle.getId());
+
+        return savedBattle;
     }
 
     // BattleRoom 삭제 서비스
@@ -187,6 +193,7 @@ public class BattleRoomService {
         // BattleRoom -> BattleSearchDto 변환
         BattleSearchDto searchDto = new BattleSearchDto();
 
+        searchDto.setBattleRoomId(battleRoom.getId());
         searchDto.setTitle(battleRoom.getTitle());
         searchDto.setContent(battleRoom.getContent());
         searchDto.setAdminName(battleRoom.getAdminUser().getNickname());

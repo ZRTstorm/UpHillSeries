@@ -12,7 +12,7 @@ public interface BattleRoomRepository extends JpaRepository<BattleRoom, Long> {
 
     // 참여 코드 사용 BattleRoom 조회 Query
     @Query("select br " +
-            "from BattleRoom br join fetch Route  r join fetch Users u " +
+            "from BattleRoom br " +
             "where br.participantCode = :participantCode")
     Optional<BattleRoom> searchRoomForCode(@Param("participantCode") String participantCode);
 

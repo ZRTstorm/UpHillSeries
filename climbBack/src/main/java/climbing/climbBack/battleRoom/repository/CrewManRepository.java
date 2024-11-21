@@ -33,8 +33,8 @@ public interface CrewManRepository extends JpaRepository<CrewMan, Long> {
     void deleteByUserId(@Param("userId") Long userId);
 
     // 크루원 전체 조회 Query
-    @Query("select new climbing.climbBack.battleRoom.domain.CrewManSearchDto(cm.id, u.nickname) " +
-            "from CrewMan cm join fetch Crew c join fetch Users u " +
-            "where c.id = :crewId")
+    @Query("select new climbing.climbBack.battleRoom.domain.CrewManSearchDto(cm.id, cm.users.nickname) " +
+            "from CrewMan cm " +
+            "where cm.crew.id = :crewId")
     List<CrewManSearchDto> findAllCrewMans(@Param("crewId") Long crewId);
 }

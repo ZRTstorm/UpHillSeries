@@ -162,7 +162,7 @@ public class RouteController {
 
     // 암장 이미지 조회 Controller
     @GetMapping("/{climbingCenterId}/centerImage")
-    @Operation(summary = "암장 이미지 조회", description = "암장 ID 와 일치하는 이미지 데이터를 조회한다")
+    @Operation(summary = "암장 이미지 조회", description = "암장 ID 와 일치 하는 이미지 데이터를 조회한다")
     public CenterImageDto getCenterImage(
             @Parameter(description = "조회할 암장 ID") @PathVariable Long climbingCenterId) {
 
@@ -170,6 +170,22 @@ public class RouteController {
             return routeService.getCenterImage(climbingCenterId);
         } catch (RuntimeException e) {
             return new CenterImageDto();
+        }
+    }
+
+    // 루트 좌표 수정 Controller
+    @PatchMapping("/{routeId}/sets")
+    @Operation(summary = "루트 좌표 수정", description = "루트의 시작 끝 좌표값을 수정 한다")
+    public ResponseEntity<?> setRouteSets(
+            @Parameter(description = "좌표값 수정 하려는 루트 ID") @PathVariable Long routeId,
+            @RequestBody RouteSetDto routeSetDto) {
+
+        try {
+            routeService.editRouteSet(routeSetDto, routeId);
+
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

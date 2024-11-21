@@ -20,9 +20,9 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     void deleteAllByBattleRoomId(@Param("battleRoomId") Long battleRoomId);
 
     // User 가 참여한 모든 BattleRoom 정보 조회 Query
-    @Query("select distinct new climbing.climbBack.battleRoom.domain.BattleSearchDto(br.id, br.title, br.content, au.nickname, r.id, br.progress) " +
+    @Query("select new climbing.climbBack.battleRoom.domain.BattleSearchDto(" +
+            "p.battleRoom.id, p.battleRoom.title, p.battleRoom.content, p.battleRoom.adminUser.nickname, p.battleRoom.route.id, p.battleRoom.progress) " +
             "from Participant p " +
-            "join fetch p.battleRoom br join fetch br.route r join fetch br.adminUser au " +
             "where p.users.id = :userId")
     List<BattleSearchDto> findAllBattleByUser(@Param("userId") Long userId);
 
@@ -35,7 +35,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     @Query("select new climbing.climbBack.battleRoom.domain.BattleDataDto(" +
             "cd.id, u.nickname, cd.success, cd.climbingTime) " +
             "from Participant p " +
-            "join fetch p.climbingData cd join fetch cd.users u " +
+            "join p.climbingData cd join cd.users u " +
             "where p.battleRoom.id = :battleRoomId")
     List<BattleDataDto> findBattleDtoById(@Param("battleRoomId") Long battleRoomId);
 }

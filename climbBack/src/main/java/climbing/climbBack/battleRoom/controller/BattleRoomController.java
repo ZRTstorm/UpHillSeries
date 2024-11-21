@@ -75,7 +75,7 @@ public class BattleRoomController {
     }
 
     // 참여 코드 사용 BattleRoom 조회 Controller
-    @GetMapping("/{participantCode}")
+    @GetMapping("/participant/{participantCode}")
     @Operation(summary = "참여 코드 조회", description = "참여 코드를 사용 하여 배틀룸을 조회한다")
     public ResponseEntity<?> getRoomForCode(
             @Parameter(description = "검색을 위해 입력한 참여 코드") @PathVariable String participantCode) {
@@ -90,7 +90,7 @@ public class BattleRoomController {
     }
 
     // User 가 참여한 모든 BattleRoom 조회 Controller
-    @GetMapping("/{userId}/all")
+    @GetMapping("/users/{userId}/all")
     @Operation(summary = "User 참여 대회 전체 조회", description = "User 가 참여 했던 모든 배틀룸을 조회한다")
     public List<BattleSearchDto> getAllRoomForUser(
             @Parameter(description = "요청을 보내는 APP User 의 ID") @PathVariable Long userId) {
@@ -99,7 +99,7 @@ public class BattleRoomController {
     }
 
     // Crew 에서 공유 하는 모든 BattleRoom 조회 Controller
-    @GetMapping("/{crewId}/all")
+    @GetMapping("/crews/{crewId}/all")
     @Operation(summary = "Crew 대회 전체 조회", description = "Crew 에 공개한 모든 배틀룸을 조회한다")
     public List<BattleSearchDto> getAllRoomForCrew(
             @Parameter(description = "요청을 보내는 APP User 의 Crew ID") @PathVariable Long crewId) {
@@ -125,7 +125,7 @@ public class BattleRoomController {
     }
 
     // BattleRoom 기본 정보 조회 Controller
-    @GetMapping("/{battleRoomId}")
+    @GetMapping("/{battleRoomId}/info")
     @Operation(summary = "배틀룸 조회", description = "배틀룸 기본 정보를 조회 한다")
     public BattleSearchDto infoBattleRoom(
             @Parameter(description = "조회 하고자 하는 배틀룸 ID") @PathVariable Long battleRoomId) {

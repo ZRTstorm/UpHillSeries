@@ -14,12 +14,12 @@ public interface CrewRepository extends JpaRepository<Crew, Long> {
 
     // Crew 전체 조회 Query
     @Query("select new climbing.climbBack.battleRoom.domain.CrewSearchDto(c.id, c.crewName, c.content, au.nickname) " +
-            "from Crew c join fetch c.adminUser au")
+            "from Crew c join c.adminUser au")
     List<CrewSearchDto> findAllCrew();
 
     // Crew 이름 Crew 조회 Query
     @Query("select new climbing.climbBack.battleRoom.domain.CrewSearchDto(c.id, c.crewName, c.content, au.nickname) " +
-            "from Crew c join fetch c.adminUser au " +
+            "from Crew c join c.adminUser au " +
             "where c.crewName = :crewName")
     List<CrewSearchDto> findCrewByName(@Param("crewName") String crewName);
 

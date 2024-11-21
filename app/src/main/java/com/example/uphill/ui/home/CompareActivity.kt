@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.uphill.R
 import com.example.uphill.data.AppStatus
 import com.example.uphill.data.UserInfo
@@ -49,17 +50,28 @@ class CompareActivity : AppCompatActivity() {
     }
     private fun showSingleAnimation(){
         val movingView = findViewById<ImageView>(R.id.movingView)
-        movingView.setImageBitmap(UserInfo.photo)
+        val parentView = findViewById<ImageView>(R.id.imageView4)
+        //movingView.setImageBitmap(UserInfo.photo)
 
-        val testClimbingRoute = ClimbingRoute(null, Point(0, 0), Point(30, 30))
+        Glide.with(this)
+            .load(UserInfo.photo)
+            .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+            .into(movingView)
 
-        val userAnimator = UserAnimator(movingView, AppStatus.animationData!!.movementData.convertToDoubleArrayList(), testClimbingRoute)
-
+        val testClimbingRoute = ClimbingRoute(null, Point(0, 0), Point(200, 300))
 
         Log.d(TAG, "calc start")
-        userAnimator.calc()
-        //userAnimator.animator?.start()
-        userAnimator.startToEndTest(50.0, 50.0)
+        parentView.post{
+            val userAnimator = UserAnimator(movingView, parentView, AppStatus.animationData!!.movementData.convertToDoubleArrayList(), testClimbingRoute)
+
+
+            Log.d(TAG, "parent view: ${parentView.width}, ${parentView.height}, location: ${parentView.x}, ${parentView.y}")
+            Log.d(TAG, "moving view: ${movingView.width}, ${movingView.height}, location: ${movingView.x}, ${movingView.y}")
+            val firstX = movingView.x
+            val firstY = movingView.y
+            userAnimator.calc()
+            userAnimator.start()
+        }
 
     }
     private fun showCompareAnimation(){

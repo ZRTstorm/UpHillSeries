@@ -106,7 +106,8 @@ class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener {
 
         httpScope.launch {
             // TODO: test code. Must get climbingDataId from climbingData
-            val data = httpClient.getMovementData(1)
+            val climbingId = climbingData?.items?.get(position)?.id
+            val data = httpClient.getMovementData(climbingId!!)
             if(data!=null){
                 AppStatus.animationData = AnimationMovementData(data)
             }

@@ -1,5 +1,5 @@
 {
-  "installationFolder": "C:\\Users\\kys87\\AndroidStudioProjects\\Uphill_front\\sdk\\build\\intermediates\\prefab_package\\release\\prefab",
+  "installationFolder": "/Users/yskim/StudioProjects/Uphill_front/sdk/build/intermediates/prefab_package/release/prefab",
   "gradlePath": ":sdk",
   "packageInfo": {
     "packageName": "sdk",
@@ -8,7 +8,7 @@
     "modules": [
       {
         "moduleName": "opencv_jni_shared",
-        "moduleHeaders": "C:\\Users\\kys87\\AndroidStudioProjects\\Uphill_front\\sdk\\native\\jni\\include",
+        "moduleHeaders": "/Users/yskim/StudioProjects/Uphill_front/sdk/native/jni/include",
         "moduleExportLibraries": [],
         "abis": []
       }

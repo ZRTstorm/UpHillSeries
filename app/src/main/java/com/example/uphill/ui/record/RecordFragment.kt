@@ -48,6 +48,7 @@ class RecordFragment : Fragment() {
                             val routeId = jsonObject.getInt("routeId")
                             UserInfo.capturedRouteId = routeId
 
+
                              // queueActivity로 이동
                              val intent = Intent(requireContext(), QueueActivity::class.java)
                              startActivity(intent)

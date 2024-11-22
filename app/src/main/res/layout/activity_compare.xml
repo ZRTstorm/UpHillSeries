@@ -14,7 +14,7 @@
         app:layout_constraintDimensionRatio="w,1:1.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/img" />
+         />
 
     <ImageView
         android:id="@+id/movingView"

@@ -65,7 +65,7 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:label="@string/loading"
+            android:label="@string/app_name"
             android:theme="@style/Theme.Uphill.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

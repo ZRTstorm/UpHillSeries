@@ -50,10 +50,10 @@ class QueueActivity : AppCompatActivity() {
         })
     }
     private fun rejectEntry(){
-        val httpClient = HttpClient()
-        scope.launch {
-            httpClient.rejectEntry()
-        }
+//        val httpClient = HttpClient()
+//        scope.launch {
+//            httpClient.rejectEntry()
+//        }
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
@@ -68,7 +68,12 @@ class QueueActivity : AppCompatActivity() {
 
     private fun routeRegistration(routeId: Int){
         // TODO 서버와 연결
-        val intent = Intent(this,AcceptActivity::class.java).putExtra("routeId", routeId)
+        val httpClient = HttpClient()
+        scope.launch {
+            httpClient.registerEntry(routeId)
+        }
+        Toast.makeText(this, "${routeId}번 경로 등록 완료", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this,MainActivity::class.java)
         startActivity(intent)
     }
 

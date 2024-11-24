@@ -7,6 +7,7 @@ import android.graphics.Interpolator
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
+import android.view.animation.PathInterpolator
 import android.widget.ImageView
 import kotlin.math.round
 
@@ -105,16 +106,31 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
 
         val path = android.graphics.Path().apply {
             moveTo(xOffset + startX, yOffset + startY)
-            movingPath.forEach{
-                lineTo(xOffset + it[1], yOffset + it[0])
+//            movingPath.forEach{
+//                lineTo(xOffset + it[1], yOffset + it[0])
+//            }
+            for (i:Int in 0..<movingPath.size-1){
+                val x1 = movingPath[i][1]
+                val y1 = movingPath[i][0]
+                val x2 = movingPath[i+1][1]
+                val y2 = movingPath[i+1][0]
+
+                val controlX = x1 - (x2-x1)/3
+                val controlY = y1 - (y2-y1)/3
+
+                quadTo(controlX, controlY, x1, y1)
             }
+            lineTo(movingPath[movingPath.size-1][1], movingPath[movingPath.size-1][0])
 
             lineTo(xOffset + endX, yOffset + endY)
             Log.d(TAG, "endX: $endX, endY: $endY")
         }
+
+        val pathInterpolator = PathInterpolator(0.42f, 0f, 0.58f, 1f)
         animator = ObjectAnimator.ofFloat(view, View.X, View.Y, path)
         animator!!.duration = duration * location.size
         animator!!.interpolator = LinearInterpolator()
+        //animator!!.interpolator = pathInterpolator
 
         view.visibility = View.VISIBLE
 

@@ -2,6 +2,8 @@ package com.example.uphill.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +39,8 @@ class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener, Climbi
     var climbingData:ClimbingData? = null//HttpClient(1).getClimbingData()
     var selectedDayClimbingData: ClimbingData? = null
 
+    var selectedDate = LocalDate.now()
+
     private var httpJob: Job = Job()
     private val httpScope = CoroutineScope(Dispatchers.IO + httpJob)
 
@@ -53,8 +57,8 @@ class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener, Climbi
 
         val calendarView = binding.calendarView
         calendarView.setOnDateChangeListener{ view, year, month, dayofMonth ->
+            selectedDate = LocalDate.of(year, month + 1, dayofMonth)
             if (climbingData!=null) {
-                val selectedDate = LocalDate.of(year, month + 1, dayofMonth)
                 updateData(selectedDate)
             }
         }
@@ -68,8 +72,10 @@ class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener, Climbi
                     Log.d("test", data.toString())
                 }
                 climbingData = data
-                withContext(Dispatchers.Main){
-                    updateData(LocalDate.now())
+                val handler = Handler(Looper.getMainLooper())
+                handler.post{
+                    updateData(selectedDate)
+                    Log.d(TAG, "get data success, $selectedDate")
                 }
             }
 

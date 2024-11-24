@@ -95,11 +95,13 @@ class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener, Climbi
     private fun updateData(date:LocalDate){
         AppStatus.initAnimationData()
         if(climbingData==null) return
-        val recyclerView: RecyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(this.context)
-        selectedDayClimbingData = climbingData!!.getDateData(date)
-        val adapter = ClimbingDataAdapter(selectedDayClimbingData!!, this, this)
-        recyclerView.adapter = adapter
+        if(isAdded){
+            val recyclerView: RecyclerView = binding.recyclerView
+            recyclerView.layoutManager = LinearLayoutManager(this.context)
+            selectedDayClimbingData = climbingData!!.getDateData(date)
+            val adapter = ClimbingDataAdapter(selectedDayClimbingData!!, this, this)
+            recyclerView.adapter = adapter
+        }
     }
 
     override fun onItemClick(position: Int) {

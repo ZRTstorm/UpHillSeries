@@ -115,9 +115,9 @@ class HomeFragment : Fragment(), ClimbingDataAdapter.OnItemClickListener, Climbi
                         Log.d(TAG, "wrong route")
                         return@launch
                     }
-                } else{
-                    AppStatus.animationData = AnimationMovementData(data)
                 }
+                AppStatus.animationData = AnimationMovementData(data)
+
                 AppStatus.animationRouteId = selectedDayClimbingData?.items?.get(position)?.routeId
             } else{
                 Log.d(TAG, "data is null")

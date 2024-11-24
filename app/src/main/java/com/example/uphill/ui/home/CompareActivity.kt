@@ -68,7 +68,8 @@ class CompareActivity : AppCompatActivity() {
             .into(movingView)
         httpScope.launch {
             setBackgroundImage()
-            val climbingRoute = ClimbingRoute(null, Point(routeImageData!!.startX, routeImageData!!.startY), Point(routeImageData!!.endX, routeImageData!!.endY))
+            //val climbingRoute = ClimbingRoute(null, Point(routeImageData!!.startX, routeImageData!!.startY), Point(routeImageData!!.endX, routeImageData!!.endY))
+            val climbingRoute = ClimbingRoute(null, Point(55, 110), Point(120, 255))
             Log.d(TAG, "calc start")
             parentView.post{
                 val userAnimator = UserAnimator(movingView, parentView, AppStatus.animationData!!.movementData.convertToDoubleArrayList(), climbingRoute)
@@ -96,7 +97,8 @@ class CompareActivity : AppCompatActivity() {
 
         httpScope.launch {
             setBackgroundImage()
-            val climbingRoute = ClimbingRoute(null, Point(routeImageData!!.startX, routeImageData!!.startY), Point(routeImageData!!.endX, routeImageData!!.endY))
+            //val climbingRoute = ClimbingRoute(null, Point(routeImageData!!.startX, routeImageData!!.startY), Point(routeImageData!!.endX, routeImageData!!.endY))
+            val climbingRoute = ClimbingRoute(null, Point(55, 110), Point(120, 255))
             Log.d(TAG, "calc start")
             parentView.post{
                 val userAnimator = UserAnimator(movingView, parentView, AppStatus.animationData!!.movementData.convertToDoubleArrayList(), climbingRoute)

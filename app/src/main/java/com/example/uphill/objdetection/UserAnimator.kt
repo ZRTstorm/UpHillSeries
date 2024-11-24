@@ -86,11 +86,14 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
         calcMag()
 
         location.forEach{
+            Log.d(TAG, "origin path: ${it[1]}, ${it[0]}")
             val x = getRelativeLocationX((it[1] - location[startFrame()][1]) * xMagnifier + climbingRoute.start.x)
             val y = getRelativeLocationY((it[0] - location[startFrame()][0]) * yMagnifier + climbingRoute.start.y)
             val floatArray = FloatArray(2)
             floatArray[0] = y
             floatArray[1] = x
+            Log.d(TAG, "path: ${floatArray[1]}, ${floatArray[0]}")
+
             movingPath.add(floatArray)
         }
 
@@ -103,7 +106,6 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
         val path = android.graphics.Path().apply {
             moveTo(xOffset + startX, yOffset + startY)
             movingPath.forEach{
-                Log.d(TAG, "origin: ${it[1]}, ${it[0]}")
                 lineTo(xOffset + it[1], yOffset + it[0])
             }
 

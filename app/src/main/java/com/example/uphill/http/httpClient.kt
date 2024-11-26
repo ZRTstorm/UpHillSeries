@@ -7,15 +7,20 @@ import android.util.Log
 import androidx.core.content.ContextCompat.startForegroundService
 import com.example.uphill.data.Convert
 import com.example.uphill.data.UserInfo
+import com.example.uphill.data.model.BattleRoomClimbingData
 import com.example.uphill.data.model.BattleRoomData
 import com.example.uphill.data.model.BattleRoomDataList
+import com.example.uphill.data.model.BattleRoomDetailInfo
 import com.example.uphill.data.model.BattleRoomRegistryReceivedData
 import com.example.uphill.data.model.BattleRoomRegistrySendData
 import com.example.uphill.data.model.ClimbingRoute
+import com.example.uphill.data.model.CrewInfo
+import com.example.uphill.data.model.CrewMan
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.RouteImageData
+import com.example.uphill.data.model.SearchedCrewInfo
+import com.example.uphill.data.model.SimpleCrewInfo
 import com.example.uphill.data.model.UserId
-import com.example.uphill.http.SocketClient
 import com.example.uphill.http.WebSocketService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -94,6 +99,19 @@ class HttpClient {
         post(url, json, "Register route success")
     }
     fun registerCenter(){}
+    fun setRouteLocation(routeId: Int, startX:Int, startY:Int, endX:Int, endY:Int){
+        val url = "$server_name/routes/$routeId/sets"
+        val json = """
+            "startX": $startX,
+            "startY": $startY,
+            "endX": $endX,
+            "endY": $endY
+        """.trimIndent()
+        fun op(response:Response){
+            Log.d(TAG, "Set route location success")
+        }
+        patch(url, json, ::op)
+    }
     fun getRouteImageData(routeId:Int):RouteImageData?{
         val url = "$server_name/routes/$routeId/routeImage"
         fun op(response:Response):RouteImageData? {
@@ -242,8 +260,108 @@ class HttpClient {
         }
         return get(url, ::op)
     }
+    // crew-controller
+    fun createCrew(crewName: String, content: String, password: String){
+        val url = "$server_name/crew/${UserInfo.userId}"
+        val json = """
+            {
+                crewName: "$crewName",
+                content: "$content",
+                password: "$password"
+            }
+        """
+        post(url, json, "Create crew success")
+    }
+    fun registerCrew(crewId: Int, password: String){
+        val url = "$server_name/crew/crewMan/${UserInfo.userId}/register"
+        val json = """
+            {
+                crewId: $crewId,
+                password: "$password"
+            }
+        """
+        post(url, json, "Register crew success")
+    }
+    fun getCrewImage(crewId: Int):Bitmap?{
+        val url="$server_name/crew/$crewId/image"
+        fun op(response:Response):Bitmap?{
+            Log.d(TAG, "Get crew image success")
+            if (response.body == null) return null
+            return Convert.base64ToBitmap(response.body!!.string())
+        }
+        return get(url, ::op)
+    }
+    fun putCrewImage(crewId: Int, image: Bitmap){
+        val url = "$server_name/crew/$crewId/image"
+        val json = Convert.bitmapToBase64(image)
+        fun op(response:Response){
+            Log.d(TAG, "Put crew image success")
+        }
+        patch(url, json, ::op)
+    }
+    fun getCrewInfo(): CrewInfo?{
+        val url = "$server_name/crew/${UserInfo.userId}/crewInfo"
+        fun op(response:Response):CrewInfo?{
+            Log.d(TAG, "Get crew info success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            return Gson().fromJson(jsonResponse, CrewInfo::class.java)
+        }
+        return get(url, ::op)
+    }
+    fun searchCrews(crewName: String):SearchedCrewInfo?{
+        val url = "$server_name/crew/$crewName"
+        fun op(response:Response):SearchedCrewInfo? {
+            Log.d(TAG, "Search crews success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            return Gson().fromJson(jsonResponse, SearchedCrewInfo::class.java)
+        }
+        return get(url, ::op)
+    }
+    fun getCrewManList(crewId: Int):List<CrewMan>?{
+        val url = "$server_name/crew/$crewId/crewMan"
+        fun op(response:Response):List<CrewMan>? {
+            Log.d(TAG, "Get crew man list success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            val listType = object:TypeToken<List<CrewMan>>() {}.type
+            return Gson().fromJson(jsonResponse, listType)
+        }
+        return get(url, ::op)
+    }
+    fun getAllCrew(): SimpleCrewInfo?{
+        val url = "$server_name/crew/all"
+        fun op(response:Response):SimpleCrewInfo? {
+            Log.d(TAG, "Get all crew success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            return Gson().fromJson(jsonResponse, SimpleCrewInfo::class.java)
+        }
+        return get(url, ::op)
+    }
+    fun deleteCrew(crewId: Int){
+        val url = "$server_name/crew/$crewId/${UserInfo.userId}"
+        delete(url, "Delete crew success")
+    }
+    fun unsubscribeCrew(){
+        val url = "$server_name/crew/crewMan/${UserInfo.userId}"
+        delete(url, "Unsubscribe crew success")
+    }
 
     // battle-room-controller
+    fun postBattleRoomClimbingData(battleRoomId: Int, climbingDataId: Int){
+        val url = "$server_name/battleRoom/${UserInfo.userId}/$battleRoomId/$climbingDataId"
+        post(url, "","Post battle room success")
+    }
+    fun participantBattleRoom(participantCode: String){
+        val room = getBattleRoomFromCode(participantCode)
+        if(room==null){
+            Log.d(TAG, "room is null")
+            return
+        }
+        participantBattleRoom(room.battleRoomId)
+    }
     fun participantBattleRoom(battleRoomId: Int){
         val url = "$server_name/battleRoom/${UserInfo.userId}/$battleRoomId/participant"
         fun op(response: Response){
@@ -269,8 +387,28 @@ class HttpClient {
         }
         patch(url, ::op)
     }
-    fun getAllBattleRoom():BattleRoomDataList?{
-        val url = "$server_name/battleRoom/${UserInfo.userId}/all"
+    fun getBattleRoomDetailInfo(battleRoomId: Int):BattleRoomDetailInfo?{
+        val url = "$server_name/battleRoom/$battleRoomId/info"
+        fun op(response: Response):BattleRoomDetailInfo?{
+            Log.d(TAG, "get battle room detail info success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            return Gson().fromJson(jsonResponse, BattleRoomDetailInfo::class.java)
+        }
+        return get(url, ::op)
+    }
+    fun getBattleRoomClimbingData(battleRoomId: Int): BattleRoomClimbingData?{
+        val url = "$server_name/battleRoom/$battleRoomId/climbingData"
+        fun op(response: Response):BattleRoomClimbingData?{
+            Log.d(TAG, "get battle room climbing data success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            return Gson().fromJson(jsonResponse, BattleRoomClimbingData::class.java)
+        }
+        return get(url, ::op)
+    }
+    fun getUserBattleRoom():BattleRoomDataList?{
+        val url = "$server_name/battleRoom/users/${UserInfo.userId}/all"
         fun op(response: Response):BattleRoomDataList?{
             Log.d(TAG, "get all success")
             if (response.body == null) return BattleRoomDataList()
@@ -280,7 +418,7 @@ class HttpClient {
         }
         return get(url, ::op)
     }
-    fun getRoomFromCode(participantCode: String): BattleRoomData?{
+    fun getBattleRoomFromCode(participantCode: String): BattleRoomData?{
         val url = "$server_name/battleRoom/$participantCode"
         fun op(response: Response):BattleRoomData?{
             Log.d(TAG, "get room from code success")
@@ -290,7 +428,7 @@ class HttpClient {
         }
         return get(url, ::op)
     }
-    fun getRoomFromCrewId(crewId: Int):BattleRoomDataList?{
+    fun getBattleRoomFromCrewId(crewId: Int):BattleRoomDataList?{
         val url = "$server_name/battleRoom/$crewId/all"
         fun op(response: Response):BattleRoomDataList?{
             Log.d(TAG, "get room from crewId success")
@@ -304,19 +442,7 @@ class HttpClient {
     }
     fun deleteBattleRoom(battleRoomId: Int){
         val url = "$server_name/battleRoom/${UserInfo.userId}/$battleRoomId"
-        val request = Request.Builder()
-            .url(url)
-            .delete()
-            .build()
-
-        try {
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                Log.d(TAG, "Delete room success")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        delete(url, "Delete battle room success")
     }
 
 
@@ -459,6 +585,32 @@ class HttpClient {
             Log.e(TAG, "Error Occurred", e)
             return null
         }
+    }
+    private fun <R> delete(url: String, operation:(Response) -> R): R?{
+        val json = """ """
+        val requestBody: RequestBody = json.toRequestBody("application/json".toMediaType())
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("accept", "*/*")
+            .delete(requestBody)
+            .build()
+
+        try {
+
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                return operation(response)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error Occurred", e)
+            return null
+        }
+    }
+    private fun delete(url: String, successLogText: String){
+        fun op(response:Response){
+            Log.d(TAG, successLogText)
+        }
+        delete(url, ::op)
     }
 
 

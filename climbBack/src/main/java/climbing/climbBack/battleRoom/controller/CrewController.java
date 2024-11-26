@@ -1,8 +1,6 @@
 package climbing.climbBack.battleRoom.controller;
 
-import climbing.climbBack.battleRoom.domain.CrewCreateDto;
-import climbing.climbBack.battleRoom.domain.CrewManSearchDto;
-import climbing.climbBack.battleRoom.domain.CrewSearchDto;
+import climbing.climbBack.battleRoom.domain.*;
 import climbing.climbBack.battleRoom.service.CrewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -43,20 +41,26 @@ public class CrewController {
     }
 
     // 크루원 등록 Controller
-    @PostMapping("/{crewId}/crewMan/{userId}")
+    @PostMapping("/crewMan/{userId}/register")
     @Operation(summary = "크루 가입", description = "User 가 크루에 가입 한다")
     public ResponseEntity<?> registerCrewMan(
             @Parameter(description = "요청을 보내는 APP User 의 ID") @PathVariable Long userId,
-            @Parameter(description = "가입 하고자 하는 Crew 의 ID") @PathVariable Long crewId) {
+            @RequestBody CrewManRegisterDto registerDto) {
 
         // User 가 이미 크루에 가입 했는지 확인
         if (crewService.checkCrewIn(userId)) {
             log.info("CrewMan Register : User already register in Other Crew = {}", userId);
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        // Crew 가입 password 가 일치하는 지 확인
+        if (!crewService.checkCrewPassword(registerDto)) {
+            log.info("CrewMan Register : User Password is not Acceptable = {}", userId);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("PasswordNot");
         }
 
         // 크루원 등록
-        Long crewManId = crewService.createCrewMan(userId, crewId);
+        Long crewManId = crewService.createCrewMan(userId, registerDto.getCrewId());
 
         // 응답 객체 생성
         Map<String, Long> response = new HashMap<>();
@@ -109,6 +113,23 @@ public class CrewController {
             @Parameter(description = "검색 하고자 하는 크루 이름") @PathVariable String crewName) {
 
         return crewService.searchCrewByName(crewName);
+    }
+
+    // User ID - Crew Data 조회 Controller
+    @GetMapping("/{userId}/crewInfo")
+    @Operation(summary = "유저 크루 동기화 조회", description = "유저가 가입한 크루 정보를 조회한다")
+    public ResponseEntity<?> searchUserCrewInfo(
+            @Parameter(description = "요청을 보내는 APP User 의 ID") @PathVariable Long userId) {
+
+        // User 가 크루에 등록 되어 있는 지 검사
+        if (!crewService.checkCrewIn(userId)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is Not in Crew");
+        }
+
+        // User - CrewInfo 조회
+        CrewInfoDto crewInfoDto = crewService.searchUserCrewInfo(userId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(crewInfoDto);
     }
 
     // 크루 - 크루원 전체 조회

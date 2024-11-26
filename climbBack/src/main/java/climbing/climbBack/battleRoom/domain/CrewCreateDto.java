@@ -10,4 +10,6 @@ public class CrewCreateDto {
     private String crewName;
     // 크루 설명
     private String content;
+    // 크루 가입 password
+    private String password;
 }

@@ -222,4 +222,31 @@ public class BattleRoomService {
     public List<BattleDataDto> getAllBattleData(Long battleRoomId) {
         return participantRepository.findBattleDtoById(battleRoomId);
     }
+
+    // BattleRoom info 서비스
+    @Transactional(readOnly = true)
+    public BattleInfoDto getBattleRoomInfo(Long battleRoomId) {
+        // BattleRoom 조회
+        Optional<BattleRoom> battleOpt = battleRoomRepository.findById(battleRoomId);
+        if (battleOpt.isEmpty()) throw new IllegalStateException("BattleInNone");
+
+        BattleRoom battleRoom = battleOpt.get();
+        BattleInfoDto battleInfoDto = new BattleInfoDto();
+
+        battleInfoDto.setBattleRoomId(battleRoom.getId());
+        battleInfoDto.setTitle(battleRoom.getTitle());
+        battleInfoDto.setContent(battleRoom.getContent());
+        battleInfoDto.setParticipantCode(battleRoom.getParticipantCode());
+        battleInfoDto.setAdminId(battleRoom.getAdminUser().getId());
+        battleInfoDto.setAdminName(battleRoom.getAdminUser().getNickname());
+        battleInfoDto.setRouteId(battleRoom.getRoute().getId());
+        battleInfoDto.setCrewId(battleRoom.getCrewId());
+        battleInfoDto.setProgress(battleRoom.getProgress());
+        battleInfoDto.setStartTime(battleRoom.getStartTime());
+
+        List<ParticipantDto> participantDtoList = participantRepository.findParticipantByBattle(battleRoomId);
+        battleInfoDto.setParticipantList(participantDtoList);
+
+        return battleInfoDto;
+    }
 }

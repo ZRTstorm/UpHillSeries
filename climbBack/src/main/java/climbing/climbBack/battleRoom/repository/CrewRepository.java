@@ -27,4 +27,5 @@ public interface CrewRepository extends JpaRepository<Crew, Long> {
     @Query("select c.crewIcon from Crew c where c.id = :crewId")
     Optional<String> findCrewImage(@Param("crewId") Long crewId);
 
+    // Crew
 }

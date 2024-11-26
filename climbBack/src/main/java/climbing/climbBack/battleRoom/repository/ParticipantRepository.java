@@ -3,6 +3,7 @@ package climbing.climbBack.battleRoom.repository;
 import climbing.climbBack.battleRoom.domain.BattleDataDto;
 import climbing.climbBack.battleRoom.domain.BattleSearchDto;
 import climbing.climbBack.battleRoom.domain.Participant;
+import climbing.climbBack.battleRoom.domain.ParticipantDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,4 +39,10 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
             "join p.climbingData cd join cd.users u " +
             "where p.battleRoom.id = :battleRoomId")
     List<BattleDataDto> findBattleDtoById(@Param("battleRoomId") Long battleRoomId);
+
+    // BattleRoom 에 참여한 모든 Participant 조회
+    @Query("select new climbing.climbBack.battleRoom.domain.ParticipantDto(p.id, p.users.nickname) " +
+            "from Participant p " +
+            "where p.battleRoom.id = :battleRoomId")
+    List<ParticipantDto> findParticipantByBattle(@Param("battleRoomId") Long battleRoomId);
 }

@@ -3,6 +3,7 @@ package climbing.climbBack.battleRoom.service;
 import climbing.climbBack.battleRoom.domain.*;
 import climbing.climbBack.battleRoom.repository.CrewManRepository;
 import climbing.climbBack.battleRoom.repository.CrewRepository;
+import climbing.climbBack.user.domain.Users;
 import climbing.climbBack.user.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class CrewService {
         crew.setCrewName(createDto.getCrewName());
         crew.setContent(createDto.getContent());
         crew.setAdminUser(usersRepository.getReferenceById(userId));
+
+        // Crew Password 등록
+        crew.setPassword(createDto.getPassword());
 
         Crew savedCrew = crewRepository.save(crew);
 
@@ -71,6 +75,50 @@ public class CrewService {
         return Objects.equals(crew.getAdminUser().getId(), userId);
     }
 
+    // Crew password 가 일치하는지 확인
+    @Transactional(readOnly = true)
+    public boolean checkCrewPassword(CrewManRegisterDto registerDto) {
+        // Crew 조회
+        Optional<Crew> crewOpt = crewRepository.findById(registerDto.getCrewId());
+        if (crewOpt.isEmpty()) return false;
+
+        // Crew Password 와 입력 Password 가 일치 하는지 확인
+        Crew crew = crewOpt.get();
+        return Objects.equals(crew.getPassword(), registerDto.getPassword());
+    }
+
+    // User - CrewInfo 조회 서비스
+    @Transactional(readOnly = true)
+    public CrewInfoDto searchUserCrewInfo(Long userId) {
+        CrewInfoDto crewInfoDto = new CrewInfoDto();
+
+        // user 가 등록된 Crew ID 조회
+        Long crewId = crewManRepository.findCrewIdByUserId(userId);
+
+        // Crew 조회
+        Optional<Crew> crewOpt = crewRepository.findById(crewId);
+        if (crewOpt.isEmpty()) throw new IllegalStateException("NotCrew");
+
+        Crew crew = crewOpt.get();
+        crewInfoDto.setCrewId(crewId);
+        crewInfoDto.setCrewName(crew.getCrewName());
+        crewInfoDto.setCrewContent(crew.getContent());
+        crewInfoDto.setPassword(crew.getPassword());
+
+        // User Info 조회
+        Optional<Users> userOpt = usersRepository.findById(userId);
+        if (userOpt.isEmpty()) throw new IllegalStateException("NotUser");
+
+        crewInfoDto.setPilotId(userId);
+        crewInfoDto.setPilotName(userOpt.get().getNickname());
+
+        // crewMan List 조회
+        List<CrewManSearchDto> crewManDtoList = searchAllCrewMans(crewId);
+        crewInfoDto.setCrewManList(crewManDtoList);
+
+        return crewInfoDto;
+    }
+
     // Crew 삭제 서비스
     @Transactional
     public void deleteCrew(Long crewId) {
@@ -85,6 +133,13 @@ public class CrewService {
     @Transactional
     public void deleteCrewMan(Long userId) {
         crewManRepository.deleteByUserId(userId);
+    }
+
+    // User 가 가입한 Crew ID 조회 서비스
+    @Transactional(readOnly = true)
+    public Long searchUserInCrew(Long userId) {
+        // User 가 가입한 Crew ID 조회
+        return crewManRepository.findCrewIdByUserId(userId);
     }
 
     // Crew 전체 조회 서비스

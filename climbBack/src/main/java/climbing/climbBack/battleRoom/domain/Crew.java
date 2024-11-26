@@ -17,6 +17,9 @@ public class Crew {
     private String crewName;
     private String content;
 
+    // Crew Password
+    private String password;
+
     // 크루 Pilot
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

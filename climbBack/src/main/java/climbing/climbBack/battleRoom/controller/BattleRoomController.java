@@ -127,10 +127,10 @@ public class BattleRoomController {
     // BattleRoom 기본 정보 조회 Controller
     @GetMapping("/{battleRoomId}/info")
     @Operation(summary = "배틀룸 조회", description = "배틀룸 기본 정보를 조회 한다")
-    public BattleSearchDto infoBattleRoom(
+    public BattleInfoDto infoBattleRoom(
             @Parameter(description = "조회 하고자 하는 배틀룸 ID") @PathVariable Long battleRoomId) {
 
-        return battleRoomService.battleInfo(battleRoomId);
+        return battleRoomService.getBattleRoomInfo(battleRoomId);
     }
 
     // Participant - ClimbingData 삽입 Controller

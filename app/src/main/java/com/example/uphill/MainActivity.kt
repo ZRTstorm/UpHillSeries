@@ -1,8 +1,6 @@
 package com.example.uphill
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +10,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.uphill.databinding.ActivityMainBinding
-import org.opencv.android.OpenCVLoader
 
 const val TAG = "UPHILL"
 

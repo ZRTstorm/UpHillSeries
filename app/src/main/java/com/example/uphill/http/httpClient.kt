@@ -19,7 +19,7 @@ import com.example.uphill.data.model.CrewMan
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.RouteImageData
 import com.example.uphill.data.model.SearchedCrewInfo
-import com.example.uphill.data.model.SimpleCrewInfo
+import com.example.uphill.data.model.SimpleCrewInfoItem
 import com.example.uphill.data.model.UserId
 import com.example.uphill.http.WebSocketService
 import com.google.gson.Gson
@@ -239,7 +239,7 @@ class HttpClient {
                 if (!response.isSuccessful) throw IOException("Unexpected code $response")
                 Log.d(TAG, "Notify fail success")
             }
-            } catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e(TAG, "Error Occurred", e)
         }
     }
@@ -330,13 +330,13 @@ class HttpClient {
         }
         return get(url, ::op)
     }
-    fun getAllCrew(): SimpleCrewInfo?{
+    fun getAllCrew(): List<SimpleCrewInfoItem>? {
         val url = "$server_name/crew/all"
-        fun op(response:Response):SimpleCrewInfo? {
+        fun op(response: Response): List<SimpleCrewInfoItem>? {
             Log.d(TAG, "Get all crew success")
             if (response.body == null) return null
             val jsonResponse = response.body?.string()
-            return Gson().fromJson(jsonResponse, SimpleCrewInfo::class.java)
+            return Gson().fromJson(jsonResponse, object : TypeToken<List<SimpleCrewInfoItem>>() {}.type)
         }
         return get(url, ::op)
     }

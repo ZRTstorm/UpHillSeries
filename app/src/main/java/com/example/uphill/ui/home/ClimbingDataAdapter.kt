@@ -1,5 +1,6 @@
 package com.example.uphill.ui.home
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +35,7 @@ class ClimbingDataAdapter(private val itemList: ClimbingData, private val clickL
         return ViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         val item = itemList.items[position]
         val str = "루트 번호: ${item.routeId}" +
                 "\n등반 시각: ${String.format(Locale.KOREA, "%02d:%02d",item.getCreatedTime()?.hour,item.getCreatedTime()?.minute)}" +

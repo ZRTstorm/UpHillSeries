@@ -3,17 +3,17 @@
 
 
         <item
-            android:id="@+id/crew_member"
+            android:id="@+id/navigation_crewMember"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="@string/크루원"
+            android:title="@string/크루"
             android:fontFamily="@font/tmoneyroundwindextrabold"/>
         <item
-            android:id="@+id/crew_dashboard"
+            android:id="@+id/navigation_crewDashboard"
             android:icon="@drawable/ic_dashboard_black_24dp"
             android:title="@string/대회"
             android:fontFamily="@font/tmoneyroundwindextrabold"/>
         <item
-            android:id="@+id/crew_record"
+            android:id="@+id/navigation_crewCompetition"
             android:icon="@drawable/ic_record_black_24dp"
             android:title="@string/기록"
             android:fontFamily="@font/tmoneyroundwindextrabold"/>

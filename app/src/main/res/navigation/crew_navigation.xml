@@ -11,13 +11,13 @@
         android:label="@string/크루"
         tools:layout="@layout/fragment_crew_member" />
     <fragment
-        android:id="@+id/navigation_crewCompetition"
-        android:name="com.example.uphill.ui.search.crew.competition.CrewCompetitionFragment"
-        android:label="@string/기록"
-        tools:layout="@layout/fragment_crew_competition" />
-    <fragment
         android:id="@+id/navigation_crewDashboard"
         android:name="com.example.uphill.ui.search.crew.dashboard.CrewDashboardFragment"
         android:label="@string/대회"
         tools:layout="@layout/fragment_crew_dashboard" />
+    <fragment
+        android:id="@+id/navigation_crewCompetition"
+        android:name="com.example.uphill.ui.search.crew.competition.CrewCompetitionFragment"
+        android:label="@string/기록"
+        tools:layout="@layout/fragment_crew_competition" />
 </navigation>

@@ -16,44 +16,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/crew_nav_menu" />
 
-    <TextView
-        android:id="@+id/crewName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="12dp"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/nav_crew"
-        app:layout_constraintTop_toBottomOf="@+id/nav_crew" />
-
-    <TextView
-        android:id="@+id/crewAdminId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/crewName"
-        app:layout_constraintTop_toBottomOf="@+id/crewName" />
-
-    <TextView
-        android:id="@+id/crewNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="13dp"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/button14"
-        app:layout_constraintStart_toStartOf="@+id/crewAdminId" />
-
-    <Button
-        android:id="@+id/button14"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:text="크루가입"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/crewAdminId" />
+    <fragment
+        android:id="@+id/nav_host_fragment_activity_crewDetail"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/crew_navigation"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

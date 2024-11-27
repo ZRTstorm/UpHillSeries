@@ -5,25 +5,26 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.uphill.databinding.ItemSearchrecyclerBinding
+import androidx.recyclerview.widget.DiffUtil
+import com.example.uphill.data.model.SimpleCrewInfoItem
+
 
 class SearchAdapter(
-    private val originalList: ArrayList<Crew>,
-    private val onItemClicked: (Crew) -> Unit // 클릭 콜백 추가
+    private var originalList: List<SimpleCrewInfoItem>, // Use SimpleCrewInfoItem
+    private val onItemClicked: (SimpleCrewInfoItem) -> Unit // Update callback type
 ) : RecyclerView.Adapter<SearchAdapter.CustomViewHolder>() {
 
-    private var filteredList: ArrayList<Crew> = ArrayList(originalList)
+    private var filteredList: List<SimpleCrewInfoItem> = originalList // Filtered list
 
-    // ViewHolder 정의
     inner class CustomViewHolder(private val binding: ItemSearchrecyclerBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(item: Crew) {
+        fun bind(item: SimpleCrewInfoItem) {
             binding.crewTitle.text = item.crewName
-            binding.crewDescription.text = "크루원: ${item.crewNumber}명"
+            binding.crewDescription.text = item.content
 
-            // 클릭 이벤트 설정
             binding.root.setOnClickListener {
-                onItemClicked(item) // 클릭 시 콜백 호출
+                onItemClicked(item) // Pass SimpleCrewInfoItem
             }
         }
     }
@@ -39,16 +40,45 @@ class SearchAdapter(
 
     override fun getItemCount(): Int = filteredList.size
 
-    @SuppressLint("NotifyDataSetChanged")
     fun filter(query: String) {
-        filteredList = if (query.isEmpty()) {
-            ArrayList(originalList)
+        val newFilteredList = if (query.isEmpty()) {
+            originalList
         } else {
             originalList.filter {
                 it.crewName.contains(query, ignoreCase = true)
-            } as ArrayList<Crew>
+            }
         }
+        updateList(newFilteredList)
+    }
+
+    private fun updateList(newList: List<SimpleCrewInfoItem>) {
+        val diffCallback = DiffUtilCallback(filteredList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        filteredList = newList
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun updateData(newList: List<SimpleCrewInfoItem>) {
+        originalList = newList
+        filteredList = newList
         notifyDataSetChanged()
+    }
+}
+
+class DiffUtilCallback(
+    private val oldList: List<SimpleCrewInfoItem>,
+    private val newList: List<SimpleCrewInfoItem>
+) : DiffUtil.Callback() {
+    override fun getOldListSize() = oldList.size
+    override fun getNewListSize() = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].crewId == newList[newItemPosition].crewId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }
 

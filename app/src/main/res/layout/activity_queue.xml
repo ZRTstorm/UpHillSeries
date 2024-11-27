@@ -5,7 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.record.QueueActivity">
+    tools:context=".ui.record.QueueActivity"
+    tools:layout_editor_absoluteX="-72dp"
+    tools:layout_editor_absoluteY="2dp">
 
     <TextView
         android:id="@+id/textView5"
@@ -13,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="41dp"
         android:layout_marginBottom="43dp"
-        android:text="TextView"
+        android:text="루트번호"
         app:layout_constraintBottom_toTopOf="@+id/imageView5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,13 +26,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="44dp"
+        android:layout_marginTop="102dp"
         android:layout_marginEnd="44dp"
-        android:layout_marginBottom="46dp"
+        android:layout_marginBottom="137dp"
         android:src="@drawable/logo"
-        app:layout_constraintBottom_toTopOf="@+id/textView6"
+        app:layout_constraintBottom_toTopOf="@+id/button10"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button9"
@@ -38,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="13dp"
         android:layout_marginEnd="21dp"
-        android:text="Accept"
+        android:text="거절"
         app:layout_constraintBaseline_toBaselineOf="@+id/button10"
         app:layout_constraintEnd_toStartOf="@+id/button10"
         app:layout_constraintStart_toStartOf="parent" />
@@ -47,21 +50,23 @@
         android:id="@+id/button10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="106dp"
-        android:text="Decline"
+        android:layout_marginBottom="105dp"
+        android:text="수락"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button9" />
+        app:layout_constraintStart_toEndOf="@+id/button9"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="72dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/button9"
-        app:layout_constraintStart_toEndOf="@+id/button9" />
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="222dp"
+        android:text="대기인원"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button9"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,10 +7,10 @@ import android.widget.EditText
 import android.widget.Switch
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.httptest2.HttpClient
 import com.example.uphill.R
+import com.example.uphill.data.model.BattleRoomRegistrySendData
 import com.example.uphill.ui.dashboard.DashboardFragment
-import org.json.JSONObject
-
 
 class AddCompetitionActivity : AppCompatActivity() {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -23,40 +23,44 @@ class AddCompetitionActivity : AppCompatActivity() {
         val titleEditText = findViewById<EditText>(R.id.editTextText)
         val contentEditText = findViewById<EditText>(R.id.editTextText2)
         val crewOnlySwitch = findViewById<Switch>(R.id.switch2)
+        val routeNumEditText = findViewById<EditText>(R.id.editTextText5)
 
-        val title = titleEditText.text.toString()
-        val content = contentEditText.text.toString()
-        val isCrewOnly = crewOnlySwitch.isChecked
-//        Json 형식
-//        {
-//            "title": "대회방이름",
-//            "content": "대회방 설명",
-//            "isCrewOnly": true,
-//        }
         submitButton.setOnClickListener {
-            submit(title, content, isCrewOnly)
+            // Safely convert routeNum to an integer, handling invalid input
+            val routeNum = routeNumEditText.text.toString().toIntOrNull()
+            if (routeNum == null) {
+                routeNumEditText.error = "Please enter a valid route number"
+                return@setOnClickListener
+            }
+
+            val title = titleEditText.text.toString()
+            val content = contentEditText.text.toString()
+            val isCrewOnly = crewOnlySwitch.isChecked
+
+            submit(title, content, isCrewOnly, routeNum)
         }
     }
-    private fun submit(title: String, content: String, isCrewOnly: Boolean){
 
-        // JSON 객체 생성
-        val jsonObject = JSONObject().apply {
-            put("title", title)
-            put("content", content)
-            put("isCrewOnly", isCrewOnly)
-        }
+    private fun submit(title: String, content: String, isCrewOnly: Boolean, routeNum: Int) {
+        // Create a data object for the request
+        val battleRoomData = BattleRoomRegistrySendData(
+            content = content,
+            crewOpen = isCrewOnly,
+            routeId = routeNum,
+            title = title
+        )
 
-        // JSON 출력
-        println(jsonObject.toString())
+        // Debugging log to verify the data
+        println(battleRoomData)
 
-        //TODO 서버에 전송
+        // TODO: Send the data to the server using HttpClient
+        HttpClient().registryBattleRoom(battleRoomData)
 
-        // Dashboard Fragment로 이동
+        // Navigate to the DashboardFragment
         val dashboardFragment = DashboardFragment()
         supportFragmentManager.beginTransaction()
-            .replace(R.id.navigation_dashboard, dashboardFragment) // fragmentContainer는 FrameLayout ID
-            .addToBackStack(null) // 뒤로가기 버튼을 누르면 이전 상태로 돌아가도록 설정
+            .replace(R.id.navigation_dashboard, dashboardFragment) // Replace with the correct container ID
+            .addToBackStack(null) // Allow navigating back
             .commit()
     }
 }
-

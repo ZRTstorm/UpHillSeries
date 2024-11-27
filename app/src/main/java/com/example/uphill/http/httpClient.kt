@@ -14,6 +14,7 @@ import com.example.uphill.data.model.BattleRoomRegistrySendData
 import com.example.uphill.data.model.ClimbingRoute
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.UserId
+import com.example.uphill.http.SearchCrew
 import com.example.uphill.http.SocketClient
 import com.example.uphill.http.WebSocketService
 import com.google.gson.Gson
@@ -188,6 +189,35 @@ class HttpClient {
             """
         post(url, json,"Register entry success")
     }
+
+    //crew-controller
+    fun createCrew(crewName: String, crewPwd: String, content: String){
+        val url = "$server_name/crew/${UserInfo.userId}"
+        val json = """
+            {
+                "crewName": $crewName,
+                "password": $crewPwd,
+                "content": $content
+            }
+        """
+        post(url, json,"Register entry success")
+    }
+
+//    fun joinCrew()
+//    fun getCrewImg()
+    // fun postCrewImg()
+    fun searchCrew(crewName: String): List<SearchCrew>? {
+        val url = "$server_name/crew/$crewName"
+        fun op(response: Response): List<SearchCrew>? {
+            Log.d(TAG, "Get Crew data success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            val listType = object : TypeToken<List<SearchCrew>>() {}.type
+            return Gson().fromJson(jsonResponse, listType)
+        }
+        return get(url, ::op)
+    }
+
     // climbing-data-controller
     fun getClimbingData():ClimbingData?{
         val url = server_name+"/climbing/users/${UserInfo.userId}/data"

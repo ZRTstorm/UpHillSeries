@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -63,6 +64,7 @@ class CompareActivity : AppCompatActivity() {
         Log.d(TAG, "calc start")
         parentView.post{
             val userAnimator = UserAnimator(movingView, parentView, AppStatus.animationData!!.movementData.convertToDoubleArrayList(), testClimbingRoute)
+            val dot = findViewById<ImageView>(R.id.movingView)
 
 
             Log.d(TAG, "parent view: ${parentView.width}, ${parentView.height}, location: ${parentView.x}, ${parentView.y}")
@@ -70,6 +72,7 @@ class CompareActivity : AppCompatActivity() {
             val firstX = movingView.x
             val firstY = movingView.y
             userAnimator.calc()
+            dot.visibility = View.VISIBLE
             userAnimator.start()
         }
 

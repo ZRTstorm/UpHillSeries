@@ -14,7 +14,7 @@
         app:layout_constraintDimensionRatio="w,1:1.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/img" />
+        app:srcCompat="@color/white" />
 
     <ImageView
         android:id="@+id/movingView"
@@ -22,7 +22,7 @@
         android:layout_height="41dp"
         android:layout_marginStart="60dp"
         android:layout_marginBottom="280dp"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/green_circle" />

@@ -1,5 +1,6 @@
 package com.example.uphill.ui.home
 
+import android.animation.AnimatorSet
 import android.graphics.Point
 import android.os.Bundle
 import android.os.Handler
@@ -25,6 +26,7 @@ class CompareActivity : AppCompatActivity() {
     private var httpJob: Job = Job()
     private val httpScope = CoroutineScope(Dispatchers.IO + httpJob)
     private var routeImageData: RouteImageData? = null
+    private var animatorSet:AnimatorSet? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,10 @@ class CompareActivity : AppCompatActivity() {
                 Log.d(TAG, "animationData is both not null")
                 showCompareAnimation()
             }
+        }
+        val parentView = findViewById<ImageView>(R.id.imageView4)
+        parentView.setOnClickListener{
+            playAnimation()
         }
     }
 
@@ -61,6 +67,7 @@ class CompareActivity : AppCompatActivity() {
     private fun showSingleAnimation(){
         val movingView = findViewById<ImageView>(R.id.movingView)
         val parentView = findViewById<ImageView>(R.id.imageView4)
+        var userAnimator:UserAnimator? = null
         //movingView.setImageBitmap(UserInfo.photo)
         Glide.with(this)
             .load(UserInfo.photo)
@@ -72,28 +79,31 @@ class CompareActivity : AppCompatActivity() {
             val climbingRoute = ClimbingRoute(null, Point(55, 110), Point(120, 255))
             Log.d(TAG, "calc start")
             parentView.post{
-                val userAnimator = UserAnimator(movingView, parentView, AppStatus.animationData!!.movementData.convertToDoubleArrayList(), climbingRoute)
+                userAnimator = UserAnimator(movingView, parentView, AppStatus.animationData!!.movementData.convertToDoubleArrayList(), climbingRoute)
+                userAnimator!!.xOffset = 0.0f
+                userAnimator!!.yOffset = dpToPx(applicationContext, 50f)
 
                 Log.d(TAG, "parent view: ${parentView.width}, ${parentView.height}, location: ${parentView.x}, ${parentView.y}")
                 Log.d(TAG, "moving view: ${movingView.width}, ${movingView.height}, location: ${movingView.x}, ${movingView.y}")
 
-                userAnimator.calc()
-                val handler = Handler(Looper.getMainLooper())
-                handler.post{
-                    userAnimator.start()
-                }
+                userAnimator!!.calc()
+                animatorSet = AnimatorSet()
+                animatorSet!!.play(userAnimator!!.animator)
+                playAnimation()
             }
         }
-
-
     }
     private fun showCompareAnimation(){
         val movingView = findViewById<ImageView>(R.id.movingView)
         val movingView2 = findViewById<ImageView>(R.id.movingView2)
         val parentView = findViewById<ImageView>(R.id.imageView4)
 
-        movingView.setImageBitmap(UserInfo.photo)
-        movingView2.setImageBitmap(UserInfo.photo)
+        Glide.with(this)
+            .load(UserInfo.photo)
+            .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+            .into(movingView)
+        movingView2.setImageResource(R.drawable.green_circle)
+        movingView2.imageAlpha = 80
 
         httpScope.launch {
             setBackgroundImage()
@@ -103,19 +113,18 @@ class CompareActivity : AppCompatActivity() {
             parentView.post{
                 val userAnimator = UserAnimator(movingView, parentView, AppStatus.animationData!!.movementData.convertToDoubleArrayList(), climbingRoute)
                 val userAnimator2 = UserAnimator(movingView2, parentView, AppStatus.animationData2!!.movementData.convertToDoubleArrayList(), climbingRoute)
-                userAnimator2.xOffset = 0.0f
+                userAnimator.xOffset = 0.0f
+                userAnimator.yOffset = dpToPx(applicationContext, 50f)
+                userAnimator2.xOffset = dpToPx(applicationContext, 20f)
                 userAnimator2.yOffset = dpToPx(applicationContext, 50f)
 
                 userAnimator.calc()
                 userAnimator2.calc()
 
-                val animatorSet = android.animation.AnimatorSet()
-                animatorSet.playTogether(userAnimator.animator, userAnimator2.animator)
+                animatorSet = android.animation.AnimatorSet()
+                animatorSet!!.playTogether(userAnimator.animator, userAnimator2.animator)
 
-                val handler = Handler(Looper.getMainLooper())
-                handler.post{
-                    animatorSet.start()
-                }
+                playAnimation()
             }
 
 
@@ -155,5 +164,15 @@ class CompareActivity : AppCompatActivity() {
     companion object{
         private const val TAG = "CompareActivity"
 
+    }
+
+    private fun playAnimation(){
+        if(animatorSet == null){
+            return
+        }
+        val handler = Handler(Looper.getMainLooper())
+        handler.post{
+            animatorSet!!.start()
+        }
     }
 }

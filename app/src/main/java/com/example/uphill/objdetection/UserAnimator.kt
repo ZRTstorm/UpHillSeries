@@ -18,7 +18,7 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
     private val basicMagnifier =  1.5F
     private var xMagnifier = 1.0
     private var yMagnifier = 1.0
-    var duration = (500/ targetFPS).toLong()
+    var duration = (1000/ targetFPS).toLong()
 
     private val topY = parentView.y + parentView.height/2 - parentView.width * 0.75F - view.height/2
     private val botY = parentView.y + parentView.height/2 + parentView.width * 0.75F - view.height/2
@@ -194,14 +194,12 @@ class UserAnimator(val view:ImageView, val parentView:ImageView, val location:Ar
         return relativeY
     }
     private fun getRelativeLocationX(loc:Double):Float{
-        val x = loc
-        val relativeX = leftX + x * (rightX-leftX)/ActivityDetection.portraitSize.width
+        val relativeX = leftX + loc * (rightX-leftX)/ActivityDetection.portraitSize.width
 
         return relativeX.toFloat()
     }
     private fun getRelativeLocationY(loc:Double):Float{
-        val y = loc
-        val relativeY = botY - (y * (botY-topY)/ActivityDetection.portraitSize.height)
+        val relativeY = botY - (loc * (botY-topY)/ActivityDetection.portraitSize.height)
 
         return relativeY.toFloat()
     }

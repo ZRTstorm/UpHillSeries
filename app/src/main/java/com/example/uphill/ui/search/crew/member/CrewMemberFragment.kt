@@ -57,7 +57,7 @@ class CrewMemberFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setTitle("Enter Password")
             .setView(dialogView)
-            .setPositiveButton("Submit") { _, _ ->
+            .setPositiveButton("제출") { _, _ ->
                 val password = passwordInput.text.toString()
                 if (password.isNotEmpty()) {
                     HttpClient().registerCrew(crewId, password)
@@ -65,14 +65,13 @@ class CrewMemberFragment : Fragment() {
                     Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("취소", null)
             .show()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        CrewSingleton.selectedCrew = null
     }
 }
 

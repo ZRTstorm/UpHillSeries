@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
-        android:background="?android:attr/windowBackground"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@android:color/transparent"
         app:menu="@menu/crew_nav_menu" />
 
     <fragment

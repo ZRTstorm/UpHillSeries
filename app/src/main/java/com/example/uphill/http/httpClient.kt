@@ -68,6 +68,8 @@ class HttpClient {
                     val serviceIntent = Intent(context, WebSocketService::class.java)
                     startForegroundService(context, serviceIntent)
                     Log.d(TAG, "Login success. ID: ${userId.userId}")
+
+                    UserInfo.crewInfo = getCrewInfo()
                 } else{
                     Log.e(TAG, "Request failed. ${response.code}")
                 }

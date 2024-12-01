@@ -31,6 +31,8 @@ class CrewDashboardFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_crew_dashboard, container, false)
         val crewData = selectedCrew
 
+
+
         // RecyclerView 초기화
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())

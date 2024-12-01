@@ -14,11 +14,17 @@ import com.example.uphill.databinding.FragmentCrewMemberBinding
 import com.example.httptest2.HttpClient
 import com.example.uphill.data.model.SearchedCrewInfoItem
 import com.example.uphill.ui.search.CrewSingleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class CrewMemberFragment : Fragment() {
 
     private var _binding: FragmentCrewMemberBinding? = null
     private val binding get() = _binding!!
+    private var httpJob: Job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + httpJob)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,7 +66,9 @@ class CrewMemberFragment : Fragment() {
             .setPositiveButton("Submit") { _, _ ->
                 val password = passwordInput.text.toString()
                 if (password.isNotEmpty()) {
-                    HttpClient().registerCrew(crewId, password)
+                    scope.launch {
+                        HttpClient().registerCrew(crewId, password)
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
                 }

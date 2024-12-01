@@ -13,8 +13,12 @@ import com.example.uphill.R
     import android.widget.EditText
     import android.widget.ImageView
     import com.example.httptest2.HttpClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
-    class BrandNewCrewActivity : AppCompatActivity() {
+class BrandNewCrewActivity : AppCompatActivity() {
 
         private lateinit var imageView2: ImageView
         private lateinit var button16: Button
@@ -22,6 +26,10 @@ import com.example.uphill.R
         private lateinit var editTextText3: EditText
         private lateinit var editTextText4: EditText
         private lateinit var editTextTextPassword: EditText
+
+
+        private var httpJob: Job = Job()
+        private val scope = CoroutineScope(Dispatchers.IO + httpJob)
 
         private val PICK_IMAGE_REQUEST = 1
         private var imageUri: Uri? = null
@@ -54,7 +62,9 @@ import com.example.uphill.R
 
                 // HttpClient의 createCrew 호출
                 if (crewName.isNotEmpty() && content.isNotEmpty() && password.isNotEmpty()) {
-                    HttpClient().createCrew(crewName, content, password)
+                    scope.launch {
+                        HttpClient().createCrew(crewName, content, password)
+                    }
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main, SearchFragment())
                         .commit()

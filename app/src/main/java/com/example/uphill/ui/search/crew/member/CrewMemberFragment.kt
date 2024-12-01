@@ -80,7 +80,6 @@ class CrewMemberFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        CrewSingleton.selectedCrew = null
     }
 }
 

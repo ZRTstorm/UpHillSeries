@@ -436,7 +436,7 @@ class HttpClient {
         return get(url, ::op)
     }
     fun getBattleRoomFromCrewId(crewId: Int):BattleRoomDataList?{
-        val url = "$server_name/battleRoom/$crewId/all"
+        val url = "$server_name/battleRoom/crews/$crewId/all"
         fun op(response: Response):BattleRoomDataList?{
             Log.d(TAG, "get room from crewId success")
             if (response.body == null) return null

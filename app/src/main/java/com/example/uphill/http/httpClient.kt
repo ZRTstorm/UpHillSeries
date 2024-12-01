@@ -369,16 +369,23 @@ class HttpClient {
         }
         post(url, ::op)
     }
-    fun registryBattleRoom(battleRoomRegistrySendData: BattleRoomRegistrySendData):BattleRoomRegistryReceivedData?{
+    fun registryBattleRoom(
+        battleRoomRegistrySendData: BattleRoomRegistrySendData,
+        callback: (BattleRoomRegistryReceivedData?) -> Unit
+    ) {
         val url = "$server_name/battleRoom/${UserInfo.userId}/registry"
         val json = Gson().toJson(battleRoomRegistrySendData)
-        fun op(response: Response):BattleRoomRegistryReceivedData?{
-            Log.d(TAG, "registry success")
-            if (response.body == null) return null
-            val jsonResponse = response.body?.string()
-            return Gson().fromJson(jsonResponse, BattleRoomRegistryReceivedData::class.java)
+
+        post(url, json) { response ->
+            if (response.body == null) {
+                Log.e(TAG, "No response body")
+                callback(null)
+            } else {
+                val jsonResponse = response.body?.string()
+                val data = Gson().fromJson(jsonResponse, BattleRoomRegistryReceivedData::class.java)
+                callback(data)
+            }
         }
-        return post(url, json, ::op)
     }
     fun finishBattle(battleRoomId: Int){
         val url = "$server_name/battleRoom/${UserInfo.userId}/$battleRoomId/end"

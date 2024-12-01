@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/crew_navigation"
     app:startDestination="@+id/navigation_crewMember">
-
     <fragment
         android:id="@+id/navigation_crewMember"
         android:name="com.example.uphill.ui.search.crew.member.CrewMemberFragment"

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.httptest2.HttpClient
@@ -54,9 +55,19 @@ class AddCompetitionActivity : AppCompatActivity() {
         println(battleRoomData)
 
         // TODO: Send the data to the server using HttpClient
-        HttpClient().registryBattleRoom(battleRoomData)
+        HttpClient().registryBattleRoom(battleRoomData) { response ->
+            if (response != null) {
+                // 응답 데이터를 다이얼로그로 표시
+                val dialog = BattleRoomResultDialog(response)
+                dialog.show(supportFragmentManager, "BattleRoomResultDialog")
+            } else {
+                // 오류 처리 (예: 토스트로 알림)
+                Toast.makeText(this, "Failed to register battle room", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        // Navigate to the DashboardFragment
+
+        // Navigate to the com.example.uphill.ui.dashboard.DashboardFragment
         val dashboardFragment = DashboardFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.navigation_dashboard, dashboardFragment) // Replace with the correct container ID

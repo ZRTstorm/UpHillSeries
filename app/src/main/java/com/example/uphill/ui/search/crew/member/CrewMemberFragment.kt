@@ -13,6 +13,7 @@ import com.example.uphill.R
 import com.example.uphill.databinding.FragmentCrewMemberBinding
 import com.example.httptest2.HttpClient
 import com.example.uphill.data.model.SearchedCrewInfoItem
+import com.example.uphill.ui.search.CrewSingleton
 
 class CrewMemberFragment : Fragment() {
 
@@ -28,22 +29,21 @@ class CrewMemberFragment : Fragment() {
         val root: View = binding.root
 
         // 전달받은 데이터 읽기
-        val crewData = arguments?.getParcelable<SearchedCrewInfoItem>("crewData")
-        Log.d("CDA", "$crewData")
+        val crew = CrewSingleton.selectedCrew
 
-        if (crewData != null) {
+        if (crew != null) {
             // UI에 데이터 반영
-            binding.textView2.text = crewData.crewName
-            binding.textView3.text = crewData.userName
-            binding.textView7.text = crewData.content
+            binding.textView2.text = crew.crewName
+            binding.textView3.text = crew.userName
+            binding.textView7.text = crew.content
         } else {
             Toast.makeText(requireContext(), "Failed to load crew data.", Toast.LENGTH_SHORT).show()
         }
 
         // 버튼 클릭 리스너 설정
         binding.button17.setOnClickListener {
-            if (crewData != null) {
-                showPasswordDialog(crewData.crewId)
+            if (crew != null) {
+                showPasswordDialog(crew.crewId)
             }
         }
 
@@ -72,6 +72,7 @@ class CrewMemberFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        CrewSingleton.selectedCrew = null
     }
 }
 

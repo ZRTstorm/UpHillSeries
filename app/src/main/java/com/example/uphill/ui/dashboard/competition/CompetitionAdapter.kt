@@ -1,24 +1,27 @@
 package com.example.uphill.ui.dashboard.competition
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.uphill.R
+import com.example.uphill.data.model.BattleRoomData
+import com.example.uphill.data.model.BattleRoomDataList
 
 class CompetitionAdapter(
-    private val items: List<Competition>,
-    private val onClick: (Competition) -> Unit
+    private var items: BattleRoomDataList, // BattleRoomDataList로 변경
+    private val onClick: (BattleRoomData) -> Unit
 ) : RecyclerView.Adapter<CompetitionAdapter.CompetitionViewHolder>() {
 
     inner class CompetitionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val titleTextView: TextView = view.findViewById(R.id.tv_title)
         private val descriptionTextView: TextView = view.findViewById(R.id.description)
 
-        fun bind(item: Competition) {
+        fun bind(item: BattleRoomData) {
             titleTextView.text = item.title
-            descriptionTextView.text = item.description
+            descriptionTextView.text = item.content
             itemView.setOnClickListener { onClick(item) }
         }
     }
@@ -33,5 +36,11 @@ class CompetitionAdapter(
     }
 
     override fun getItemCount(): Int = items.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(newItems: BattleRoomDataList) {
+        items = newItems
+        notifyDataSetChanged()
+    }
 }
 

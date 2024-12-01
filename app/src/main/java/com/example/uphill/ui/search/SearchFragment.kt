@@ -32,9 +32,10 @@ class SearchFragment : Fragment() {
 
         // Initialize RecyclerView
         searchAdapter = SearchAdapter(arrayListOf()) { crew ->
-            val intent = Intent(requireContext(), CrewDetailActivity::class.java).apply {
-                putExtra("crewName", crew.crewName)
-            }
+            CrewSingleton.selectedCrew = crew
+
+            // CrewDetailActivity로 이동
+            val intent = Intent(requireContext(), CrewDetailActivity::class.java)
             startActivity(intent)
         }
         binding.searchRecycle.apply {

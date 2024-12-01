@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.uphill.R
+import com.example.uphill.ui.search.CrewSingleton
 
 class CrewCompetitionFragment : Fragment() {
 
@@ -15,6 +16,7 @@ class CrewCompetitionFragment : Fragment() {
     }
 
     private val viewModel: CrewCompetitionViewModel by viewModels()
+    val crew = CrewSingleton.selectedCrew
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

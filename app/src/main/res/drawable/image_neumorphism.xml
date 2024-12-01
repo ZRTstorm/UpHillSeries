@@ -1,27 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 밝은 그림자 -->
-    <item
-        android:top="-3dp"
-        android:left="-3dp">
+    <item android:top="-4dp" android:left="-4dp">
         <shape android:shape="oval">
             <solid android:color="@color/light_shadow" />
         </shape>
     </item>
 
     <!-- 어두운 그림자 -->
-    <item
-        android:bottom="-3dp"
-        android:right="-3dp">
+    <item android:bottom="-4dp" android:right="-4dp">
         <shape android:shape="oval">
             <solid android:color="@color/dark_shadow" />
         </shape>
     </item>
 
-    <!-- 중앙의 실제 배경 -->
-    <item android:top="6dp" android:left="6dp" android:bottom="6dp" android:right="6dp">
+    <!-- 중앙 배경 -->
+    <item>
         <shape android:shape="oval">
             <solid android:color="@color/background" />
-            <stroke android:width="10dp" android:color="@color/background" />
         </shape>
     </item>
 </layer-list>

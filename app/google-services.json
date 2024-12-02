@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "227338494165-i9m0ulcd7igcaut5ces0fc4nprfg7p8o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.uphill",
+            "certificate_hash": "69996dda84105c744cbb2b89bcb89039b002695b"
+          }
+        },
+        {
           "client_id": "227338494165-pi1m28nj3re2ub393qs0tod6i0b2n80u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

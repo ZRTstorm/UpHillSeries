@@ -80,14 +80,11 @@ class AddCompetitionActivity : AppCompatActivity() {
                 }
             }
         }
-
-
-
-        // Navigate to the com.example.uphill.ui.dashboard.DashboardFragment
-//        val dashboardFragment = DashboardFragment()
-//        supportFragmentManager.beginTransaction()
-//            .replace(R.id.navigation_dashboard, dashboardFragment) // Replace with the correct container ID
-//            .addToBackStack(null) // Allow navigating back
-//            .commit()
+    }
+    fun navigateToDashboardFragment() {
+        val dashboardFragment = DashboardFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, dashboardFragment)
+            .commit()
     }
 }

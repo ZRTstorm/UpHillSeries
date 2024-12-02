@@ -26,11 +26,12 @@ class BattleRoomResultDialog(private val data: BattleRoomRegistryReceivedData) :
         val battleRoomIdTextView = view.findViewById<TextView>(R.id.battleRoomIdTextView)
         val participantCodeTextView = view.findViewById<TextView>(R.id.participantCodeTextView)
 
-        battleRoomIdTextView.text = "Battle Room ID: ${data.battleRoomId}"
-        participantCodeTextView.text = "Participant Code: ${data.participantCode}"
+        battleRoomIdTextView.text = "방 아이디: ${data.battleRoomId}"
+        participantCodeTextView.text = "초대코드: ${data.participantCode}"
 
         view.findViewById<View>(R.id.closeButton).setOnClickListener {
             dismiss()
+            (activity as? AddCompetitionActivity)?.navigateToDashboardFragment()
         }
     }
 }

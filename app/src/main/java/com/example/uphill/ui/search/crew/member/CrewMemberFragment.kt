@@ -2,25 +2,23 @@ package com.example.uphill.ui.search.crew.member
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.transition.Visibility
-import com.example.uphill.R
-import com.example.uphill.databinding.FragmentCrewMemberBinding
 import com.example.httptest2.HttpClient
+import com.example.uphill.R
 import com.example.uphill.data.UserInfo
-import com.example.uphill.data.model.SearchedCrewInfoItem
+import com.example.uphill.databinding.FragmentCrewMemberBinding
 import com.example.uphill.ui.search.CrewSingleton
+import com.example.uphill.ui.search.SearchFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+
 
 class CrewMemberFragment : Fragment() {
 
@@ -44,18 +42,26 @@ class CrewMemberFragment : Fragment() {
             // UI에 데이터 반영
             binding.textView2.text = crew.crewName
             binding.textView3.text = crew.userName
-            binding.textView7.text = crew.content
+            binding.textView8.text = crew.content
         } else {
             Toast.makeText(requireContext(), "Failed to load crew data.", Toast.LENGTH_SHORT).show()
         }
 
         if(UserInfo.crewInfo != null){
-            binding.button17.visibility = INVISIBLE
-        }
+            binding.button17.text = "탈퇴"}
         // 버튼 클릭 리스너 설정
         binding.button17.setOnClickListener {
-            if (crew != null) {
-                showPasswordDialog(crew.crewId)
+            if(UserInfo.crewInfo != null) {
+                HttpClient().unsubscribeCrew()
+                val searchFragment = SearchFragment()
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment_activity_main, searchFragment)
+                    .commit()
+            }
+            else{
+                if (crew != null) {
+                    showPasswordDialog(crew.crewId)
+                }
             }
         }
 
@@ -67,7 +73,7 @@ class CrewMemberFragment : Fragment() {
         val passwordInput = dialogView.findViewById<EditText>(R.id.passwordInput)
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Enter Password")
+            .setTitle("크루초대번호")
             .setView(dialogView)
             .setPositiveButton("제출") { _, _ ->
                 val password = passwordInput.text.toString()
@@ -76,11 +82,19 @@ class CrewMemberFragment : Fragment() {
                         HttpClient().registerCrew(crewId, password)
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "번호를 입력해주세요!", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("취소", null)
             .show()
+    }
+
+    fun newInstant() : CrewMemberFragment
+    {
+        val args = Bundle()
+        val frag = CrewMemberFragment()
+        frag.arguments = args
+        return frag
     }
 
     override fun onDestroyView() {

@@ -3,21 +3,7 @@
         <!-- 배경 그림자 -->
         <shape android:shape="rectangle">
             <corners android:radius="16dp" />
-            <solid android:color="@color/background" />
-        </shape>
-    </item>
-    <item android:top="4dp" android:left="4dp">
-        <!-- 어두운 그림자 -->
-        <shape android:shape="rectangle">
-            <corners android:radius="16dp" />
-            <solid android:color="@color/dark_shadow" />
-        </shape>
-    </item>
-    <item android:bottom="4dp" android:right="4dp">
-        <!-- 밝은 그림자 -->
-        <shape android:shape="rectangle">
-            <corners android:radius="16dp" />
-            <solid android:color="@color/light_shadow" />
+            <solid android:color="@color/skyblue" />
         </shape>
     </item>
 </layer-list>

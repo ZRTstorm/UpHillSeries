@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.uphill.R
 import com.example.uphill.data.model.BattleRoomData
 import com.example.uphill.ui.dashboard.competition.BattleSingleton.selectedRoom
+import org.w3c.dom.Text
 
 class CompetitionActivity : AppCompatActivity() {
 
@@ -17,7 +18,7 @@ class CompetitionActivity : AppCompatActivity() {
 
         if (competitionData != null) {
             findViewById<TextView>(R.id.titleTextView).text = competitionData.title
-            findViewById<TextView>(R.id.descriptionTextView).text = competitionData.content
+            findViewById<TextView>(R.id.descriptionTextView).text = competitionData.adminName
         } else {
             findViewById<TextView>(R.id.titleTextView).text = "Competition not found"
         }

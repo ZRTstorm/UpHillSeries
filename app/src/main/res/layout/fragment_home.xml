@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E0E5EC"
+    android:background="@color/white"
     tools:context=".ui.home.HomeFragment">
 
     <CalendarView
@@ -15,10 +15,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="12dp"
-        android:background="@drawable/background_neumorphism"
-        android:dateTextAppearance="@style/CalendarDateTextAppearance"
-        android:weekDayTextAppearance="@style/CalendarWeekDayTextAppearance"
         android:elevation="10dp"
+        android:background="@color/white"
         android:padding="16dp"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="70dp"
-        android:background="@drawable/background_neumorphism"
+        android:background="@drawable/border"
         android:fadeScrollbars="false"
         android:fontFamily="@font/tmoneyroundwindextrabold"
         android:scrollbarSize="6dp"

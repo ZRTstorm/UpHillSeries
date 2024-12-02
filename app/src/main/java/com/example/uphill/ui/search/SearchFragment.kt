@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.uphill.databinding.FragmentSearchBinding
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.SearchView
 import com.example.uphill.ui.search.crew.CrewDetailActivity
@@ -18,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.httptest2.HttpClient
+import com.example.uphill.data.UserInfo
 import com.example.uphill.data.model.SimpleCrewInfo
 import com.example.uphill.data.model.SimpleCrewInfoItem
 import kotlinx.coroutines.Job
@@ -41,6 +40,15 @@ class SearchFragment : Fragment() {
 
         val searchView = binding.searchView
         val button15 = binding.button15
+
+        if(UserInfo.crewInfo != null){
+            val crew = UserInfo.crewInfo!!.toSimpleCrewInfoItem()
+            CrewSingleton.selectedCrew = crew
+
+            // CrewDetailActivity로 이동
+            val intent = Intent(requireContext(), CrewDetailActivity::class.java)
+            startActivity(intent)
+        }
 
         // 검색
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{

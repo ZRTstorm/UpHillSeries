@@ -11,13 +11,15 @@
         android:id="@+id/imageView3"
         android:layout_width="369sp"
         android:layout_height="207sp"
+        android:background="@color/zxing_transparent"
+        android:elevation="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.619"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.272"
-        app:srcCompat="@drawable/uphill" />
+        app:srcCompat="@drawable/uphill"/>
 
     <TextView
         android:id="@+id/textView"
@@ -26,10 +28,11 @@
         android:fontFamily="@font/tmoneyroundwindextrabold"
         android:gravity="center"
         android:text="@string/오름길"
-        android:textColor="@color/text_color"
+        android:textColor="@color/white"
         android:textSize="80sp"
         android:textStyle="bold"
         android:background="@color/zxing_transparent"
+        android:elevation="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="@+id/imageView3"
         app:layout_constraintHorizontal_bias="0.495"
@@ -46,7 +49,7 @@
         android:layout_marginTop="550dp"
         android:layout_marginEnd="182dp"
         android:layout_marginBottom="33dp"
-        android:indeterminateTint="@color/dark_shadow"
+        android:indeterminateTint="@color/skyblue"
         android:indeterminateTintMode="src_in"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

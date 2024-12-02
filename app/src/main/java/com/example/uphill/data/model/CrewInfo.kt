@@ -11,4 +11,13 @@ data class CrewInfo(
     val password: Any,
     val pilotId: Int,
     val pilotName: String
-)
+){
+    fun toSimpleCrewInfoItem(): SimpleCrewInfoItem {
+        return SimpleCrewInfoItem(
+            content = crewContent,
+            crewId = crewId,
+            crewName = crewName,
+            userName = pilotName
+        )
+    }
+}

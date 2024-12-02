@@ -21,14 +21,12 @@ import com.example.httptest2.HttpClient
 import com.example.uphill.data.model.SimpleCrewInfo
 import com.example.uphill.data.model.SimpleCrewInfoItem
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 
 class SearchFragment : Fragment() {
 
     private lateinit var searchAdapter: SearchAdapter
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-
 
     private var httpJob: Job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + httpJob)
@@ -42,24 +40,21 @@ class SearchFragment : Fragment() {
         val root: View = binding.root
 
         val searchView = binding.searchView
+        val button15 = binding.button15
 
+        // 검색
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchCrews(query.toString())
                 return true
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                if(newText.isNullOrBlank()){
-                    loadCrewsFromServer()
-                } else{
-                    //searchCrews(newText.toString())
-                }
                 return true
             }
         })
 
-        // Initialize RecyclerView
-        searchAdapter = SearchAdapter(arrayListOf()) { crew ->
+        // 크루 선택
+        searchAdapter = SearchAdapter(SimpleCrewInfo()) { crew ->
             CrewSingleton.selectedCrew = crew
 
             // CrewDetailActivity로 이동
@@ -71,8 +66,12 @@ class SearchFragment : Fragment() {
             adapter = searchAdapter
         }
 
-        // Load crews from server
+        // 크루 데이터 로드
         loadCrewsFromServer()
+
+        button15.setOnClickListener {
+            startActivity(Intent(requireContext(), BrandNewCrewActivity::class.java))
+        }
 
         return root
     }
@@ -80,26 +79,26 @@ class SearchFragment : Fragment() {
         Log.d("SearchFragment", "Search query: $query")
         scope.launch {
             val filteredCrews = HttpClient().searchCrews(query)
-
             if (filteredCrews != null) {
-                updateCrewList(filteredCrews.toSimpleCrewInfo())
+                updateCrewList(filteredCrews)
             }
         }
     }
-    private fun updateCrewList(newCrews: List<SimpleCrewInfoItem>) {
-        val handler = Handler(Looper.getMainLooper())
-        handler.post {
-            searchAdapter.updateData(newCrews)
+    private fun updateCrewList(newCrews: SimpleCrewInfo) {
+        scope.launch {
+            withContext(Dispatchers.Main) { // 메인 스레드에서 실행
+                searchAdapter.updateData(newCrews)
+            }
         }
     }
 
     private fun loadCrewsFromServer() {
         CoroutineScope(Dispatchers.IO).launch {
-            val crewList = HttpClient().getAllCrew() // Fetch the list of crews
+            val crewList = HttpClient().getAllCrew()
             crewList?.let { crews ->
-                // Update RecyclerView on the Main Thread
+                // 리사이클러뷰 업데이트
                 withContext(Dispatchers.Main) {
-                    searchAdapter.updateData(ArrayList(crews))
+                    searchAdapter.updateData(crews)
                 }
             } ?: run {
                 Log.e("SearchFragment", "Failed to load crews from server")
@@ -112,5 +111,3 @@ class SearchFragment : Fragment() {
         _binding = null
     }
 }
-
-

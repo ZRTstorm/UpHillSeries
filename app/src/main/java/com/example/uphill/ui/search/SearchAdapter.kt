@@ -6,17 +6,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.uphill.databinding.ItemSearchrecyclerBinding
 import androidx.recyclerview.widget.DiffUtil
-import com.example.uphill.data.model.SearchedCrewInfo
+import com.example.uphill.data.model.SimpleCrewInfo
 import com.example.uphill.data.model.SimpleCrewInfoItem
 
 
 class SearchAdapter(
-    private var originalList: SearchedCrewInfo, // Use SimpleCrewInfoItem
+    private var originalList: SimpleCrewInfo, // Use SimpleCrewInfoItem
     private val onItemClicked: (SimpleCrewInfoItem) -> Unit // Update callback type
 ) : RecyclerView.Adapter<SearchAdapter.CustomViewHolder>() {
 
-    private var filteredList: SearchedCrewInfo = originalList // Filtered list
+    private var filteredList: SimpleCrewInfo = originalList // Filtered list
 
+    // 리사이클러
     inner class CustomViewHolder(private val binding: ItemSearchrecyclerBinding) :
         RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
@@ -25,7 +26,7 @@ class SearchAdapter(
             binding.crewDescription.text = item.content
 
             binding.root.setOnClickListener {
-                onItemClicked(item) // Pass SimpleCrewInfoItem
+                onItemClicked(item)
             }
         }
     }
@@ -45,14 +46,12 @@ class SearchAdapter(
         val newFilteredList = if (query.isEmpty()) {
             originalList
         } else {
-            originalList.filter {
-                it.crewName.contains(query, ignoreCase = true)
-            }
+            originalList
         }
         updateList(newFilteredList)
     }
 
-    private fun updateList(newList: SearchedCrewInfo) {
+    private fun updateList(newList: SimpleCrewInfo) {
         val diffCallback = DiffUtilCallback(filteredList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
@@ -60,7 +59,7 @@ class SearchAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    fun updateData(newList: SearchedCrewInfo) {
+    fun updateData(newList: SimpleCrewInfo) {
         originalList = newList
         filteredList = newList
         notifyDataSetChanged()
@@ -68,8 +67,8 @@ class SearchAdapter(
 }
 
 class DiffUtilCallback(
-    private val oldList: SearchedCrewInfo,
-    private val newList: SearchedCrewInfo
+    private val oldList: SimpleCrewInfo,
+    private val newList: SimpleCrewInfo
 ) : DiffUtil.Callback() {
     override fun getOldListSize() = oldList.size
     override fun getNewListSize() = newList.size

@@ -15,9 +15,8 @@ import com.example.uphill.data.model.BattleRoomDataList
 import com.example.uphill.ui.dashboard.competition.AddCompetitionActivity
 import com.example.uphill.ui.dashboard.competition.CompetitionActivity
 import com.example.uphill.ui.dashboard.competition.CompetitionAdapter
-
-import androidx.lifecycle.lifecycleScope
 import com.example.uphill.ui.dashboard.competition.BattleSingleton.selectedRoom
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,17 +58,19 @@ class DashboardFragment : Fragment() {
 
     private fun loadBattleRooms() {
         // Coroutine을 사용하여 네트워크 요청을 비동기적으로 실행
-        lifecycleScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 // 백그라운드 스레드에서 네트워크 호출
                 val battleRooms = withContext(Dispatchers.IO) {
                     HttpClient().getUserBattleRoom()
                 }
                 // UI 업데이트 (메인 스레드에서 실행)
-                battleRooms?.let {
-                    battleRoomAdapter.updateList(it)
+                withContext(Dispatchers.Main) {
+                    battleRooms?.let {
+                        battleRoomAdapter.updateList(it)
+                    }
                 }
-            } catch (e: Exception) {
+            } catch (e: Exception)  {
                 e.printStackTrace() // 네트워크 오류 처리 (로그 출력)
             }
         }

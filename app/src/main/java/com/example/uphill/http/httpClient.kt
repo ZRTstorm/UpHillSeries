@@ -19,6 +19,7 @@ import com.example.uphill.data.model.CrewMan
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.RouteImageData
 import com.example.uphill.data.model.SearchedCrewInfo
+import com.example.uphill.data.model.SimpleCrewInfo
 import com.example.uphill.data.model.SimpleCrewInfoItem
 import com.example.uphill.data.model.UserId
 import com.example.uphill.http.WebSocketService
@@ -311,13 +312,13 @@ class HttpClient {
         }
         return get(url, ::op)
     }
-    fun searchCrews(crewName: String):SearchedCrewInfo?{
+    fun searchCrews(crewName: String):SimpleCrewInfo?{
         val url = "$server_name/crew/$crewName"
-        fun op(response:Response):SearchedCrewInfo? {
+        fun op(response:Response):SimpleCrewInfo? {
             Log.d(TAG, "Search crews success")
             if (response.body == null) return null
             val jsonResponse = response.body?.string()
-            return Gson().fromJson(jsonResponse, SearchedCrewInfo::class.java)
+            return Gson().fromJson(jsonResponse, SimpleCrewInfo::class.java)
         }
         return get(url, ::op)
     }
@@ -332,13 +333,13 @@ class HttpClient {
         }
         return get(url, ::op)
     }
-    fun getAllCrew(): List<SimpleCrewInfoItem>? {
+    fun getAllCrew(): SimpleCrewInfo? {
         val url = "$server_name/crew/all"
-        fun op(response: Response): List<SimpleCrewInfoItem>? {
+        fun op(response: Response): SimpleCrewInfo? {
             Log.d(TAG, "Get all crew success")
             if (response.body == null) return null
             val jsonResponse = response.body?.string()
-            return Gson().fromJson(jsonResponse, object : TypeToken<List<SimpleCrewInfoItem>>() {}.type)
+            return Gson().fromJson(jsonResponse, object : TypeToken<SimpleCrewInfo>() {}.type)
         }
         return get(url, ::op)
     }

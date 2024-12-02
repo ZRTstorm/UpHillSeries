@@ -1,11 +1,15 @@
 package com.example.uphill.ui.dashboard
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +22,15 @@ import com.example.uphill.ui.dashboard.competition.CompetitionAdapter
 import com.example.uphill.ui.dashboard.competition.BattleSingleton.selectedRoom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DashboardFragment : Fragment() {
 
     private lateinit var battleRoomAdapter: CompetitionAdapter
+    private var httpJob: Job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + httpJob)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,6 +54,20 @@ class DashboardFragment : Fragment() {
             val intent = Intent(requireContext(), AddCompetitionActivity::class.java)
             startActivity(intent)
         }
+
+        val searchView = view.findViewById<SearchView>(R.id.searchView2)
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { showConfirmationDialog(it) }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+
     }
 
     override fun onCreateView(
@@ -74,6 +95,21 @@ class DashboardFragment : Fragment() {
                 e.printStackTrace() // 네트워크 오류 처리 (로그 출력)
             }
         }
+    }
+    private fun showConfirmationDialog(code: String) {
+        val dialogView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_battleroom, null)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("대회신청")
+            .setView(dialogView)
+            .setPositiveButton("수락") { _, _ ->
+                    scope.launch {
+                        HttpClient().participantBattleRoom(code)
+                    }
+                }
+                .setNegativeButton("취소", null)
+                .show()
     }
 }
 

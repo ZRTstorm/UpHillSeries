@@ -48,11 +48,22 @@ class CrewMemberFragment : Fragment() {
         }
 
         if(UserInfo.crewInfo != null){
-            binding.button17.text = "탈퇴"}
+            if(UserInfo.userId == UserInfo.crewInfo!!.pilotId){
+                binding.button17.text = "삭제"
+            }
+            else{
+                binding.button17.text = "탈퇴"
+            }
+        }
         // 버튼 클릭 리스너 설정
         binding.button17.setOnClickListener {
             if(UserInfo.crewInfo != null) {
-                HttpClient().unsubscribeCrew()
+                if(UserInfo.userId == UserInfo.crewInfo!!.pilotId){
+                    HttpClient().deleteCrew(UserInfo.crewInfo!!.crewId)
+                }
+                else {
+                    HttpClient().unsubscribeCrew()
+                }
                 val searchFragment = SearchFragment()
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment_activity_main, searchFragment)

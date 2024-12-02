@@ -5,20 +5,29 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.transition.Visibility
 import com.example.uphill.R
 import com.example.uphill.databinding.FragmentCrewMemberBinding
 import com.example.httptest2.HttpClient
+import com.example.uphill.data.UserInfo
 import com.example.uphill.data.model.SearchedCrewInfoItem
 import com.example.uphill.ui.search.CrewSingleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class CrewMemberFragment : Fragment() {
 
     private var _binding: FragmentCrewMemberBinding? = null
     private val binding get() = _binding!!
+    private var httpJob: Job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + httpJob)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +49,9 @@ class CrewMemberFragment : Fragment() {
             Toast.makeText(requireContext(), "Failed to load crew data.", Toast.LENGTH_SHORT).show()
         }
 
+        if(UserInfo.crewInfo != null){
+            binding.button17.visibility = INVISIBLE
+        }
         // 버튼 클릭 리스너 설정
         binding.button17.setOnClickListener {
             if (crew != null) {
@@ -60,7 +72,9 @@ class CrewMemberFragment : Fragment() {
             .setPositiveButton("제출") { _, _ ->
                 val password = passwordInput.text.toString()
                 if (password.isNotEmpty()) {
-                    HttpClient().registerCrew(crewId, password)
+                    scope.launch {
+                        HttpClient().registerCrew(crewId, password)
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
                 }

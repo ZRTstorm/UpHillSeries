@@ -2,6 +2,9 @@ package com.example.uphill.ui.dashboard.competition
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
@@ -21,7 +24,10 @@ class AddCompetitionActivity : AppCompatActivity() {
 
     private var httpJob: Job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + httpJob)
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private val titleBasicString = "제목"
+    private val contentBasicString = "내용"
+    private var routeNumBasicString = "루트번호"
+    @SuppressLint("UseSwitchCompatOrMaterialCode", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,6 +38,84 @@ class AddCompetitionActivity : AppCompatActivity() {
         val contentEditText = findViewById<EditText>(R.id.editTextText2)
         val crewOnlySwitch = findViewById<Switch>(R.id.switch2)
         val routeNumEditText = findViewById<EditText>(R.id.editTextText5)
+
+
+// TextWatcher 설정
+//        titleEditText.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                if (s.toString().isEmpty()) {
+//                    titleEditText.setText(titleBasicString)
+//                    titleEditText.setSelection(0)  // 커서를 텍스트 시작 위치로 이동
+//                }
+//            }
+//        })
+//        contentEditText.addTextChangedListener(object : TextWatcher{
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                if (s.toString().isEmpty()) {
+//                    contentEditText.setText(contentBasicString)
+//                    contentEditText.setSelection(0)  // 커서를 텍스트 시작 위치로 이동
+//                }
+//            }
+//        })
+//        routeNumEditText.addTextChangedListener(object : TextWatcher{
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+//
+//            override fun afterTextChanged(s: Editable?) {
+//                if (s.toString().isEmpty()) {
+//                    routeNumEditText.setText(routeNumBasicString)
+//                    routeNumEditText.setSelection(0)  // 커서를 텍스트 시작 위치로 이동
+//                }
+//            }
+//        })
+//
+//// 포커스 변화 리스너 설정
+//        titleEditText.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                if (titleEditText.text.toString() == titleBasicString) {
+//                    titleEditText.setText("")
+//                }
+//            } else {
+//                if (titleEditText.text.toString().isEmpty()) {
+//                    titleEditText.setText(titleBasicString)
+//                }
+//            }
+//        }
+//        contentEditText.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                if (contentEditText.text.toString() == contentBasicString) {
+//                    contentEditText.setText("")
+//                }
+//            } else {
+//                if (contentEditText.text.toString().isEmpty()) {
+//                    contentEditText.setText(contentBasicString)
+//                }
+//            }
+//        }
+//        routeNumEditText.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus) {
+//                if (routeNumEditText.text.toString() == routeNumBasicString) {
+//                    routeNumEditText.setText("")
+//                }
+//            } else {
+//                if (routeNumEditText.text.toString().isEmpty()) {
+//                    routeNumEditText.setText(routeNumBasicString)
+//                }
+//            }
+//        }
+
+
+
+
 
         submitButton.setOnClickListener {
             // Safely convert routeNum to an integer, handling invalid input
@@ -70,6 +154,15 @@ class AddCompetitionActivity : AppCompatActivity() {
                     handler.post {
                         val dialog = BattleRoomResultDialog(response)
                         dialog.show(supportFragmentManager, "BattleRoomResultDialog")
+                        supportFragmentManager.setFragmentResultListener("inviteCodeDialog", this@AddCompetitionActivity) { _, _ ->
+                            //Navigate to the com.example.uphill.ui.dashboard.DashboardFragment
+//                            val dashboardFragment = DashboardFragment()
+//                            supportFragmentManager.beginTransaction()
+//                                .replace(R.id.navigation_dashboard, dashboardFragment) // Replace with the correct container ID
+//                                .addToBackStack(null) // Allow navigating back
+//                                .commit()
+                            onBackPressedDispatcher.onBackPressed()
+                        }
                     }
                 } else {
                     // 오류 처리 (예: 토스트로 알림)
@@ -83,11 +176,5 @@ class AddCompetitionActivity : AppCompatActivity() {
 
 
 
-        // Navigate to the com.example.uphill.ui.dashboard.DashboardFragment
-//        val dashboardFragment = DashboardFragment()
-//        supportFragmentManager.beginTransaction()
-//            .replace(R.id.navigation_dashboard, dashboardFragment) // Replace with the correct container ID
-//            .addToBackStack(null) // Allow navigating back
-//            .commit()
     }
 }

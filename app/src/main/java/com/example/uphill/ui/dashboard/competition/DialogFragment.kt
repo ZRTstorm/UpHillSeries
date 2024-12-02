@@ -16,6 +16,7 @@ class BattleRoomResultDialog(private val data: BattleRoomRegistryReceivedData) :
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         return inflater.inflate(R.layout.fragment_dialog, container, false)
     }
 
@@ -30,6 +31,7 @@ class BattleRoomResultDialog(private val data: BattleRoomRegistryReceivedData) :
         participantCodeTextView.text = "Participant Code: ${data.participantCode}"
 
         view.findViewById<View>(R.id.closeButton).setOnClickListener {
+            parentFragmentManager.setFragmentResult("inviteCodeDialog", Bundle())
             dismiss()
         }
     }

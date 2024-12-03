@@ -8,7 +8,8 @@ data class BattleRoomClimbingDataItem(
     val climbingDataId: Int,
     val climbingTime: Int,
     val success: Boolean,
-    val userName: String
+    val userName: String,
+    val userId: Int
 ){
     fun getClimbingTimeString():String{
         var ret = ""

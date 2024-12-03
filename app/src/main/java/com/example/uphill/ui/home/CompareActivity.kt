@@ -69,10 +69,17 @@ class CompareActivity : AppCompatActivity() {
         val parentView = findViewById<ImageView>(R.id.imageView4)
         var userAnimator:UserAnimator? = null
         //movingView.setImageBitmap(UserInfo.photo)
-        Glide.with(this)
-            .load(UserInfo.photo)
-            .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
-            .into(movingView)
+        if(AppStatus.animationProfile==null) {
+            Glide.with(this)
+                .load(UserInfo.photo)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(movingView)
+        } else{
+            Glide.with(this)
+                .load(AppStatus.animationProfile)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(movingView)
+        }
         httpScope.launch {
             setBackgroundImage()
             //val climbingRoute = ClimbingRoute(null, Point(routeImageData!!.startX, routeImageData!!.startY), Point(routeImageData!!.endX, routeImageData!!.endY))
@@ -98,11 +105,29 @@ class CompareActivity : AppCompatActivity() {
         val movingView2 = findViewById<ImageView>(R.id.movingView2)
         val parentView = findViewById<ImageView>(R.id.imageView4)
 
-        Glide.with(this)
-            .load(UserInfo.photo)
-            .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
-            .into(movingView)
-        movingView2.setImageResource(R.drawable.green_circle)
+
+        Log.d(TAG,"profile1: ${AppStatus.animationProfile}")
+        Log.d(TAG,"profile2: ${AppStatus.animationProfile2}")
+        if(AppStatus.animationProfile==null){
+            Glide.with(this)
+                .load(UserInfo.photo)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(movingView)
+        } else{
+            Glide.with(this)
+                .load(AppStatus.animationProfile)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(movingView)
+        }
+        if(AppStatus.animationProfile2==null){
+            movingView2.setImageResource(R.drawable.green_circle)
+        } else{
+            Glide.with(this)
+                .load(AppStatus.animationProfile2)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(movingView2)
+        }
+
         movingView2.imageAlpha = 80
 
         httpScope.launch {

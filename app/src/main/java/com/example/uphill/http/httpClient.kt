@@ -76,6 +76,27 @@ class HttpClient {
             }
         })
     }
+    fun getProfileImageUrl(userId: Int):String{
+        val url = "$server_name/users/profile/$userId"
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Accept", "*/*")
+            .get()
+            .build()
+
+        try{
+            client.newCall(request).execute().use { response ->
+                if(!response.isSuccessful) throw IOException("Unexpected code $response")
+
+                if(response.body == null) return ""
+
+                return response.body!!.string()
+            }
+        } catch (e:Exception){
+            Log.e(TAG, "Error Occurred", e)
+            return ""
+        }
+    }
 
     // sensor-controller
     // route-Controller

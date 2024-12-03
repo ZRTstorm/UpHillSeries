@@ -2,6 +2,8 @@ package com.example.uphill.ui.dashboard.competition
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.URL
 
 class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.OnItemClickListener, CompetitionClimbingDataAdapter.OnItemLongClickListener {
 
@@ -92,6 +95,8 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
         scope.launch {
             val climbingId = climbingData?.get(position)?.climbingDataId
             val data = httpClient.getMovementData(climbingId!!)
+            val climbingProfileUrl = httpClient.getProfileImageUrl(climbingData!![position].userId)
+            val bitmap = loadImageFromUri(climbingProfileUrl)
             if(data!=null){
                 if(AppStatus.animationRouteId!=null){
 //                    if((AppStatus.animationRouteId!!)!=climbingData?.items?.get(position)?.routeId){
@@ -102,6 +107,8 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
                 AppStatus.animationData = AnimationMovementData(data)
 
                 AppStatus.animationRouteId = selectedRoom!!.routeId
+                Log.d(TAG, "animation url: $climbingProfileUrl")
+                AppStatus.animationProfile = bitmap
             } else{
                 Log.d(TAG, "data is null")
                 AppStatus.animationData = null
@@ -119,14 +126,30 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
         scope.launch {
             val climbingId = climbingData?.get(position)?.climbingDataId
             val data = httpClient.getMovementData(climbingId!!)
+            val climbingProfileUrl = httpClient.getProfileImageUrl(climbingData!![position].userId)
+            val bitmap = loadImageFromUri(climbingProfileUrl)
+            UserInfo.photo = bitmap
+            Log.d(TAG, "bitmap: $bitmap")
             if (data != null) {
                 AppStatus.animationRouteId = selectedRoom!!.routeId
                 AppStatus.animationData2 = AnimationMovementData(data)
+                AppStatus.animationProfile2 = bitmap
+
                 Log.d(TAG, "set animationData2: ${AppStatus.animationData2}")
             }else{
                 Log.d(TAG, "data is null")
                 return@launch
             }
+        }
+    }
+    private fun loadImageFromUri(uri: String): Bitmap? {
+        return try {
+            val url = URL(uri)
+            val inputStream = url.openStream()
+            BitmapFactory.decodeStream(inputStream)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 

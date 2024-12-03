@@ -95,9 +95,10 @@ class CrewMemberFragment : Fragment() {
                 if (password.isNotEmpty()) {
                     scope.launch {
                         HttpClient().registerCrew(crewId, password)
+                        UserInfo.crewInfo = HttpClient().getCrewInfo()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "번호를 입력해주세요!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "비밀번호를 입력해주세요!", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("취소", null)

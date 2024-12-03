@@ -282,9 +282,9 @@ class HttpClient {
         val url = "$server_name/crew/${UserInfo.userId}"
         val json = """
             {
-                crewName: "$crewName",
-                content: "$content",
-                password: "$password"
+                "crewName": "$crewName",
+                "content": "$content",
+                "password": "$password"
             }
         """
         post(url, json, "Create crew success")
@@ -293,10 +293,11 @@ class HttpClient {
         val url = "$server_name/crew/crewMan/${UserInfo.userId}/register"
         val json = """
             {
-                crewId: $crewId,
-                password: "$password"
+                "crewId": $crewId,
+                "password": "$password"
             }
         """
+        Log.d(TAG, json)
         post(url, json, "Register crew success")
     }
     fun getCrewImage(crewId: Int):Bitmap?{

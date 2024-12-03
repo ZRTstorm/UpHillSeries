@@ -1,5 +1,6 @@
 package com.example.uphill.ui.dashboard.competition
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -32,6 +33,7 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
 
     private var climbingData: BattleRoomClimbingData? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_competition)
@@ -43,6 +45,7 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
         if (competitionData != null) {
             findViewById<TextView>(R.id.titleTextView).text = competitionData.title
             findViewById<TextView>(R.id.descriptionTextView).text = competitionData.content
+            findViewById<TextView>(R.id.adminTextView).text = "방장: ${competitionData.adminName}"
             scope.launch {
                 val bdetail = HttpClient().getBattleRoomDetailInfo(competitionData.battleRoomId)
                 if (bdetail != null && UserInfo.userId == bdetail.adminId) {
@@ -78,7 +81,7 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
         handler.post{
             val recyclerView = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.competitionRecyclerView)
             recyclerView.layoutManager = LinearLayoutManager(this)
-            val adapter = CompetitionClimbingDataAdapter(climbingData!!, this, this, selectedRoom!!.routeId)
+            val adapter = CompetitionClimbingDataAdapter(climbingData!!.sort(), this, this, selectedRoom!!.routeId)
             recyclerView.adapter = adapter
         }
     }

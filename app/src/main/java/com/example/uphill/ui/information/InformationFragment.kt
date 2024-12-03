@@ -56,8 +56,6 @@ class InformationFragment : Fragment() {
                 QueueStatus.nowPosition = httpClient.getEntryPosition()?.count
                 QueueStatus.routeImage = httpClient.getRouteImageData(1)
             }
-
-            UphillNotification.createPersistentNotification(requireContext())
         }
         btn2.setOnClickListener {
             val intent = Intent(requireContext(), DTestActivity::class.java)

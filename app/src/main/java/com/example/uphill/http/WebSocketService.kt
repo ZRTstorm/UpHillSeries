@@ -126,7 +126,7 @@ class WebSocketService: Service() {
     }
 
     private fun showNotification(){
-        UphillNotification.notificationManager?.cancel(1)
+        UphillNotification.notificationManager?.cancel(0)
         val intent = Intent(applicationContext, AcceptActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -138,8 +138,8 @@ class WebSocketService: Service() {
             .setContentTitle("오름길")
             .setContentText("대기열의 선두입니다!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true)
             .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
 
         if (ActivityCompat.checkSelfPermission(
                 applicationContext,
@@ -155,7 +155,7 @@ class WebSocketService: Service() {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        UphillNotification.notificationManager?.notify(1, builder.build())
+        UphillNotification.notificationManager?.notify(0, builder.build())
     }
 
 

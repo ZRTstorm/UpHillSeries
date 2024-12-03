@@ -118,7 +118,6 @@ class QueueActivity : AppCompatActivity() {
             QueueStatus.routeImage = httpClient.getRouteImageData(routeId)
         }
         Toast.makeText(this, "${routeId}번 경로 등록 완료", Toast.LENGTH_SHORT).show()
-        UphillNotification.createPersistentNotification(applicationContext)
         val intent = Intent(this,MainActivity::class.java)
         startActivity(intent)
     }

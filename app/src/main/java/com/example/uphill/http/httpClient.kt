@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.startForegroundService
 import com.example.uphill.data.Convert
 import com.example.uphill.data.UserInfo
@@ -19,11 +18,8 @@ import com.example.uphill.data.model.CrewInfo
 import com.example.uphill.data.model.CrewMan
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.RouteImageData
-import com.example.uphill.data.model.SearchedCrewInfo
 import com.example.uphill.data.model.SimpleCrewInfo
-import com.example.uphill.data.model.SimpleCrewInfoItem
 import com.example.uphill.data.model.UserId
-import com.example.uphill.http.UphillNotification
 import com.example.uphill.http.WebSocketService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

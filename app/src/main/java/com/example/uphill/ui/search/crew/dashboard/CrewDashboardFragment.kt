@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.httptest2.HttpClient
@@ -73,11 +74,11 @@ class CrewDashboardFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun showConfirmationDialog(id: Int) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_battleroom, null)
-        val TitleView = dialogView.findViewById<TextView>(R.id.textView7)
+        val titleView = dialogView.findViewById<TextView>(R.id.textView7)
         scope.launch {
             val data = HttpClient().getBattleRoomDetailInfo(id)
             if (data != null) {
-                TitleView.text = "${data.title}\n해당 대회에 등록하시겠습니까?"
+                titleView.text = "${data.title}\n해당 대회에 등록하시겠습니까?"
             }
         }
 
@@ -85,11 +86,18 @@ class CrewDashboardFragment : Fragment() {
             .setTitle("대회신청")
             .setView(dialogView)
             .setPositiveButton("수락") {_,_ ->
-                scope.launch {
-                    HttpClient().participantBattleRoom(id)
+                try {
+                    scope.launch {
+                        HttpClient().participantBattleRoom(id)
+                    }
                 }
-                val intent = Intent(requireContext(), CompetitionActivity::class.java)
-                startActivity(intent)
+                catch(_: Exception){
+                    Toast.makeText(requireContext(), "이미 등록된 대회입니다.", Toast.LENGTH_SHORT).show()
+                }
+                finally {
+                    val intent = Intent(requireContext(), CompetitionActivity::class.java)
+                    startActivity(intent)
+                }
             }
             .setNegativeButton("취소", null)
             .show()

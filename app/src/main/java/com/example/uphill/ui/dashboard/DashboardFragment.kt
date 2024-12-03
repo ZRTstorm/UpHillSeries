@@ -69,6 +69,8 @@ class DashboardFragment : Fragment() {
                         showConfirmationDialog(query)
                     }
                 }
+                searchView.setQuery("", false)
+                searchView.clearFocus()
                 return true
             }
             override fun onQueryTextChange(newText: String?): Boolean {

@@ -1,5 +1,6 @@
 package com.example.uphill.ui.dashboard
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -9,8 +10,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.SearchView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.httptest2.HttpClient
@@ -25,6 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okio.utf8Size
 
 class DashboardFragment : Fragment() {
 
@@ -59,10 +64,13 @@ class DashboardFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { showConfirmationDialog(it) }
+                if (query != null) {
+                    if(query.length == 8){
+                        showConfirmationDialog(query)
+                    }
+                }
                 return true
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
@@ -96,20 +104,29 @@ class DashboardFragment : Fragment() {
             }
         }
     }
+
+    @SuppressLint("SetTextI18n")
     private fun showConfirmationDialog(code: String) {
-        val dialogView =
-            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_battleroom, null)
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_battleroom, null)
+        val TitleView = dialogView.findViewById<TextView>(R.id.textView7)
+        scope.launch {
+            val data = HttpClient().getBattleRoomFromCode(code)
+            if (data != null) {
+                TitleView.text = "${data.title}\n\n해당 대회에 등록하시겠습니까?"
+            }
+        }
 
         AlertDialog.Builder(requireContext())
             .setTitle("대회신청")
             .setView(dialogView)
-            .setPositiveButton("수락") { _, _ ->
+            .setPositiveButton("수락") {_,_ ->
                     scope.launch {
                         HttpClient().participantBattleRoom(code)
                     }
                 }
                 .setNegativeButton("취소", null)
                 .show()
+        loadBattleRooms()
     }
 }
 

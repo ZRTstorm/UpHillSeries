@@ -22,6 +22,7 @@ import com.example.uphill.data.model.RouteImageData
 import com.example.uphill.data.model.SimpleCrewInfo
 import com.example.uphill.data.model.UserId
 import com.example.uphill.http.WebSocketService
+import com.example.uphill.ui.record.QueueStatus
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.MediaType.Companion.toMediaType
@@ -287,6 +288,7 @@ class HttpClient {
         post(url, json, "Send movement data success")
         if(UserInfo.battleRoomId != null){
             postBattleRoomClimbingData(UserInfo.battleRoomId!!, UserInfo.lastClimbingId!!)
+            QueueStatus.reset()
         }
         UserInfo.lastClimbingId = null
     }

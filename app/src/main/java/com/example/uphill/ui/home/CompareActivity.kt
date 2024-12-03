@@ -128,7 +128,6 @@ class CompareActivity : AppCompatActivity() {
                 .into(movingView2)
         }
 
-        movingView2.imageAlpha = 80
 
         httpScope.launch {
             setBackgroundImage()

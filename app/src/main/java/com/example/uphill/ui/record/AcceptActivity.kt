@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 
 class AcceptActivity : AppCompatActivity() {
     private var httpJob: Job = Job()
@@ -35,7 +37,15 @@ class AcceptActivity : AppCompatActivity() {
             Log.d("AcceptActivity", "notification canceled")
         }
 
+        val data = QueueStatus
+
         val routeId: Int = UserInfo.capturedRouteId?:1
+
+        val routeImg: ImageView = findViewById(R.id.imageView5)
+        val routeText: TextView = findViewById(R.id.textView5)
+
+        routeText.text = "${routeId}번 루트"
+        routeImg.setImageBitmap(data.routeImage?.toBitmap())
 
         val countdownTextView: TextView = findViewById(R.id.countdown_text)
         countdownTextView.text = "10"

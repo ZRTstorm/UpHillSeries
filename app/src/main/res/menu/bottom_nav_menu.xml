@@ -21,10 +21,10 @@
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/크루"
         android:fontFamily="@font/tmoneyroundwindextrabold"/>
-    <item
-        android:id="@+id/navigation_information"
-        android:icon="@drawable/ic_information_black_24dp"
-        android:title="@string/내정보"
-        android:fontFamily="@font/tmoneyroundwindextrabold"/>
+<!--    <item-->
+<!--        android:id="@+id/navigation_information"-->
+<!--        android:icon="@drawable/ic_information_black_24dp"-->
+<!--        android:title="@string/내정보"-->
+<!--        android:fontFamily="@font/tmoneyroundwindextrabold"/>-->
 
 </menu>

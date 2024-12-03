@@ -25,9 +25,9 @@
         android:name="com.example.uphill.ui.search.SearchFragment"
         android:label="@string/크루"
         tools:layout="@layout/fragment_search" />
-    <fragment
-        android:id="@+id/navigation_information"
-        android:name="com.example.uphill.ui.information.InformationFragment"
-        android:label="@string/내정보"
-        tools:layout="@layout/fragment_information" />
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_information"-->
+<!--        android:name="com.example.uphill.ui.information.InformationFragment"-->
+<!--        android:label="@string/내정보"-->
+<!--        tools:layout="@layout/fragment_information" />-->
 </navigation>

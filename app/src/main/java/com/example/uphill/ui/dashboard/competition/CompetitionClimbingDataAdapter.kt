@@ -8,14 +8,23 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.httptest2.ClimbingData
+import com.example.httptest2.HttpClient
 import com.example.uphill.R
 import com.example.uphill.data.model.BattleRoomClimbingData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class CompetitionClimbingDataAdapter(private val itemList: BattleRoomClimbingData, private val clickListener: OnItemClickListener, private val longClickListener: OnItemLongClickListener, private val routeId: Int) : RecyclerView.Adapter<CompetitionClimbingDataAdapter.ViewHolder>() {
 
     private var selectedPosition = RecyclerView.NO_POSITION
+    private var httpJob: Job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + httpJob)
+    private var updateChangeCount = 0
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.item_text)
@@ -37,8 +46,9 @@ class CompetitionClimbingDataAdapter(private val itemList: BattleRoomClimbingDat
     }
 
     override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
+        updateChangeCount = 0
         val item = itemList[position]
-        val str = "루트 번호: $routeId" +
+        val str = "${position+1}위" +
                 "\n등반 선수: ${item.userName}" +
                 "\n등반 시간: ${item.getClimbingTimeString()}"
         holder.textView.text = str
@@ -58,10 +68,33 @@ class CompetitionClimbingDataAdapter(private val itemList: BattleRoomClimbingDat
         }
 
         // 성공 여부에 따라 원의 색상 변경
-        if (item.success) {
-            holder.statusCircle.setImageResource(R.drawable.green_circle)
-        } else {
-            holder.statusCircle.setImageResource(R.drawable.red_circle)
+//        if (item.success) {
+//            holder.statusCircle.setImageResource(R.drawable.green_circle)
+//
+//        } else {
+//            holder.statusCircle.setImageResource(R.drawable.red_circle)
+//        }
+        updateImage(holder, holder.statusCircle, item.userId)
+    }
+    private fun updateImage(holder: ViewHolder, view: ImageView, userId:Int){
+        scope.launch {
+
+            val imageUrl = HttpClient().getProfileImageUrl(userId)
+
+            val handler = android.os.Handler(android.os.Looper.getMainLooper())
+            handler.post {
+                val layoutParams = view.layoutParams
+                layoutParams.width = 100
+                layoutParams.height = 100
+                view.layoutParams = layoutParams
+                Glide.with(holder.itemView.context)
+                    .load(imageUrl)
+                    .into(view)
+            }
+            updateChangeCount++
+        }
+        if(updateChangeCount==itemList.size){
+            notifyDataSetChanged()
         }
     }
 

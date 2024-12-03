@@ -1,12 +1,14 @@
 package com.example.uphill.ui.dashboard.competition
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.example.uphill.MainActivity
 import com.example.uphill.R
 import com.example.uphill.data.model.BattleRoomRegistryReceivedData
 
@@ -31,7 +33,8 @@ class BattleRoomResultDialog(private val data: BattleRoomRegistryReceivedData) :
 
         view.findViewById<View>(R.id.closeButton).setOnClickListener {
             dismiss()
-            (activity as? AddCompetitionActivity)?.navigateToDashboardFragment()
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            startActivity(intent)
         }
     }
 }

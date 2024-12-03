@@ -79,10 +79,10 @@ class AddCompetitionActivity : AppCompatActivity() {
                     handler.post {
                         Toast.makeText(this@AddCompetitionActivity, "등록실패", Toast.LENGTH_SHORT).show()
                     }
+                    val intent = Intent(this@AddCompetitionActivity, MainActivity::class.java)
+                    startActivity(intent)
                 }
             }
         }
-        val intent = Intent(this@AddCompetitionActivity, MainActivity::class.java)
-        startActivity(intent)
     }
 }

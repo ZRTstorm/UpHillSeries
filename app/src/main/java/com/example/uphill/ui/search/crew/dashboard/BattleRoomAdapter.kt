@@ -27,7 +27,10 @@ class BattleRoomAdapter(
             titleText.text = item.title
             descriptionText.text = "방장: ${item.adminName}"
             routeText.text = "루트:${item.routeId}번"
-            itemView.setOnClickListener { onClick(item) }
+            itemView.setOnClickListener {
+                onClick(item)
+                notifyDataSetChanged()
+            }
         }
     }
 

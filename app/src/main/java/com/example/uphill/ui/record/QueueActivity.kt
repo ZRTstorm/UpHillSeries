@@ -1,29 +1,31 @@
 package com.example.uphill.ui.record
 
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.httptest2.HttpClient
 import com.example.uphill.MainActivity
 import com.example.uphill.R
 import com.example.uphill.data.UserInfo
+import com.example.uphill.data.model.BattleRoomDataList
 import com.example.uphill.http.UphillNotification
+import com.example.uphill.ui.dashboard.competition.CompetitionAdapter
+import com.example.uphill.ui.search.crew.dashboard.BattleRoomAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
+import kotlinx.coroutines.withContext
 
 class QueueActivity : AppCompatActivity() {
-
+    private lateinit var battleRoomAdapter: ParticipantBattleRoomAdaptor
     private var httpJob: Job = Job()
     private val scope = CoroutineScope(Dispatchers.IO + httpJob)
     @SuppressLint("SetTextI18n")
@@ -33,7 +35,17 @@ class QueueActivity : AppCompatActivity() {
 
 
         val routeId: Int = UserInfo.capturedRouteId?:1
+        UserInfo.battleRoomId = null
+        Log.d("QueueActivity", "routeId: $routeId")
 
+        val recyclerView = findViewById<RecyclerView>(R.id.battleRoomRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        battleRoomAdapter = ParticipantBattleRoomAdaptor(BattleRoomDataList()) { battleRoom ->
+            Log.d("QueueActivity", "battleRoom: $battleRoom")
+            UserInfo.battleRoomId = battleRoom.battleRoomId
+        }
+        recyclerView.adapter = battleRoomAdapter
+        loadBattleRooms()
 
         // 거절 버튼 클릭 리스너 설정
         val rejectButton = findViewById<Button>(R.id.button9)
@@ -50,6 +62,25 @@ class QueueActivity : AppCompatActivity() {
                 rejectEntry()
             }
         })
+    }
+    private fun loadBattleRooms() {
+        // Coroutine을 사용하여 네트워크 요청을 비동기적으로 실행
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // 백그라운드 스레드에서 네트워크 호출
+                val battleRooms = withContext(Dispatchers.IO) {
+                    HttpClient().getUserBattleRoom()
+                }
+                // UI 업데이트 (메인 스레드에서 실행)
+                withContext(Dispatchers.Main) {
+                    battleRooms?.let {
+                        battleRoomAdapter.updateList(it)
+                    }
+                }
+            } catch (e: Exception)  {
+                e.printStackTrace() // 네트워크 오류 처리 (로그 출력)
+            }
+        }
     }
     private fun rejectEntry(){
 //        val httpClient = HttpClient()
@@ -69,7 +100,6 @@ class QueueActivity : AppCompatActivity() {
 
 
     private fun routeRegistration(routeId: Int){
-        // TODO 서버와 연결
         val httpClient = HttpClient()
         scope.launch {
             httpClient.registerEntry(routeId)

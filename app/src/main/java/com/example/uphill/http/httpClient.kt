@@ -264,6 +264,9 @@ class HttpClient {
         val url = server_name+"/bodyMovement/"+UserInfo.userId+"/${UserInfo.lastClimbingId}"
         val json = Gson().toJson(movementData)
         post(url, json, "Send movement data success")
+        if(UserInfo.battleRoomId != null){
+            postBattleRoomClimbingData(UserInfo.battleRoomId!!, UserInfo.lastClimbingId!!)
+        }
         UserInfo.lastClimbingId = null
     }
     fun getMovementData(climbingDataId: Int):MovementData?{

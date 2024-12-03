@@ -13,4 +13,6 @@ object UserInfo {
     var isCompetitionEntered: Boolean = false
 
     var crewInfo: CrewInfo? = null
+
+    var battleRoomId: Int? = null
 }

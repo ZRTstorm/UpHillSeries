@@ -18,7 +18,7 @@ class CompetitionAdapter(
 
     inner class CompetitionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val profileImage: ImageView = itemView.findViewById(R.id.iv_profile)
-        private val titleTextView: TextView = view.findViewById(R.id.tv_title)
+        private val titleTextView: TextView = view.findViewById(R.id.crewman)
         private val descriptionTextView: TextView = view.findViewById(R.id.description)
         private val routeTextView: TextView = view.findViewById(R.id.route)
 

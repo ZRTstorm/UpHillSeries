@@ -9,13 +9,13 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.httptest2.HttpClient
 import com.example.uphill.MainActivity
 import com.example.uphill.R
 import com.example.uphill.data.UserInfo
 import com.example.uphill.databinding.FragmentCrewMemberBinding
 import com.example.uphill.ui.search.CrewSingleton
-import com.example.uphill.ui.search.SearchFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,9 +45,20 @@ class CrewMemberFragment : Fragment() {
             binding.textView2.text = crew.crewName
             binding.textView3.text = crew.userName
             binding.textView8.text = crew.content
+            scope.launch {
+                val crewMembers = HttpClient().getCrewManList(crew.crewId)
+                crewMembers?.let {
+                    requireActivity().runOnUiThread {
+                        val adapter = CrewMemberAdapter(it)
+                        binding.crewMember.adapter = adapter
+                    }
+                }
+            }
         } else {
             Toast.makeText(requireContext(), "Failed to load crew data.", Toast.LENGTH_SHORT).show()
         }
+        binding.crewMember.layoutManager = LinearLayoutManager(requireContext())
+
 
         if(UserInfo.crewInfo != null){
             if(UserInfo.userId == UserInfo.crewInfo!!.pilotId){

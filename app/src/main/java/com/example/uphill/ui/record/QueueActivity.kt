@@ -71,11 +71,14 @@ class QueueActivity : AppCompatActivity() {
                 val battleRooms = withContext(Dispatchers.IO) {
                     HttpClient().getUserBattleRoom()
                 }
+                val battleRoomDataList = BattleRoomDataList()
+                battleRooms?.forEach {
+                    if(it.routeId == UserInfo.capturedRouteId)
+                    battleRoomDataList.add(it)
+                }
                 // UI 업데이트 (메인 스레드에서 실행)
                 withContext(Dispatchers.Main) {
-                    battleRooms?.let {
-                        battleRoomAdapter.updateList(it)
-                    }
+                    battleRoomAdapter.updateList(battleRoomDataList)
                 }
             } catch (e: Exception)  {
                 e.printStackTrace() // 네트워크 오류 처리 (로그 출력)

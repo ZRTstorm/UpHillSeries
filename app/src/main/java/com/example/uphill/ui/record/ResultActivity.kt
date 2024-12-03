@@ -15,6 +15,9 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_result)
+
+        QueueStatus.reset()
+
         // 거절 버튼 클릭 리스너 설정
         val save_button = findViewById<Button>(R.id.button11)
         save_button.setOnClickListener {

@@ -129,10 +129,7 @@ class RecordFragment : Fragment() {
         return root
     }
     private fun init(){
-        QueueStatus.isRegistered = false
-        QueueStatus.routeId = null
-        QueueStatus.nowPosition = null
-        QueueStatus.routeImage = null
+        QueueStatus.reset()
         binding.imageView7.visibility = View.GONE
         binding.countNoText.visibility = View.GONE
         binding.countText.visibility = View.GONE

@@ -8,4 +8,11 @@ object QueueStatus {
     var nowPosition: Int? = null
     var routeId: Int? = null
     var routeImage: RouteImageData? = null
+
+    fun reset() {
+        isRegistered = false
+        nowPosition = null
+        routeId = null
+        routeImage = null
+    }
 }

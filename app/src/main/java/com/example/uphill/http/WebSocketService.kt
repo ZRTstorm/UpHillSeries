@@ -135,8 +135,8 @@ class WebSocketService: Service() {
         // Show alert here
         val builder = NotificationCompat.Builder(this, "default")
             .setSmallIcon(R.drawable.logo)
-            .setContentTitle("message")
-            .setContentText("test")
+            .setContentTitle("오름길")
+            .setContentText("대기열의 선두입니다!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)

@@ -1,6 +1,8 @@
 package com.example.uphill.data.model
 
 
+import android.graphics.Bitmap
+import com.example.uphill.data.Convert
 import com.google.gson.annotations.SerializedName
 
 data class RouteImageData(
@@ -9,4 +11,8 @@ data class RouteImageData(
     val imageData: String,
     val startX: Int,
     val startY: Int
-)
+){
+    fun toBitmap(): Bitmap? {
+        return Convert.base64ToBitmap(imageData)
+    }
+}

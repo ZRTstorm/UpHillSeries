@@ -18,7 +18,7 @@ class BattleRoomAdapter(
 
     inner class BattleRoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val profileImage: ImageView = itemView.findViewById(R.id.iv_profile)
-        private val titleText: TextView = itemView.findViewById(R.id.tv_title)
+        private val titleText: TextView = itemView.findViewById(R.id.crewman)
         private val descriptionText: TextView = itemView.findViewById(R.id.description)
         private val routeText: TextView = itemView.findViewById(R.id.route)
 

@@ -25,9 +25,6 @@
             android:padding="16dp">
 
             <!-- ImageView -->
-
-            <!-- Title Text -->
-
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="384dp"
@@ -35,6 +32,9 @@
                 android:layout_gravity="center"
                 android:contentDescription="Competition Image"
                 app:srcCompat="@drawable/tcbc" />
+
+            <!-- Title Text -->
+
 
             <TextView
                 android:id="@+id/titleTextView"
@@ -48,13 +48,31 @@
 
             <!-- Description Text -->
             <TextView
-                android:id="@+id/descriptionTextView"
+                android:id="@+id/adminTextView"
                 android:layout_width="match_parent"
-                android:layout_height="258sp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:lineSpacingExtra="4dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="30dp"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/competitionRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:layout_marginTop="10dp" />
 
             <Button
                 android:id="@+id/delbutton"
@@ -62,6 +80,7 @@
                 android:layout_height="wrap_content"
                 android:text="삭제"
                 android:visibility="invisible" />
+
 
             <!-- Button -->
 

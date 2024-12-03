@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -122,8 +123,13 @@ class DashboardFragment : Fragment() {
             .setTitle("대회신청")
             .setView(dialogView)
             .setPositiveButton("수락") {_,_ ->
+                try {
                     scope.launch {
                         HttpClient().participantBattleRoom(code)
+                    }
+                }
+                    catch (_: Exception){
+                        Toast.makeText(requireContext(), "이미 등록된 대회입니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
                 .setNegativeButton("취소", null)

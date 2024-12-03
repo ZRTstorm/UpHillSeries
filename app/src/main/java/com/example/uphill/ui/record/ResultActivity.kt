@@ -37,20 +37,20 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_result)
-
-        if(AppStatus.animationData==null){
-            Log.d(TAG, "animationData is null")
-            showAlertAndGoBack()
-        } else{
-            if(AppStatus.animationData2==null){
-                Log.d(TAG, "animationData2 is null")
-                showSingleAnimation()
-            }
-            else{
-                Log.d(TAG, "animationData is both not null")
-                showCompareAnimation()
-            }
-        }
+            // todo 분석 전에 불러서 튕기는 문제
+//        if(AppStatus.animationData==null){
+//            Log.d(TAG, "animationData is null")
+//            showAlertAndGoBack()
+//        } else{
+//            if(AppStatus.animationData2==null){
+//                Log.d(TAG, "animationData2 is null")
+//                showSingleAnimation()
+//            }
+//            else{
+//                Log.d(TAG, "animationData is both not null")
+//                showCompareAnimation()
+//            }
+//        }
         val parentView = findViewById<ImageView>(R.id.imageView4)
         parentView.setOnClickListener{
             playAnimation()

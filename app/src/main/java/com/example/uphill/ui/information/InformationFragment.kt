@@ -52,6 +52,7 @@ class InformationFragment : Fragment() {
             }
             QueueStatus.isRegistered = true
             QueueStatus.routeId = 1
+            UserInfo.battleRoomId = 45
             scope.launch {
                 QueueStatus.nowPosition = httpClient.getEntryPosition()?.count
                 QueueStatus.routeImage = httpClient.getRouteImageData(1)

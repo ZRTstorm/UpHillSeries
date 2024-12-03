@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +38,9 @@ class QueueActivity : AppCompatActivity() {
         val routeId: Int = UserInfo.capturedRouteId?:1
         UserInfo.battleRoomId = null
         Log.d("QueueActivity", "routeId: $routeId")
+        
+        val textview = findViewById<TextView>(R.id.textView6)
+        textview.text = "${routeId}번 루트"
 
         val recyclerView = findViewById<RecyclerView>(R.id.battleRoomRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)

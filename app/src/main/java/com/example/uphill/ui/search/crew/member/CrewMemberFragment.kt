@@ -1,6 +1,7 @@
 package com.example.uphill.ui.search.crew.member
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.httptest2.HttpClient
+import com.example.uphill.MainActivity
 import com.example.uphill.R
 import com.example.uphill.data.UserInfo
 import com.example.uphill.databinding.FragmentCrewMemberBinding
@@ -61,17 +63,18 @@ class CrewMemberFragment : Fragment() {
                 if(UserInfo.userId == UserInfo.crewInfo!!.pilotId) {
                     scope.launch {
                         HttpClient().deleteCrew(UserInfo.crewInfo!!.crewId)
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        startActivity(intent)
                     }
                 }
                 else {
                     scope.launch {
                         HttpClient().unsubscribeCrew()
+                        UserInfo.crewInfo = null
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        startActivity(intent)
                     }
                 }
-                val searchFragment = SearchFragment()
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.nav_host_fragment_activity_main, searchFragment)
-                    .commit()
             }
             else{
                 if (crew != null) {
@@ -96,6 +99,8 @@ class CrewMemberFragment : Fragment() {
                     scope.launch {
                         HttpClient().registerCrew(crewId, password)
                         UserInfo.crewInfo = HttpClient().getCrewInfo()
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        startActivity(intent)
                     }
                 } else {
                     Toast.makeText(requireContext(), "비밀번호를 입력해주세요!", Toast.LENGTH_SHORT).show()

@@ -58,11 +58,15 @@ class CrewMemberFragment : Fragment() {
         // 버튼 클릭 리스너 설정
         binding.button17.setOnClickListener {
             if(UserInfo.crewInfo != null) {
-                if(UserInfo.userId == UserInfo.crewInfo!!.pilotId){
-                    HttpClient().deleteCrew(UserInfo.crewInfo!!.crewId)
+                if(UserInfo.userId == UserInfo.crewInfo!!.pilotId) {
+                    scope.launch {
+                        HttpClient().deleteCrew(UserInfo.crewInfo!!.crewId)
+                    }
                 }
                 else {
-                    HttpClient().unsubscribeCrew()
+                    scope.launch {
+                        HttpClient().unsubscribeCrew()
+                    }
                 }
                 val searchFragment = SearchFragment()
                 requireActivity().supportFragmentManager.beginTransaction()

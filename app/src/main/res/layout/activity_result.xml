@@ -7,18 +7,43 @@
     android:layout_height="match_parent"
     tools:context=".ui.record.ResultActivity">
 
-    <VideoView
-        android:id="@+id/videoView"
+    <ImageView
+        android:id="@+id/imageView4"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="97dp"
-        android:layout_marginBottom="97dp"
-        app:layout_constraintBottom_toTopOf="@+id/button12"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.7"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="3:4"/>
+
+    <ImageView
+        android:id="@+id/movingView"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="410dp"
+        android:layout_marginBottom="280dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/movingView2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/green_circle" />
+
+    <ImageView
+        android:id="@+id/movingView2"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginBottom="251dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/movingView"
+        app:layout_constraintStart_toStartOf="@+id/movingView"
+        app:layout_constraintTop_toBottomOf="@+id/movingView"
+        app:srcCompat="@drawable/button_background" />
 
     <Button
         android:id="@+id/button11"
@@ -34,10 +59,9 @@
         android:id="@+id/button12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="74dp"
+        android:layout_marginBottom="24dp"
         android:text="Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button11"
-        app:layout_constraintTop_toBottomOf="@+id/videoView" />
+        app:layout_constraintStart_toEndOf="@+id/button11" />
 </androidx.constraintlayout.widget.ConstraintLayout>

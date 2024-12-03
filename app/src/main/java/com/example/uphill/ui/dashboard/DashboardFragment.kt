@@ -119,7 +119,7 @@ class DashboardFragment : Fragment() {
         scope.launch {
             val data = HttpClient().getBattleRoomFromCode(code)
             if (data != null) {
-                TitleView.text = "${data.title}\n\n해당 대회에 등록하시겠습니까?"
+                TitleView.text = "${data.title}\n해당 대회에 등록하시겠습니까?"
             }
         }
 

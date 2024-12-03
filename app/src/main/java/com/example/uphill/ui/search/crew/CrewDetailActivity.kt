@@ -34,10 +34,6 @@ class CrewDetailActivity : AppCompatActivity() {
                 // Navigate back to MainActivity and select SearchFragment
                 CrewSingleton.selectedCrew = null
                 val intent = Intent(this@CrewDetailActivity, MainActivity::class.java).apply {
-                    putExtra(
-                        "navigate_to",
-                        R.id.navigation_search
-                    ) // Optional, pass navigation target
                 }
                 startActivity(intent)
                 finish() // Close CrewDetailActivity

@@ -80,6 +80,11 @@ class DashboardFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadBattleRooms()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

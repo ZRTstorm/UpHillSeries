@@ -110,11 +110,11 @@ class DashboardFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun showConfirmationDialog(code: String) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_battleroom, null)
-        val titleView = dialogView.findViewById<TextView>(R.id.textView7)
+        val TitleView = dialogView.findViewById<TextView>(R.id.textView7)
         scope.launch {
             val data = HttpClient().getBattleRoomFromCode(code)
             if (data != null) {
-                titleView.text = "${data.title}\n\n해당 대회에 등록하시겠습니까?"
+                TitleView.text = "${data.title}\n해당 대회에 등록하시겠습니까?"
             }
         }
 

@@ -13,6 +13,7 @@ import com.example.httptest2.HttpClient
 import com.example.uphill.MainActivity
 import com.example.uphill.R
 import com.example.uphill.data.UserInfo
+import com.example.uphill.http.UphillNotification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,6 +29,11 @@ class AcceptActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_accept)
+
+        if(UphillNotification.notificationManager!=null){
+            UphillNotification.notificationManager!!.cancel(0)
+            Log.d("AcceptActivity", "notification canceled")
+        }
 
         val routeId: Int = UserInfo.capturedRouteId?:1
 

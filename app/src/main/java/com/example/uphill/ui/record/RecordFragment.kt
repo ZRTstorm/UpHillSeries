@@ -2,6 +2,8 @@ package com.example.uphill.ui.record
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +13,25 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.httptest2.HttpClient
 import com.example.uphill.data.AppStatus
 import com.example.uphill.data.UserInfo
 import com.example.uphill.databinding.FragmentRecordBinding
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class RecordFragment : Fragment() {
 
     private var _binding: FragmentRecordBinding? = null
     private val binding get() = _binding!!
+
+    private var httpJob: Job = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + httpJob)
 
     private lateinit var qrScannerLauncher: ActivityResultLauncher<Intent>
 
@@ -76,8 +86,58 @@ class RecordFragment : Fragment() {
 
         _binding = FragmentRecordBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        Log.d("RecordFragment", "onCreateView called")
 
         // QR 코드 스캔 시작 버튼
+        if (QueueStatus.isRegistered) {
+            if(QueueStatus.routeImage != null){
+                binding.imageView7.setImageBitmap(QueueStatus.routeImage!!.toBitmap())
+                binding.imageView7.visibility = View.VISIBLE
+            } else{
+                updateImage()
+            }
+
+            updateNowPosition()
+            binding.countText.visibility = View.VISIBLE
+            binding.countNoText.visibility = View.VISIBLE
+            binding.countNoText.text = QueueStatus.nowPosition.toString()
+            binding.countNoText.setOnClickListener {
+                updateNowPosition()
+            }
+            binding.routeNumText.visibility = View.VISIBLE
+            binding.routeNumText.text = QueueStatus.routeId.toString()
+
+            binding.button8.text = "취소"
+            binding.button8.setOnClickListener {
+                scope.launch {
+                    val httpClient = HttpClient()
+                    httpClient.deleteEntry()
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.post{
+                        Toast.makeText(requireContext(), "경로 등록이 취소되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                init()
+            }
+        } else{
+            Log.d("RecordFragment", "not registered")
+            init()
+        }
+
+
+        return root
+    }
+    private fun init(){
+        QueueStatus.isRegistered = false
+        QueueStatus.routeId = null
+        QueueStatus.nowPosition = null
+        QueueStatus.routeImage = null
+        binding.imageView7.visibility = View.GONE
+        binding.countNoText.visibility = View.GONE
+        binding.countText.visibility = View.GONE
+        binding.routeNumText.visibility = View.GONE
+        binding.button8.text = "경로 등록"
         binding.button8.setOnClickListener {
 
 
@@ -87,9 +147,29 @@ class RecordFragment : Fragment() {
             integrator.captureActivity = CustomCaptureActivity::class.java // 세로 고정된 CustomCaptureActivity 사용
             qrScannerLauncher.launch(integrator.createScanIntent())
         }
+    }
+    private fun updateNowPosition(){
+        scope.launch {
+            val httpClient = HttpClient()
+            QueueStatus.nowPosition = httpClient.getEntryPosition()?.count
+            val handler = Handler(Looper.getMainLooper())
+            handler.post {
+                binding.countNoText.text = QueueStatus.nowPosition.toString()
+            }
+        }
+    }
+    private fun updateImage(){
+        scope.launch {
+            val httpClient = HttpClient()
+            QueueStatus.routeImage = httpClient.getRouteImageData(QueueStatus.routeId!!)
+            val handler = Handler(Looper.getMainLooper())
+            if (QueueStatus.routeImage!=null){
+                handler.post {
+                    binding.imageView7.setImageBitmap(QueueStatus.routeImage!!.toBitmap())
+                }
+            }
+        }
 
-
-        return root
     }
 
     override fun onDestroyView() {

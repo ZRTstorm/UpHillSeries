@@ -16,6 +16,7 @@ import com.example.uphill.data.model.BattleRoomRegistrySendData
 import com.example.uphill.data.model.ClimbingRoute
 import com.example.uphill.data.model.CrewInfo
 import com.example.uphill.data.model.CrewMan
+import com.example.uphill.data.model.EntryPosition
 import com.example.uphill.data.model.MovementData
 import com.example.uphill.data.model.RouteImageData
 import com.example.uphill.data.model.SimpleCrewInfo
@@ -208,6 +209,21 @@ class HttpClient {
             }
             """
         post(url, json,"Register entry success")
+    }
+    fun getEntryPosition():EntryPosition?{
+        val url = "$server_name/entryQueue/${UserInfo.userId}/position"
+        fun op(response:Response):EntryPosition?{
+            Log.d(TAG, "Get entry position success")
+            if (response.body == null) return null
+            val jsonResponse = response.body?.string()
+            return Gson().fromJson(jsonResponse, EntryPosition::class.java)
+
+        }
+        return get(url, ::op)
+    }
+    fun deleteEntry(){
+        val url = "$server_name/entryQueue/${UserInfo.userId}"
+        delete(url, "Delete entry success")
     }
     // climbing-data-controller
     fun getClimbingData():ClimbingData?{

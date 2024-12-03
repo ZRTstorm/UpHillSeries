@@ -1,6 +1,7 @@
 package com.example.uphill.ui.record
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -14,6 +15,7 @@ import com.example.httptest2.HttpClient
 import com.example.uphill.MainActivity
 import com.example.uphill.R
 import com.example.uphill.data.UserInfo
+import com.example.uphill.http.UphillNotification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -72,7 +74,14 @@ class QueueActivity : AppCompatActivity() {
         scope.launch {
             httpClient.registerEntry(routeId)
         }
+        QueueStatus.isRegistered = true
+        QueueStatus.routeId = routeId
+        scope.launch {
+            QueueStatus.nowPosition = httpClient.getEntryPosition()?.count
+            QueueStatus.routeImage = httpClient.getRouteImageData(routeId)
+        }
         Toast.makeText(this, "${routeId}번 경로 등록 완료", Toast.LENGTH_SHORT).show()
+        UphillNotification.createPersistentNotification(applicationContext)
         val intent = Intent(this,MainActivity::class.java)
         startActivity(intent)
     }

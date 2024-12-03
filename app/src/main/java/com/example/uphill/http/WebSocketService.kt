@@ -1,6 +1,7 @@
 package com.example.uphill.http
 
 import android.Manifest
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -13,14 +14,10 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
-import com.example.httptest2.HttpClient
 import com.example.uphill.R
 import com.example.uphill.data.AppStatus
 import com.example.uphill.data.UserInfo
 import com.example.uphill.ui.record.AcceptActivity
-import com.example.uphill.ui.record.QueueActivity
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +41,7 @@ class WebSocketService: Service() {
 
     override fun onCreate() {
         super.onCreate()
+        UphillNotification.notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel("default", "WebSocket Service", NotificationManager.IMPORTANCE_DEFAULT)
@@ -128,6 +126,7 @@ class WebSocketService: Service() {
     }
 
     private fun showNotification(){
+        UphillNotification.notificationManager?.cancel(1)
         val intent = Intent(applicationContext, AcceptActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -142,7 +141,6 @@ class WebSocketService: Service() {
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (ActivityCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -157,8 +155,11 @@ class WebSocketService: Service() {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        notificationManager.notify(1, builder.build())
+        UphillNotification.notificationManager?.notify(1, builder.build())
     }
+
+
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }

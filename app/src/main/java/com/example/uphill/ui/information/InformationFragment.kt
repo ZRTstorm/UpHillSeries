@@ -10,6 +10,8 @@ import com.example.httptest2.HttpClient
 import com.example.uphill.data.UserInfo
 import com.example.uphill.databinding.FragmentHomeBinding
 import com.example.uphill.databinding.FragmentInformationBinding
+import com.example.uphill.http.UphillNotification
+import com.example.uphill.ui.record.QueueStatus
 import com.example.uphill.ui.record.ShootActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +50,14 @@ class InformationFragment : Fragment() {
             scope.launch {
                 httpClient.registerEntry(1)
             }
+            QueueStatus.isRegistered = true
+            QueueStatus.routeId = 1
+            scope.launch {
+                QueueStatus.nowPosition = httpClient.getEntryPosition()?.count
+                QueueStatus.routeImage = httpClient.getRouteImageData(1)
+            }
+
+            UphillNotification.createPersistentNotification(requireContext())
         }
         btn2.setOnClickListener {
             val intent = Intent(requireContext(), DTestActivity::class.java)

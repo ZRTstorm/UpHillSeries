@@ -1,6 +1,7 @@
 package com.example.uphill.ui.dashboard.competition
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -9,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.httptest2.HttpClient
+import com.example.uphill.MainActivity
 import com.example.uphill.R
 import com.example.uphill.data.model.BattleRoomRegistrySendData
 import com.example.uphill.ui.dashboard.DashboardFragment
@@ -75,16 +77,12 @@ class AddCompetitionActivity : AppCompatActivity() {
                     // 오류 처리 (예: 토스트로 알림)
                     val handler = android.os.Handler(mainLooper)
                     handler.post {
-                        Toast.makeText(this@AddCompetitionActivity, "Failed to register battle room", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@AddCompetitionActivity, "등록실패", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
-    }
-    fun navigateToDashboardFragment() {
-        val dashboardFragment = DashboardFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, dashboardFragment)
-            .commit()
+        val intent = Intent(this@AddCompetitionActivity, MainActivity::class.java)
+        startActivity(intent)
     }
 }

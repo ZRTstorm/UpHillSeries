@@ -1,5 +1,6 @@
 package com.example.uphill.ui.search.crew.member
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -41,19 +42,10 @@ class CrewMemberFragment : Fragment() {
         val crew = CrewSingleton.selectedCrew
 
         if (crew != null) {
-            // UI에 데이터 반영
-            binding.textView2.text = crew.crewName
-            binding.textView3.text = crew.userName
-            binding.textView8.text = crew.content
-            scope.launch {
-                val crewMembers = HttpClient().getCrewManList(crew.crewId)
-                crewMembers?.let {
-                    requireActivity().runOnUiThread {
-                        val adapter = CrewMemberAdapter(it)
-                        binding.crewMember.adapter = adapter
-                    }
-                }
-            }
+                binding.textView2.text = crew.crewName
+                binding.textView3.text = crew.userName
+                binding.textView8.text = crew.content
+                refreshCrewMembers(crew.crewId) // 초기 데이터 로드
         } else {
             Toast.makeText(requireContext(), "Failed to load crew data.", Toast.LENGTH_SHORT).show()
         }
@@ -74,6 +66,12 @@ class CrewMemberFragment : Fragment() {
                 if(UserInfo.userId == UserInfo.crewInfo!!.pilotId) {
                     scope.launch {
                         HttpClient().deleteCrew(UserInfo.crewInfo!!.crewId)
+                        Toast.makeText(
+                            requireContext(),
+                            "크루를 삭제했습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        UserInfo.crewInfo = null
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         startActivity(intent)
                     }
@@ -82,6 +80,11 @@ class CrewMemberFragment : Fragment() {
                     scope.launch {
                         HttpClient().unsubscribeCrew()
                         UserInfo.crewInfo = null
+                        Toast.makeText(
+                            requireContext(),
+                            "크루를 탈퇴했습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         startActivity(intent)
                     }
@@ -97,6 +100,20 @@ class CrewMemberFragment : Fragment() {
         return root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun refreshCrewMembers(crewId: Int) {
+        scope.launch {
+            val updatedCrewMembers = HttpClient().getCrewManList(crewId)
+            updatedCrewMembers?.let {
+                requireActivity().runOnUiThread {
+                    val adapter = CrewMemberAdapter(it)
+                    binding.crewMember.adapter = adapter
+                    binding.crewMember.adapter?.notifyDataSetChanged()
+                }
+            }
+        }
+    }
+
     private fun showPasswordDialog(crewId: Int) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_password_input, null)
         val passwordInput = dialogView.findViewById<EditText>(R.id.passwordInput)
@@ -108,10 +125,19 @@ class CrewMemberFragment : Fragment() {
                 val password = passwordInput.text.toString()
                 if (password.isNotEmpty()) {
                     scope.launch {
-                        HttpClient().registerCrew(crewId, password)
-                        UserInfo.crewInfo = HttpClient().getCrewInfo()
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        startActivity(intent)
+                        try {
+                            HttpClient().registerCrew(crewId, password)
+                            UserInfo.crewInfo = HttpClient().getCrewInfo()
+                            requireActivity().runOnUiThread {
+                                Toast.makeText(requireContext(), "크루 등록 완료!", Toast.LENGTH_SHORT).show()
+                                refreshCrewMembers(crewId) // 새로고침 호출
+                            }
+                        }
+                        catch (_:Exception){
+                            requireActivity().runOnUiThread {
+                                Toast.makeText(requireContext(), "등록 실패. 비밀번호를 확인하세요.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                 } else {
                     Toast.makeText(requireContext(), "비밀번호를 입력해주세요!", Toast.LENGTH_SHORT).show()
@@ -120,6 +146,7 @@ class CrewMemberFragment : Fragment() {
             .setNegativeButton("취소", null)
             .show()
     }
+
 
     fun newInstant() : CrewMemberFragment
     {

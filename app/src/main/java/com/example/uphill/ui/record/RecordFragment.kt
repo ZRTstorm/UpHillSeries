@@ -1,5 +1,6 @@
 package com.example.uphill.ui.record
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -76,13 +77,13 @@ class RecordFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val RecordViewModel =
-            ViewModelProvider(this).get(RecordViewModel::class.java)
+        ViewModelProvider(this).get(RecordViewModel::class.java)
 
         _binding = FragmentRecordBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -98,14 +99,16 @@ class RecordFragment : Fragment() {
             }
 
             updateNowPosition()
+            binding.imageView8.visibility = View.INVISIBLE
+            binding.textView10.visibility = View.INVISIBLE
             binding.countText.visibility = View.VISIBLE
             binding.countNoText.visibility = View.VISIBLE
-            binding.countNoText.text = QueueStatus.nowPosition.toString()
+            binding.countNoText.text = "${QueueStatus.nowPosition.toString()}명"
             binding.countNoText.setOnClickListener {
                 updateNowPosition()
             }
             binding.routeNumText.visibility = View.VISIBLE
-            binding.routeNumText.text = QueueStatus.routeId.toString()
+            binding.routeNumText.text = "${QueueStatus.routeId.toString()}번 루트"
 
             binding.button8.text = "취소"
             binding.button8.setOnClickListener {
@@ -134,6 +137,8 @@ class RecordFragment : Fragment() {
         binding.countNoText.visibility = View.GONE
         binding.countText.visibility = View.GONE
         binding.routeNumText.visibility = View.GONE
+        binding.imageView8.visibility = View.VISIBLE
+        binding.textView10.visibility = View.VISIBLE
         binding.button8.text = "경로 등록"
         binding.button8.setOnClickListener {
 

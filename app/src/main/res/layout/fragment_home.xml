@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context=".ui.home.HomeFragment">
 
     <CalendarView
@@ -14,11 +13,12 @@
         android:layout_margin="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="12dp"
-        android:elevation="10dp"
-        android:background="@color/white"
-        android:padding="16dp"
+        android:background="@drawable/border"
+        android:focusedMonthDateColor = "@color/skyblue"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +27,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="70dp"
-        android:background="@drawable/border"
         android:fadeScrollbars="false"
         android:fontFamily="@font/tmoneyroundwindextrabold"
         android:scrollbarSize="6dp"

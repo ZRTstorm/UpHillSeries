@@ -13,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.httptest2.HttpClient
 import com.example.uphill.MainActivity
 import com.example.uphill.R
 import com.example.uphill.data.AppStatus
@@ -37,6 +38,7 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_result)
+        HttpClient().deleteEntry()
             // todo 분석 전에 불러서 튕기는 문제
 //        if(AppStatus.animationData==null){
 //            Log.d(TAG, "animationData is null")
@@ -56,11 +58,6 @@ class ResultActivity : AppCompatActivity() {
             playAnimation()
         }
 
-        // 거절 버튼 클릭 리스너 설정
-        val save_button = findViewById<Button>(R.id.button11)
-        save_button.setOnClickListener {
-            navigateToRecordFragment()
-        }
         // 수락 버튼 클릭 리스너 설정
         val del_button = findViewById<Button>(R.id.button12)
         del_button.setOnClickListener {

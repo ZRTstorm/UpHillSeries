@@ -18,7 +18,7 @@
         android:fontFamily="@font/tmoneyroundwindextrabold"/>
     <item
         android:id="@+id/navigation_search"
-        android:icon="@drawable/ic_search_black_24dp"
+        android:icon="@drawable/ic_crew_black_24dp"
         android:title="@string/크루"
         android:fontFamily="@font/tmoneyroundwindextrabold"/>
 <!--    <item-->

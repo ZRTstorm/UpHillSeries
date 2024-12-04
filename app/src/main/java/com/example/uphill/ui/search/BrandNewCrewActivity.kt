@@ -13,6 +13,7 @@ import com.example.uphill.R
     import android.widget.EditText
     import android.widget.ImageView
     import com.example.httptest2.HttpClient
+import com.example.uphill.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -65,9 +66,9 @@ class BrandNewCrewActivity : AppCompatActivity() {
                     scope.launch {
                         HttpClient().createCrew(crewName, content, password)
                     }
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.main, SearchFragment())
-                        .commit()
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 } else {
                     // 사용자에게 빈 필드 알림 (필요시 추가 가능)
                     println("모든 필드를 입력해주세요.")

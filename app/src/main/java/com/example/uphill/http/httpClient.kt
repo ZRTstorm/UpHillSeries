@@ -495,6 +495,13 @@ class HttpClient {
         val url = "$server_name/battleRoom/${UserInfo.userId}/$battleRoomId"
         delete(url, "Delete battle room success")
     }
+    fun quitBattleRoom(battleRoomId: Int){
+        val url = "$server_name/battleRoom/$battleRoomId/${UserInfo.userId}/quit"
+        fun op(response: Response){
+            Log.d(TAG, "quit room from crewId success")
+        }
+        post(url, ::op)
+    }
 
 
 

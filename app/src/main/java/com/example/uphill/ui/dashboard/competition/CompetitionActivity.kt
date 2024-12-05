@@ -40,9 +40,6 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_competition)
-
-
-
         val competitionData = selectedRoom
 
         if (competitionData != null) {
@@ -51,11 +48,9 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
             findViewById<TextView>(R.id.adminTextView).text = "방장: ${competitionData.adminName}"
             scope.launch {
                 val bdetail = HttpClient().getBattleRoomDetailInfo(competitionData.battleRoomId)
+                val bnt = findViewById<Button>(R.id.delbutton)
                 if (bdetail != null && UserInfo.userId == bdetail.adminId) {
                     withContext(Dispatchers.Main) {
-                        val bnt = findViewById<Button>(R.id.delbutton)
-                        bnt.visibility = View.VISIBLE
-
                         bnt.setOnClickListener {
                             scope.launch {
                                 HttpClient().deleteBattleRoom(competitionData.battleRoomId)
@@ -63,6 +58,18 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
                                     val intent = Intent(this@CompetitionActivity, MainActivity::class.java)
                                     startActivity(intent)
                                 }
+                            }
+                        }
+                    }
+                }
+                else{
+                    bnt.text = "탈퇴"
+                    bnt.setOnClickListener {
+                        scope.launch {
+                            HttpClient().deleteBattleRoom(competitionData.battleRoomId)
+                            withContext(Dispatchers.Main) {
+                                val intent = Intent(this@CompetitionActivity, MainActivity::class.java)
+                                startActivity(intent)
                             }
                         }
                     }

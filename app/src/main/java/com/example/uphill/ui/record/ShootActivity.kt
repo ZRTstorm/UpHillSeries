@@ -154,7 +154,7 @@ class ShootActivity : AppCompatActivity() {
             detectObject()
             AppStatus.initClimbingStatus()
 
-            val intent = Intent(this, ResultActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
 
@@ -198,7 +198,7 @@ class ShootActivity : AppCompatActivity() {
 
                                 AppStatus.initClimbingStatus()
 
-                                val intent = Intent(this, ResultActivity::class.java)
+                                val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
                                 finish()
                             } else {
@@ -247,9 +247,9 @@ class ShootActivity : AppCompatActivity() {
         ActivityDetector.detectImages(bitmapArray){success ->
             runOnUiThread{
                 if(success){
-                    Toast.makeText(this, "object detection success", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "등반 기록이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "object detection fail", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "등반 기록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
                 }
                 bitmapArray.clear()
             }

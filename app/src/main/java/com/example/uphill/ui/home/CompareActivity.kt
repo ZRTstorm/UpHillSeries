@@ -1,14 +1,20 @@
 package com.example.uphill.ui.home
 
+import android.animation.Animator
 import android.animation.AnimatorSet
+import android.annotation.SuppressLint
 import android.graphics.Point
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract.CommonDataKinds.Im
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.transition.Visibility
 import com.bumptech.glide.Glide
 import com.example.uphill.R
 import com.example.uphill.data.AppStatus
@@ -27,6 +33,8 @@ class CompareActivity : AppCompatActivity() {
     private val httpScope = CoroutineScope(Dispatchers.IO + httpJob)
     private var routeImageData: RouteImageData? = null
     private var animatorSet:AnimatorSet? = null
+    private lateinit var timerTextView:TextView
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,18 +75,40 @@ class CompareActivity : AppCompatActivity() {
     private fun showSingleAnimation(){
         val movingView = findViewById<ImageView>(R.id.movingView)
         val parentView = findViewById<ImageView>(R.id.imageView4)
+
+
+        val profileView = findViewById<ImageView>(R.id.imageView9)
+        val profileView2 = findViewById<ImageView>(R.id.imageView10)
+        val profileTextView = findViewById<TextView>(R.id.textView11)
+        val profileTextView2 = findViewById<TextView>(R.id.textView12)
         var userAnimator:UserAnimator? = null
+
+        profileView2.visibility = View.GONE
+        profileTextView2.visibility = View.GONE
+
         //movingView.setImageBitmap(UserInfo.photo)
         if(AppStatus.animationProfile==null) {
             Glide.with(this)
                 .load(UserInfo.photo)
                 .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
                 .into(movingView)
+            Glide.with(this)
+                .load(UserInfo.photo)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(profileView)
+            profileTextView.text = UserInfo.user!!.displayName
+
         } else{
             Glide.with(this)
                 .load(AppStatus.animationProfile)
                 .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
                 .into(movingView)
+            Glide.with(this)
+                .load(AppStatus.animationProfile)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(profileView)
+
+            profileTextView.text = AppStatus.animationUserName
         }
         httpScope.launch {
             setBackgroundImage()
@@ -95,6 +125,7 @@ class CompareActivity : AppCompatActivity() {
 
                 userAnimator!!.calc()
                 animatorSet = AnimatorSet()
+                Log.d(TAG, "animator1 duration: ${userAnimator!!.animator!!.duration}")
                 animatorSet!!.play(userAnimator!!.animator)
                 playAnimation()
             }
@@ -105,6 +136,14 @@ class CompareActivity : AppCompatActivity() {
         val movingView2 = findViewById<ImageView>(R.id.movingView2)
         val parentView = findViewById<ImageView>(R.id.imageView4)
 
+        val profileView = findViewById<ImageView>(R.id.imageView9)
+        val profileView2 = findViewById<ImageView>(R.id.imageView10)
+        val profileTextView = findViewById<TextView>(R.id.textView11)
+        val profileTextView2 = findViewById<TextView>(R.id.textView12)
+
+        profileView2.visibility = View.VISIBLE
+        profileTextView2.visibility = View.VISIBLE
+
 
         Log.d(TAG,"profile1: ${AppStatus.animationProfile}")
         Log.d(TAG,"profile2: ${AppStatus.animationProfile2}")
@@ -113,20 +152,41 @@ class CompareActivity : AppCompatActivity() {
                 .load(UserInfo.photo)
                 .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
                 .into(movingView)
+
+            Glide.with(this)
+                .load(UserInfo.photo)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(profileView)
+            profileTextView.text = UserInfo.user!!.displayName
         } else{
             Glide.with(this)
                 .load(AppStatus.animationProfile)
                 .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
                 .into(movingView)
+
+            Glide.with(this)
+                .load(AppStatus.animationProfile)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(profileView)
+            profileTextView.text = AppStatus.animationUserName
         }
         if(AppStatus.animationProfile2==null){
             movingView2.setImageResource(R.drawable.green_circle)
+            profileView2.setImageResource(R.drawable.green_circle)
+            profileTextView2.text = UserInfo.user!!.displayName
         } else{
             Glide.with(this)
                 .load(AppStatus.animationProfile2)
                 .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
                 .into(movingView2)
+
+            Glide.with(this)
+                .load(AppStatus.animationProfile2)
+                .transform(com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                .into(profileView2)
+            profileTextView2.text = AppStatus.animationUserName2
         }
+
 
 
         httpScope.launch {
@@ -145,10 +205,14 @@ class CompareActivity : AppCompatActivity() {
                 userAnimator.calc()
                 userAnimator2.calc()
 
-                animatorSet = android.animation.AnimatorSet()
+                animatorSet = AnimatorSet()
                 animatorSet!!.playTogether(userAnimator.animator, userAnimator2.animator)
 
+                Log.d(TAG, "animator1 duration: ${userAnimator.animator!!.duration}")
+                Log.d(TAG, "animator2 duration: ${userAnimator2.animator!!.duration}")
+
                 playAnimation()
+
             }
 
 
@@ -194,9 +258,10 @@ class CompareActivity : AppCompatActivity() {
         if(animatorSet == null){
             return
         }
-        val handler = Handler(Looper.getMainLooper())
         handler.post{
+            Log.d(TAG, "animation duration: ${animatorSet!!.duration}")
             animatorSet!!.start()
         }
     }
+
 }

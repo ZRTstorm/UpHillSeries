@@ -116,6 +116,7 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
                 AppStatus.animationRouteId = selectedRoom!!.routeId
                 Log.d(TAG, "animation url: $climbingProfileUrl")
                 AppStatus.animationProfile = bitmap
+                AppStatus.animationUserName = climbingData!![position].userName
             } else{
                 Log.d(TAG, "data is null")
                 AppStatus.animationData = null
@@ -141,6 +142,7 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
                 AppStatus.animationRouteId = selectedRoom!!.routeId
                 AppStatus.animationData2 = AnimationMovementData(data)
                 AppStatus.animationProfile2 = bitmap
+                AppStatus.animationUserName2 = climbingData!![position].userName
 
                 Log.d(TAG, "set animationData2: ${AppStatus.animationData2}")
             }else{

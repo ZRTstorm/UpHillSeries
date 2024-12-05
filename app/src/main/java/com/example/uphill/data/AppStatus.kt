@@ -13,6 +13,8 @@ object AppStatus {
     var animationRouteId: Int? = null
     var animationProfile: Bitmap? = null
     var animationProfile2: Bitmap? = null
+    var animationUserName: String? = null
+    var animationUserName2: String? = null
 
     var originBitmapList: ArrayList<Bitmap>? = null
     var diffBitmapList: ArrayList<Bitmap>? = null
@@ -30,6 +32,8 @@ object AppStatus {
         animationRouteId = null
         animationProfile = null
         animationProfile2 = null
+        animationUserName = null
+        animationUserName2 = null
 
     }
 }

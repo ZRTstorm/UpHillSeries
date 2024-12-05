@@ -66,7 +66,7 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
                     bnt.text = "탈퇴"
                     bnt.setOnClickListener {
                         scope.launch {
-                            HttpClient().deleteBattleRoom(competitionData.battleRoomId)
+                            HttpClient().quitBattleRoom(competitionData.battleRoomId)
                             withContext(Dispatchers.Main) {
                                 val intent = Intent(this@CompetitionActivity, MainActivity::class.java)
                                 startActivity(intent)
@@ -87,11 +87,12 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
     private fun updateData(){
         AppStatus.initAnimationData()
         if(climbingData==null) return
+        climbingData = climbingData!!.sort()
         val handler = Handler(Looper.getMainLooper())
         handler.post{
             val recyclerView = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.competitionRecyclerView)
             recyclerView.layoutManager = LinearLayoutManager(this)
-            val adapter = CompetitionClimbingDataAdapter(climbingData!!.sort(), this, this, selectedRoom!!.routeId)
+            val adapter = CompetitionClimbingDataAdapter(climbingData!!, this, this, selectedRoom!!.routeId)
             recyclerView.adapter = adapter
         }
     }

@@ -44,13 +44,16 @@ class CrewDashboardFragment : Fragment() {
         // Fetch data for the RecyclerView
         crewData?.let {
             scope.launch {
-                val battleRooms = withContext(Dispatchers.IO) {
-                    HttpClient().getBattleRoomFromCrewId(it.crewId)
-                }
-                withContext(Dispatchers.Main) {
-                    battleRooms?.let { rooms ->
-                        adapter.updateList(rooms)
+                while (isActive) { // Coroutine이 활성화된 동안 반복 실행
+                    val battleRooms = withContext(Dispatchers.IO) {
+                        HttpClient().getBattleRoomFromCrewId(it.crewId)
                     }
+                    withContext(Dispatchers.Main) {
+                        battleRooms?.let { rooms ->
+                            adapter.updateList(rooms)
+                        }
+                    }
+                    delay(10000) // 10초 대기
                 }
             }
         }

@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingTop="80dp"
     tools:context=".ui.search.crew.CrewDetailActivity">
 
     <com.google.android.material.tabs.TabLayout

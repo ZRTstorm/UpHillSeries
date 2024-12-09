@@ -36,7 +36,6 @@ class AddCompetitionActivity : AppCompatActivity() {
         val routeNumEditText = findViewById<EditText>(R.id.editTextText5)
 
         submitButton.setOnClickListener {
-            // Safely convert routeNum to an integer, handling invalid input
             val routeNum = routeNumEditText.text.toString().toIntOrNull()
             if (routeNum == null) {
                 routeNumEditText.error = "Please enter a valid route number"
@@ -48,6 +47,7 @@ class AddCompetitionActivity : AppCompatActivity() {
             val isCrewOnly = crewOnlySwitch.isChecked
 
             submit(title, content, isCrewOnly, routeNum)
+            Toast.makeText(this@AddCompetitionActivity, "대회가 생성되었습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -63,7 +63,6 @@ class AddCompetitionActivity : AppCompatActivity() {
         // Debugging log to verify the data
         println(battleRoomData)
 
-        // TODO: Send the data to the server using HttpClient
         scope.launch {
             HttpClient().registryBattleRoom(battleRoomData) { response ->
                 if (response != null) {

@@ -11,7 +11,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.httptest2.HttpClient
 import com.example.uphill.MainActivity
@@ -52,6 +54,11 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
                 if (bdetail != null && UserInfo.userId == bdetail.adminId) {
                     withContext(Dispatchers.Main) {
                         bnt.setOnClickListener {
+                            Toast.makeText(
+                                this@CompetitionActivity,
+                                "대회를 삭제했습니다.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             scope.launch {
                                 HttpClient().deleteBattleRoom(competitionData.battleRoomId)
                                 withContext(Dispatchers.Main) {
@@ -65,6 +72,11 @@ class CompetitionActivity : AppCompatActivity(),CompetitionClimbingDataAdapter.O
                 else{
                     bnt.text = "탈퇴"
                     bnt.setOnClickListener {
+                        Toast.makeText(
+                            this@CompetitionActivity,
+                            "대회를 탈퇴했습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         scope.launch {
                             HttpClient().quitBattleRoom(competitionData.battleRoomId)
                             withContext(Dispatchers.Main) {

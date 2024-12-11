@@ -1,0 +1,5 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent" />
+    <stroke android:width="0.8dp" android:color="#D3D3D3" /> <!-- 연한 회색 -->
+    <corners android:radius="8dp" /> <!-- 둥근 모서리 옵션 -->
+</shape>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_information">information</string>
+    <string name="title_search">search</string>
+    <string name="title_record">record</string>
+    <string name="title_dot">Dot</string>
+    <string name="게시물">게시물</string>
+    <string name="내정보">내정보</string>
+    <string name="계정">계정</string>
+    <string name="설정">설정</string>
+    <string name="오름길" />
+    <string name="회원가입">회원가입</string>
+    <string name="로그인">로그인</string>
+    <string name="loading">Loading</string>
+    <string name="plus">+</string>
+    <string name="room_title">room_title</string>
+    <string name="description">description</string>
+    <string name="메인">오름길</string>
+    <string name="대회">대회</string>
+    <string name="기록">기록</string>
+    <string name="크루">크루</string>
+    <string name="홈">홈</string>
+    <string name="crew_title" />
+    <string name="크루원">크루원</string>
+</resources>

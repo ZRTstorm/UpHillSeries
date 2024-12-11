@@ -14,6 +14,7 @@ import com.example.uphill.R
     import android.widget.ImageView
     import com.example.httptest2.HttpClient
 import com.example.uphill.MainActivity
+import com.example.uphill.data.UserInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -65,6 +66,7 @@ class BrandNewCrewActivity : AppCompatActivity() {
                 if (crewName.isNotEmpty() && content.isNotEmpty() && password.isNotEmpty()) {
                     scope.launch {
                         HttpClient().createCrew(crewName, content, password)
+                        UserInfo.crewInfo = HttpClient().getCrewInfo()
                     }
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
